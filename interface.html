@@ -1,0 +1,72 @@
+<div id="flooplan-app" class="is-loading">
+  <main>
+    <header>
+      <p>Configure your floorplan</p>
+      <a id="help_tip" href="#">Need help?</a>
+    </header>
+    <div class="loading-message">
+      <!-- Show loading animation -->
+      <div class="spinner-holder animated">
+        <div class="spinner-overlay">Loading...</div>
+        <p>Loading the floorplan... Please wait!</p>
+      </div>
+    </div>
+    <section class="app-content">
+      <form class="form-horizontal">
+        <div class="form-group clearfix">
+          <div class="col-sm-4 control-label">
+            <label>Add your floorplans</label>
+          </div>
+          <div class="col-sm-8">
+            <div class="floor-panels-holder">
+              <div class="add-floor-panel" @click.prevent="onAdd"><i class="fa fa-plus-circle"></i> Add a new floorplan</div>
+              <div class="panel-group" id="floor-accordion" v-sortable="{ handle: '.panel-heading', group: { name: 'floorPanels', pull: false }, scrollSensitivity: 116, scrollSpeed: 10, onUpdate: onSort }">
+                
+                <div v-for="(floor, idx) in floors" v-bind:key="floor.id" class="panel panel-default floor-panel" :data-id="floor.id">
+                  <div class="panel-heading">
+                    <h4 class="panel-title" v-bind:class="{ 'collapsed': floor.isFromNew }" data-toggle="collapse" data-parent="#floor-accordion" :data-target="'#collapse-' + floor.id">
+                      <div class="screen-reorder-handle">
+                        <i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i>
+                      </div>
+                      <span class="panel-title-text">\{{floor.name}}</span>
+                      <span class="fa panel-chevron fa-chevron-up"></span>
+                    </h4>
+                    <a href="#" v-on:click.prevent.stop="deleteField(idx)"><span class="icon-delete fa fa-trash"></span></a>
+                  </div>
+                  <div :id="'collapse-' + floor.id" class="panel-collapse collapse" v-bind:class="{ in: !floor.isFromNew }">
+                    <div class="panel-body">
+
+                      <div class="form-group clearfix">
+                        <div class="col-sm-4 control-label">
+                          <label>Floor name</label>
+                        </div>
+                        <div class="col-sm-8">
+                          <input type="text" class="form-control" v-model="floor.name"/>
+                        </div>
+                      </div>
+
+                      <div class="form-group clearfix">
+                        <div class="col-sm-4 control-label">
+                          <label>Configure your floors</label>
+                        </div>
+                        <div class="col-sm-8">
+                          <div class="btn btn-default" @click.prevent="openFilePicker(floor)">
+                            <span v-if="floor.image">Replace image</span>
+                            <span v-else>Select an image</span>
+                          </div>
+                          <div v-if="floor.image" class="selected-folder">Selected folder: <span>\{{floor.image.name}}</span></div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </section>
+  </main>
+</div>

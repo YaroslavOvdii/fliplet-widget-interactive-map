@@ -1,0 +1,3 @@
+Fliplet.Floorplan = (function() {
+  return {}
+})()
