@@ -7,7 +7,7 @@ const named = require('vinyl-named');
 
 const paths = {
   scripts: {
-    entry: ['js/libs/*', 'vendor/*'],
+    entry: ['js/libs/*'],
     dest: 'dist/'
   }
 };

@@ -77,6 +77,7 @@ const app = new Vue({
         isFromNew: true,
         name: `Marker ${this.markers.length + 1}`,
         icon: '',
+        color: '#333333',
         type: 'marker-panel'
       }
 
@@ -93,7 +94,7 @@ const app = new Vue({
           return;
         }
 
-        $vm.floors.splice(index, 1);
+        $vm.markers.splice(index, 1);
       });
     },
     onPanelSettingChanged(panelData) {

@@ -13,6 +13,10 @@ Fliplet.Floorplan.component('marker-panel', {
       type: String,
       default: ''
     },
+    color: {
+      type: String,
+      default: '#333333'
+    },
     type: {
       type: String,
       default: 'marker-panel'
@@ -24,7 +28,7 @@ Fliplet.Floorplan.component('marker-panel', {
   },
   methods: {
     onChangeData() {
-      const componentData = _.pick(this, ['id', 'name', 'icon', 'type', 'isFromNew'])
+      const componentData = _.pick(this, ['id', 'name', 'icon', 'color', 'type', 'isFromNew'])
       Fliplet.Floorplan.emit('marker-panel-settings-changed', componentData)
     },
     openIconPicker() {
@@ -68,5 +72,27 @@ Fliplet.Floorplan.component('marker-panel', {
         return Promise.resolve();
       })
     }
+  },
+  mounted() {
+    const $vm = this
+    const $colorpickerElement = $('#list-item-color-' + $vm.id).parents('[colorpicker-component]')
+
+    $colorpickerElement.colorpicker({
+      container: false,
+      align: 'left'
+    });
+
+    $colorpickerElement.on('changeColor', (e) => {
+      $vm.color = e.value
+      $vm.onChangeData()
+    })
+
+    $('#list-item-color-' + $vm.id).on('click', () => {
+      $(this).prev('.input-group-addon').find('i').trigger('click')
+    });
+
+    $('.input-group-addon i').on('click', () => {
+      $(this).parents('.input-group-addon').next('#list-item-color-' + $vm.id).trigger('focus')
+    });
   }
 });

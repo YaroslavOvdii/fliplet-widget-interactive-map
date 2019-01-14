@@ -18,8 +18,10 @@
       "moment"
     ],
     "assets": [
-      "dist/TweenMax.js",
-      "dist/jquery.pinchzoomer.js",
+      "vendor/TweenMax.js",
+      "vendor/jquery.pinchzoomer.js",
+      "vendor/bootstrap-colorpicker.min.js",
+      "vendor/bootstrap-colorpicker.css",
 
       "js/interface.templates.js",
       "dist/core.js",
@@ -42,8 +44,8 @@
       "moment"
     ],
     "assets": [
-      "dist/TweenMax.js",
-      "dist/jquery.pinchzoomer.js",
+      "vendor/TweenMax.js",
+      "vendor/jquery.pinchzoomer.js",
       "dist/build.js",
       "css/build.css"
     ]
