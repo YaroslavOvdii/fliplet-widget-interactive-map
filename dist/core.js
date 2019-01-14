@@ -94,7 +94,34 @@
 /***/ (function(module, exports) {
 
 Fliplet.Floorplan = function () {
-  return {};
+  var components = {};
+  var eventHub = new Vue();
+  var templates = Fliplet.Widget.Templates;
+  return {
+    on: function on(eventName, fn) {
+      eventHub.$on(eventName, fn);
+    },
+    off: function off(eventName, fn) {
+      eventHub.$off(eventName, fn);
+    },
+    emit: function emit(eventName, data) {
+      eventHub.$emit(eventName, data);
+    },
+    component: function component(componentName, _component) {
+      if (!_component.componentName) {
+        throw new Error('The component name is required');
+      }
+
+      var template = templates['templates.interface.' + componentName];
+
+      if (!template) {
+        throw new Error('A template for the ' + componentName + ' component has not been found');
+      }
+
+      _component.template = template();
+      Vue.component(componentName, _component);
+    }
+  };
 }();
 
 /***/ }),

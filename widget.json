@@ -20,9 +20,14 @@
     "assets": [
       "dist/TweenMax.js",
       "dist/jquery.pinchzoomer.js",
-      "dist/core.js",
-      "dist/interface.js",
 
+      "js/interface.templates.js",
+      "dist/core.js",
+
+      "js/interface/floor-panel.js",
+      "js/interface/marker-panel.js",
+
+      "dist/interface.js",
       "css/interface.css"
     ]
   },

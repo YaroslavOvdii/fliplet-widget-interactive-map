@@ -22,7 +22,8 @@ const app = new Vue({
       filePickerProvider: null,
       floorPanelsIsEmpty: true,
       settings: widgetData,
-      floors: widgetData.floors || []
+      floors: widgetData.floors || [],
+      markers: widgetData.markers || []
     }
   },
   methods: {
@@ -43,19 +44,20 @@ const app = new Vue({
         cache: false
       })
     },
-    onAdd(event) {
+    onAddFloor() {
       const newItem = {
         id: this.makeid(8),
         isFromNew: true,
-        name: `Floor ${this.floors.length + 1}`
+        name: `Floor ${this.floors.length + 1}`,
+        type: 'floor-panel'
       }
 
       this.floors.push(newItem);
     },
-    onSort(event) {
+    onSortFloors(event) {
       this.floors.splice(event.newIndex, 0, this.floors.splice(event.oldIndex, 1)[0]);
     },
-    deleteField(index) {
+    deleteFloor(index) {
       const $vm = this
 
       Fliplet.Modal.confirm({
@@ -69,52 +71,61 @@ const app = new Vue({
         $vm.floors.splice(index, 1);
       });
     },
-    openFilePicker(item) {
-      const $vm = this
-      const filePickerData = {
-        selectFiles: item.image ? [item.image] : [],
-        selectMultiple: false,
-        type: 'image',
-        fileExtension: ['JPG', 'JPEG', 'PNG', 'GIF', 'TIFF'],
-        autoSelectOnUpload: true
+    onAddMarker() {
+      const newItem = {
+        id: this.makeid(8),
+        isFromNew: true,
+        name: `Marker ${this.markers.length + 1}`,
+        icon: '',
+        type: 'marker-panel'
       }
 
-      $vm.filePickerProvider = Fliplet.Widget.open('com.fliplet.file-picker', {
-        data: filePickerData,
-        onEvent: (e, data) => {
-          switch (e) {
-            case 'widget-set-info':
-              Fliplet.Studio.emit('widget-save-label-reset')
-              Fliplet.Studio.emit('widget-save-label-update', {
-                text: 'Select'
-              })
-              Fliplet.Widget.toggleSaveButton(!!data.length)
-              var msg = data.length ? data.length + ' folder selected' : 'no selected folders'
-              Fliplet.Widget.info(msg)
-              break
-          }
+      this.markers.push(newItem);
+    },
+    deleteMarker(index) {
+      const $vm = this
+
+      Fliplet.Modal.confirm({
+        title: 'Delete floorplan',
+        message: '<p>Are you sure you want to delete this floor?</p>'
+      }).then(function (result) {
+        if (!result) {
+          return;
+        }
+
+        $vm.floors.splice(index, 1);
+      });
+    },
+    onPanelSettingChanged(panelData) {
+      this.floors.forEach((panel, index) => {
+        if (panelData.id === panel.id) {
+          // To overcome the array change caveat
+          // https://vuejs.org/v2/guide/list.html#Caveats
+          Vue.set(this.floors, index, panelData)
         }
       })
-
-      $vm.filePickerProvider.then((result) => {
-        Fliplet.Widget.info('')
-        item.image = result.data[0]
-        item.mediaFolderNavStack = result.data[0].navStackRef || {}
-        $vm.floors.forEach((panel, index) => {
-          if (item.id === panel.id) {
-            // To overcome the array change caveat
-            // https://vuejs.org/v2/guide/list.html#Caveats
-            Vue.set($vm.floors, index, item)
-          }
-        })
-        $vm.filePickerProvider = null
-        Fliplet.Studio.emit('widget-save-label-reset');
-        return Promise.resolve();
+    },
+    onMarkerPanelSettingChanged(panelData) {
+      this.markers.forEach((panel, index) => {
+        if (panelData.id === panel.id) {
+          // To overcome the array change caveat
+          // https://vuejs.org/v2/guide/list.html#Caveats
+          Vue.set(this.markers, index, panelData)
+        }
       })
     },
     prepareToSaveData() {
+      // Mark 'isFromNew' as false
+      this.floors.forEach((floor) => {
+        floor.isFromNew = false
+      })
+      this.markers.forEach((marker) => {
+        marker.isFromNew = false
+      })
+
       const newSettings = {
-        floors: this.floors
+        floors: this.floors,
+        markers: this.markers
       }
 
       this.settings = _.assignIn(this.settings, newSettings);
@@ -125,12 +136,15 @@ const app = new Vue({
       Fliplet.Widget.save(this.settings)
         .then(function() {
           Fliplet.Widget.complete();
-          Fliplet.Studio.emit('reload-widget-instance', widgetId);
         })
     }
   },
   async created() {
     const $vm = this
+
+    Fliplet.Floorplan.on('floor-panel-settings-changed', this.onPanelSettingChanged)
+    Fliplet.Floorplan.on('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
+
     // Gets the list of data sources
     this.dataSources = await this.loadDataSources()
 
@@ -147,11 +161,21 @@ const app = new Vue({
     })
 
     Fliplet.Widget.onSaveRequest(function() {
-      if ($vm.filePickerProvider) {
-        $vm.filePickerProvider.forwardSaveRequest()
-      } else {
-        $vm.prepareToSaveData()
+      if (window.filePickerProvider) {
+        window.filePickerProvider.forwardSaveRequest()
+        return
       }
+
+      if (window.iconPickerProvider) {
+        window.iconPickerProvider.forwardSaveRequest()
+        return
+      }
+
+      $vm.prepareToSaveData()
     })
+  },
+  destroyed() {
+    Fliplet.Floorplan.off('floor-panel-settings-changed', this.onPanelSettingChanged)
+    Fliplet.Floorplan.off('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
   }
-})
+});

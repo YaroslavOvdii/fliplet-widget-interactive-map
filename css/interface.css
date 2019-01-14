@@ -27,13 +27,15 @@ main {
 }
 
 /* ACCORDION */
-.floor-panels-holder {
+.floor-panels-holder,
+.floor-markers-holder {
   position: relative;
   padding-bottom: 40px;
   overflow: hidden;
 }
 
-.add-floor-panel {
+.add-floor-panel,
+.add-floor-marker {
   position: absolute;
   bottom: 0;
   right: 0;
@@ -49,17 +51,20 @@ main {
   z-index: 1;
 }
 
-.add-floor-panel:hover {
+.add-floor-panel:hover,
+.add-floor-marker:hover {
   background-color: #f4f1f2;
 }
 
-.add-floor-panel:active {
+.add-floor-panel:active,
+.add-floor-marker:active {
   background-color: #f4f1f2;
   -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
 
-.floor-panels-holder .panel-group {
+.floor-panels-holder .panel-group,
+.floor-markers-holder .panel-group {
   display: block;
   -webkit-user-select: none;
   padding: 0 0 8px;
@@ -68,14 +73,9 @@ main {
   margin: 0;
 }
 
-.floor-panels-holder.empty .panel-group {
+.floor-panels-holder.empty .panel-group,
+.floor-markers-holder.empty .panel-group {
   display: none;
-}
-
-.panel-title-text .column,
-.panel-title-text .sort-by,
-.panel-title-text .order-by {
-  text-transform: capitalize;
 }
 
 .panel {
@@ -108,6 +108,14 @@ main {
 
 .panel-heading h4 {
   padding: 10px 40px 10px 6px;
+}
+
+.floor-markers-holder .panel-heading:hover {
+  cursor: pointer;
+}
+
+.floor-markers-holder .panel-heading h4 {
+  padding: 10px 40px 10px 10px;
 }
 
 .panel-title {
@@ -187,7 +195,8 @@ main {
   border: 1px solid rgb(0, 171, 210);
 }
 
-.floor-panel .panel-body label {
+.floor-panel .panel-body label,
+.marker-panel .panel-body label {
   font-weight: normal;
 }
 
@@ -197,4 +206,14 @@ main {
 
 .selected-folder span {
   font-weight: bold;
+}
+
+.icon-holder {
+  height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.icon-wrapper {
+  float: left;
 }
