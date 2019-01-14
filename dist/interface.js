@@ -124,7 +124,8 @@ var app = new Vue({
       floorPanelsIsEmpty: true,
       settings: widgetData,
       floors: widgetData.floors || [],
-      markers: widgetData.markers || []
+      markers: widgetData.markers || [],
+      showAddMarkersUI: false
     };
   },
   methods: {
@@ -216,6 +217,14 @@ var app = new Vue({
           Vue.set(_this2.markers, index, panelData);
         }
       });
+    },
+    openAddMarkers: function openAddMarkers() {
+      this.showAddMarkersUI = true;
+      Fliplet.Studio.emit('widget-mode', 'wide');
+    },
+    goBackToSettings: function goBackToSettings() {
+      this.showAddMarkersUI = false;
+      Fliplet.Studio.emit('widget-mode', 'normal');
     },
     prepareToSaveData: function prepareToSaveData() {
       // Mark 'isFromNew' as false

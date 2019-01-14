@@ -14,6 +14,33 @@ main {
   margin-bottom: 0;
 }
 
+header .title-holder {
+  display: flex;
+}
+
+header .title-holder .go-back {
+  position: relative;
+  margin-right: 15px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-right: 1px solid rgba(51, 51, 51, 0.2);
+  line-height: 20px;
+  cursor: pointer;
+}
+
+header .title-holder .go-back .fa {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 20px;
+  height: 20px;
+  line-height: 1;
+}
+
+header .title-holder p {
+  line-height: 20px;
+}
+
 .loading-message {
   display: none;
   padding-top: 25%;
@@ -232,7 +259,8 @@ main {
   float: left;
 }
 
-.markers-form-group {
+.markers-form-group,
+.add-markers-form-group {
   margin-top: 40px;
 }
 

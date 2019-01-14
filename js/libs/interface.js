@@ -23,7 +23,8 @@ const app = new Vue({
       floorPanelsIsEmpty: true,
       settings: widgetData,
       floors: widgetData.floors || [],
-      markers: widgetData.markers || []
+      markers: widgetData.markers || [],
+      showAddMarkersUI: false
     }
   },
   methods: {
@@ -114,6 +115,14 @@ const app = new Vue({
           Vue.set(this.markers, index, panelData)
         }
       })
+    },
+    openAddMarkers() {
+      this.showAddMarkersUI = true
+      Fliplet.Studio.emit('widget-mode', 'wide');
+    },
+    goBackToSettings() {
+      this.showAddMarkersUI = false
+      Fliplet.Studio.emit('widget-mode', 'normal');
     },
     prepareToSaveData() {
       // Mark 'isFromNew' as false
