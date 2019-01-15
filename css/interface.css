@@ -292,3 +292,17 @@ header .title-holder p {
   height: 100%;
   cursor: pointer;
 }
+
+/* Add Markers */
+.add-markers-wrapper {
+  margin: 0 -15px;
+  padding: 20px 0;
+}
+
+.marker-settings-wrapper {
+  margin: 0 -15px;
+}
+
+.marker-settings-wrapper .button-wrapper .btn + .btn {
+  margin-left: 15px;
+}

@@ -33,7 +33,7 @@ Fliplet.Floorplan.component('marker-panel', {
     },
     openIconPicker() {
       const $vm = this
-      $vm.icon = $vm.icon || '';
+      $vm.icon = $vm.icon || ''
 
       window.iconPickerProvider = Fliplet.Widget.open('com.fliplet.icon-selector', {
         // Also send the data I have locally, so that
@@ -64,14 +64,20 @@ Fliplet.Floorplan.component('marker-panel', {
 
       window.iconPickerProvider.then((data) => {
         if (data.data) {
-          $vm.icon = data.data.icon;
+          $vm.icon = data.data.icon
         }
         $vm.onChangeData()
         window.iconPickerProvider = null
-        Fliplet.Studio.emit('widget-save-label-reset');
-        return Promise.resolve();
+        Fliplet.Studio.emit('widget-save-label-reset')
+        return Promise.resolve()
       })
     }
+  },
+  created() {
+    Fliplet.Floorplan.on('markers-save', this.onChangeData)
+  },
+  destroyed() {
+    Fliplet.Floorplan.off('markers-save', this.onChangeData)
   },
   mounted() {
     const $vm = this

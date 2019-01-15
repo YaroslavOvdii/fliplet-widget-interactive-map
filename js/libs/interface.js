@@ -18,6 +18,10 @@ const app = new Vue({
   el: selector,
   data: () => {
     return {
+      appName: Fliplet.Env.get('appName'),
+      organizationId: Fliplet.Env.get('organizationId'),
+      defaultColumns: window.flFloorplanColumns,
+      autoDataSource: widgetData.autoDataSource || false,
       dataSources: [],
       filePickerProvider: null,
       floorPanelsIsEmpty: true,
@@ -43,6 +47,22 @@ const app = new Vue({
         type: null
       }, {
         cache: false
+      })
+    },
+    createDataSource() {
+      const name = `${this.appName} - Markers`
+      return Fliplet.DataSources.create({
+        name: name,
+        organizationId: this.organizationId,
+        columns: this.defaultColumns
+      }).then((ds) => {
+        this.settings.markersDataSource = ds
+        this.settings.markerNameColumn = 'Name'
+        this.settings.markerFloorColumn = 'Floor name'
+        this.settings.markerTypeColumn = 'Marker style',
+        this.settings.markerXPositionColumn = 'Position X',
+        this.settings.markerYPositionColumn = 'Position Y'
+        this.settings.autoDataSource = true
       })
     },
     onAddFloor() {
@@ -116,6 +136,9 @@ const app = new Vue({
         }
       })
     },
+    onAddMarkersSettingChanged(addMarkersData) {
+      this.settings = _.assignIn(this.settings, addMarkersData);
+    },
     openAddMarkers() {
       this.showAddMarkersUI = true
       Fliplet.Studio.emit('widget-mode', 'wide');
@@ -154,6 +177,12 @@ const app = new Vue({
 
     Fliplet.Floorplan.on('floor-panel-settings-changed', this.onPanelSettingChanged)
     Fliplet.Floorplan.on('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
+    Fliplet.Floorplan.on('add-markers-settings-changed', this.onAddMarkersSettingChanged)
+
+    // Create data source on first time
+    if (!this.autoDataSource) {
+      await this.createDataSource()
+    }
 
     // Gets the list of data sources
     this.dataSources = await this.loadDataSources()
@@ -181,11 +210,15 @@ const app = new Vue({
         return
       }
 
+      Fliplet.Floorplan.emit('floors-save')
+        Fliplet.Floorplan.emit('markers-save')
+      Fliplet.Floorplan.emit('add-markers-save')
       $vm.prepareToSaveData()
     })
   },
   destroyed() {
     Fliplet.Floorplan.off('floor-panel-settings-changed', this.onPanelSettingChanged)
     Fliplet.Floorplan.off('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
+    Fliplet.Floorplan.off('add-markers-settings-changed', this.onAddMarkersSettingChanged)
   }
 });

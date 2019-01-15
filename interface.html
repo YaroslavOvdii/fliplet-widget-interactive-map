@@ -1,21 +1,21 @@
 <div id="flooplan-app" class="is-loading">
   <main v-if="!showAddMarkersUI">
     <header>
-      <p>Configure your floorplan</p>
+      <p>Configure your floor plan</p>
       <a id="help_tip" href="#">Need help?</a>
     </header>
     <div class="loading-message">
       <!-- Show loading animation -->
       <div class="spinner-holder animated">
         <div class="spinner-overlay">Loading...</div>
-        <p>Loading the floorplan... Please wait!</p>
+        <p>Loading the floor plan... Please wait!</p>
       </div>
     </div>
     <section class="app-content">
       <form class="form-horizontal">
         <div class="form-group clearfix floors-form-group">
           <div class="col-sm-12 control-label">
-            <label>Add your floorplans</label>
+            <label>Add your floor plans</label>
           </div>
           <div class="col-sm-12">
             <div class="floor-panels-holder">
@@ -49,11 +49,11 @@
 
         <div class="form-group clearfix markers-form-group">
           <div class="col-sm-12 control-label">
-            <label>Configure your floor markers</label>
+            <label>Create marker styles</label>
           </div>
           <div class="col-sm-12">
             <div class="floor-markers-holder">
-              <div class="add-floor-marker" @click.prevent="onAddMarker"><i class="fa fa-plus-circle"></i> Add a new marker</div>
+              <div class="add-floor-marker" @click.prevent="onAddMarker"><i class="fa fa-plus-circle"></i> Add a new marker style</div>
               <div class="panel-group" id="markers-accordion">
                 
                 <div v-for="(marker, idx) in markers" v-bind:key="marker.id" class="panel panel-default marker-panel" :data-id="marker.id">
@@ -79,10 +79,10 @@
         </div>
         <div class="form-group clearfix add-markers-form-group">
           <div class="col-sm-4 control-label">
-            <label>Add markers to your floor(s)</label>
+            <label>Add markers to your floor plan(s)</label>
           </div>
           <div class="col-sm-8">
-            <div class="btn btn-default" @click.prevent="openAddMarkers">Add markers</div>
+            <div class="btn btn-default" @click.prevent="openAddMarkers">Mark floor(s)</div>
           </div>
         </div>
       </form>
@@ -92,11 +92,21 @@
     <header>
       <div class="title-holder">
         <div class="go-back" @click.prevent="goBackToSettings"><i class="fa fa-angle-left"></i> Back to settings</div>
-        <p>Data view settings</p>
+        <p>Add markers</p>
       </div>
     </header>
-    <form class="form-horizontal">
-      Hello World
-    </form>
+    <div class="add-markers-wrapper">
+      <component is="add-markers" v-bind="{
+        widgetData: settings,
+        dataSources: dataSources,
+        markersDataSource: settings.markersDataSource,
+        markerNameColumn: settings.markerNameColumn,
+        markerFloorColumn: settings.markerFloorColumn,
+        markerTypeColumn: settings.markerTypeColumn,
+        markerXPositionColumn: settings.markerXPositionColumn,
+        markerYPositionColumn: settings.markerYPositionColumn,
+        autoDataSource: settings.autoDataSource
+      }"></component>
+    </div>
   </main>
 </div>

@@ -23,14 +23,17 @@
       "vendor/bootstrap-colorpicker.min.js",
       "vendor/bootstrap-colorpicker.css",
 
+      "js/config/default-table.js",
       "js/interface.templates.js",
       "dist/core.js",
 
-      "js/interface/floor-panel.js",
-      "js/interface/marker-panel.js",
+      "dist/floor-panel.js",
+      "dist/marker-panel.js",
+      "dist/add-markers.js",
 
       "dist/interface.js",
-      "css/interface.css"
+      "css/interface.css",
+      "dist/vue-multiselect.min.css"
     ]
   },
   "build": {

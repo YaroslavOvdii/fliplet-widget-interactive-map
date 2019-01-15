@@ -56,9 +56,15 @@ Fliplet.Floorplan.component('floor-panel', {
         $vm.image = result.data[0]
         $vm.onChangeData()
         window.filePickerProvider = null
-        Fliplet.Studio.emit('widget-save-label-reset');
-        return Promise.resolve();
+        Fliplet.Studio.emit('widget-save-label-reset')
+        return Promise.resolve()
       })
     }
+  },
+  created() {
+    Fliplet.Floorplan.on('floors-save', this.onChangeData)
+  },
+  destroyed() {
+    Fliplet.Floorplan.off('floors-save', this.onChangeData)
   }
 });

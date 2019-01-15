@@ -119,6 +119,10 @@ var app = new Vue({
   el: selector,
   data: function data() {
     return {
+      appName: Fliplet.Env.get('appName'),
+      organizationId: Fliplet.Env.get('organizationId'),
+      defaultColumns: window.flFloorplanColumns,
+      autoDataSource: widgetData.autoDataSource || false,
       dataSources: [],
       filePickerProvider: null,
       floorPanelsIsEmpty: true,
@@ -145,6 +149,22 @@ var app = new Vue({
         type: null
       }, {
         cache: false
+      });
+    },
+    createDataSource: function createDataSource() {
+      var _this = this;
+
+      var name = "".concat(this.appName, " - Markers");
+      return Fliplet.DataSources.create({
+        name: name,
+        organizationId: this.organizationId,
+        columns: this.defaultColumns
+      }).then(function (ds) {
+        _this.settings.markersDataSource = ds;
+        _this.settings.markerNameColumn = 'Name';
+        _this.settings.markerFloorColumn = 'Floor name';
+        _this.settings.markerTypeColumn = 'Marker style', _this.settings.markerXPositionColumn = 'Position X', _this.settings.markerYPositionColumn = 'Position Y';
+        _this.settings.autoDataSource = true;
       });
     },
     onAddFloor: function onAddFloor() {
@@ -197,26 +217,29 @@ var app = new Vue({
       });
     },
     onPanelSettingChanged: function onPanelSettingChanged(panelData) {
-      var _this = this;
+      var _this2 = this;
 
       this.floors.forEach(function (panel, index) {
         if (panelData.id === panel.id) {
           // To overcome the array change caveat
           // https://vuejs.org/v2/guide/list.html#Caveats
-          Vue.set(_this.floors, index, panelData);
+          Vue.set(_this2.floors, index, panelData);
         }
       });
     },
     onMarkerPanelSettingChanged: function onMarkerPanelSettingChanged(panelData) {
-      var _this2 = this;
+      var _this3 = this;
 
       this.markers.forEach(function (panel, index) {
         if (panelData.id === panel.id) {
           // To overcome the array change caveat
           // https://vuejs.org/v2/guide/list.html#Caveats
-          Vue.set(_this2.markers, index, panelData);
+          Vue.set(_this3.markers, index, panelData);
         }
       });
+    },
+    onAddMarkersSettingChanged: function onAddMarkersSettingChanged(addMarkersData) {
+      this.settings = _.assignIn(this.settings, addMarkersData);
     },
     openAddMarkers: function openAddMarkers() {
       this.showAddMarkersUI = true;
@@ -258,12 +281,22 @@ var app = new Vue({
             case 0:
               $vm = this;
               Fliplet.Floorplan.on('floor-panel-settings-changed', this.onPanelSettingChanged);
-              Fliplet.Floorplan.on('marker-panel-settings-changed', this.onMarkerPanelSettingChanged); // Gets the list of data sources
+              Fliplet.Floorplan.on('marker-panel-settings-changed', this.onMarkerPanelSettingChanged);
+              Fliplet.Floorplan.on('add-markers-settings-changed', this.onAddMarkersSettingChanged); // Create data source on first time
 
-              _context.next = 5;
+              if (this.autoDataSource) {
+                _context.next = 7;
+                break;
+              }
+
+              _context.next = 7;
+              return this.createDataSource();
+
+            case 7:
+              _context.next = 9;
               return this.loadDataSources();
 
-            case 5:
+            case 9:
               this.dataSources = _context.sent;
               // Switches UI to ready state
               $(selector).removeClass('is-loading');
@@ -283,10 +316,13 @@ var app = new Vue({
                   return;
                 }
 
+                Fliplet.Floorplan.emit('floors-save');
+                Fliplet.Floorplan.emit('markers-save');
+                Fliplet.Floorplan.emit('add-markers-save');
                 $vm.prepareToSaveData();
               });
 
-            case 9:
+            case 13:
             case "end":
               return _context.stop();
           }
@@ -303,6 +339,7 @@ var app = new Vue({
   destroyed: function destroyed() {
     Fliplet.Floorplan.off('floor-panel-settings-changed', this.onPanelSettingChanged);
     Fliplet.Floorplan.off('marker-panel-settings-changed', this.onMarkerPanelSettingChanged);
+    Fliplet.Floorplan.off('add-markers-settings-changed', this.onAddMarkersSettingChanged);
   }
 });
 

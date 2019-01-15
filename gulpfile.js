@@ -7,12 +7,20 @@ const named = require('vinyl-named');
 
 const paths = {
   scripts: {
-    entry: ['js/libs/*'],
+    entry: ['js/libs/*', 'js/interface/*'],
     dest: 'dist/'
   }
 };
 
-gulp.task('watch', () => gulp
+// Get CSS file from vue-multiselect
+gulp.task('copy-css', () => {
+  return gulp
+  .src(['node_modules/vue-multiselect/dist/vue-multiselect.min.css'])
+  .pipe(gulp.dest('dist/'))
+});
+
+gulp.task('copy-js', () => {
+  return gulp
   .src(paths.scripts.entry)
   .pipe(named())
   .pipe(
@@ -44,4 +52,7 @@ gulp.task('watch', () => gulp
       plugins: [new webpack.NoEmitOnErrorsPlugin()]
     })
   )
-  .pipe(gulp.dest(paths.scripts.dest)));
+  .pipe(gulp.dest(paths.scripts.dest))
+});
+
+gulp.task('watch', gulp.parallel('copy-css', 'copy-js'));
