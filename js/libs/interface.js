@@ -16,7 +16,7 @@ const selector = '#flooplan-app'
 
 const app = new Vue({
   el: selector,
-  data: () => {
+  data() {
     return {
       appName: Fliplet.Env.get('appName'),
       organizationId: Fliplet.Env.get('organizationId'),
@@ -34,7 +34,7 @@ const app = new Vue({
   methods: {
     makeid(length) {
       let text = ''
-      const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 
       for (let i = 0; i < length; i++)
         text += possible.charAt(Math.floor(Math.random() * possible.length))
@@ -56,7 +56,7 @@ const app = new Vue({
         organizationId: this.organizationId,
         columns: this.defaultColumns
       }).then((ds) => {
-        this.settings.markersDataSource = ds
+        this.settings.markersDataSourceId = ds.id
         this.settings.markerNameColumn = 'Name'
         this.settings.markerFloorColumn = 'Floor name'
         this.settings.markerTypeColumn = 'Marker style',
@@ -73,10 +73,10 @@ const app = new Vue({
         type: 'floor-panel'
       }
 
-      this.floors.push(newItem);
+      this.floors.push(newItem)
     },
     onSortFloors(event) {
-      this.floors.splice(event.newIndex, 0, this.floors.splice(event.oldIndex, 1)[0]);
+      this.floors.splice(event.newIndex, 0, this.floors.splice(event.oldIndex, 1)[0])
     },
     deleteFloor(index) {
       const $vm = this
@@ -84,13 +84,13 @@ const app = new Vue({
       Fliplet.Modal.confirm({
         title: 'Delete floorplan',
         message: '<p>Are you sure you want to delete this floor?</p>'
-      }).then(function (result) {
+      }).then((result) => {
         if (!result) {
-          return;
+          return
         }
 
-        $vm.floors.splice(index, 1);
-      });
+        $vm.floors.splice(index, 1)
+      })
     },
     onAddMarker() {
       const newItem = {
@@ -102,7 +102,7 @@ const app = new Vue({
         type: 'marker-panel'
       }
 
-      this.markers.push(newItem);
+      this.markers.push(newItem)
     },
     deleteMarker(index) {
       const $vm = this
@@ -110,13 +110,13 @@ const app = new Vue({
       Fliplet.Modal.confirm({
         title: 'Delete floorplan',
         message: '<p>Are you sure you want to delete this floor?</p>'
-      }).then(function (result) {
+      }).then((result) => {
         if (!result) {
-          return;
+          return
         }
 
-        $vm.markers.splice(index, 1);
-      });
+        $vm.markers.splice(index, 1)
+      })
     },
     onPanelSettingChanged(panelData) {
       this.floors.forEach((panel, index) => {
@@ -137,15 +137,15 @@ const app = new Vue({
       })
     },
     onAddMarkersSettingChanged(addMarkersData) {
-      this.settings = _.assignIn(this.settings, addMarkersData);
+      this.settings = _.assignIn(this.settings, addMarkersData)
     },
     openAddMarkers() {
       this.showAddMarkersUI = true
-      Fliplet.Studio.emit('widget-mode', 'wide');
+      Fliplet.Studio.emit('widget-mode', this.settings.savedData ? 'wide' : 'normal')
     },
     goBackToSettings() {
       this.showAddMarkersUI = false
-      Fliplet.Studio.emit('widget-mode', 'normal');
+      Fliplet.Studio.emit('widget-mode', 'normal')
     },
     prepareToSaveData() {
       // Mark 'isFromNew' as false
@@ -161,14 +161,15 @@ const app = new Vue({
         markers: this.markers
       }
 
-      this.settings = _.assignIn(this.settings, newSettings);
+      this.settings = _.assignIn(this.settings, newSettings)
+      this.settings.savedData = true
 
       this.saveData()
     },
     saveData() {
       Fliplet.Widget.save(this.settings)
-        .then(function() {
-          Fliplet.Widget.complete();
+        .then(() => {
+          Fliplet.Widget.complete()
         })
     }
   },
@@ -199,7 +200,7 @@ const app = new Vue({
       }
     })
 
-    Fliplet.Widget.onSaveRequest(function() {
+    Fliplet.Widget.onSaveRequest(() => {
       if (window.filePickerProvider) {
         window.filePickerProvider.forwardSaveRequest()
         return

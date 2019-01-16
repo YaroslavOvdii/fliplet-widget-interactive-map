@@ -109,8 +109,8 @@ Fliplet.Floorplan.component('add-markers', {
       type: Object,
       default: undefined
     },
-    markersDataSource: {
-      type: Object,
+    markersDataSourceId: {
+      type: Number,
       default: undefined
     },
     markerNameColumn: {
@@ -143,22 +143,30 @@ Fliplet.Floorplan.component('add-markers', {
     }
   },
   components: {
-    Multiselect: vue_multiselect__WEBPACK_IMPORTED_MODULE_0___default.a
+    'multi-select': vue_multiselect__WEBPACK_IMPORTED_MODULE_0___default.a
   },
   data: function data() {
     return {
-      manualSelectDataSource: false
+      manualSelectDataSource: false,
+      manualSetSettings: false,
+      savedData: this.widgetData.savedData,
+      markersDataSource: _.find(this.dataSources, {
+        id: this.markersDataSourceId
+      }),
+      selectedFloorIndex: 0,
+      pinchzoomer: null,
+      pzHandler: undefined,
+      markerCtr: 0,
+      selectedMarkerFloor: null,
+      selectedMarkerIcon: null
     };
   },
   computed: {
-    markersDataSourceId: function markersDataSourceId() {
-      return this.markersDataSource.id;
-    },
     markerFieldColumns: function markerFieldColumns() {
       return this.markersDataSource ? this.markersDataSource.columns : [];
     },
-    savedDataSource: function savedDataSource() {
-      return this.widgetData.markersDataSourceId ? true : false;
+    selectedFloor: function selectedFloor() {
+      return this.widgetData.floors[this.selectedFloorIndex];
     }
   },
   watch: {
@@ -171,6 +179,12 @@ Fliplet.Floorplan.component('add-markers', {
         this.markerXPositionColumn = '';
         this.markerYPositionColumn = '';
       }
+    },
+    selectedMarkerFloor: function selectedMarkerFloor(floor) {
+      console.log(floor);
+    },
+    selectedMarkerIcon: function selectedMarkerIcon(icon) {
+      console.log(icon);
     }
   },
   methods: {
@@ -247,8 +261,60 @@ Fliplet.Floorplan.component('add-markers', {
         cache: false
       });
     },
+    useSettings: function useSettings() {
+      this.savedData = true;
+      Fliplet.Studio.emit('widget-mode', 'wide');
+    },
+    changeSettings: function changeSettings() {
+      this.savedData = false;
+      Fliplet.Studio.emit('widget-mode', 'normal');
+    },
+    attachEventHandler: function attachEventHandler() {
+      this.pzHandler.on('tap', this.onTapHandler);
+    },
+    onTapHandler: function onTapHandler(e) {
+      if (!$(e.target).hasClass('marker')) {
+        var clientRect = this.pinchzoomer.elem().get(0).getBoundingClientRect();
+        var elemPosX = clientRect.left;
+        var elemPosY = clientRect.top;
+        var center = e.center;
+        var x = (center.x - elemPosX) / (this.pinchzoomer.baseZoom() * this.pinchzoomer.zoom());
+        var y = (center.y - elemPosY) / (this.pinchzoomer.baseZoom() * this.pinchzoomer.zoom());
+        var markerElem = $("<div id='marker" + this.markerCtr + "' class='marker' style='left: -15px; top: -15px; position: absolute;' data-tooltip='Marker " + (this.markerCtr + 1) + "'></div>");
+        var markerElemHandler = new Hammer(markerElem.get(0));
+        this.pinchzoomer.addMarkers([new Marker(markerElem, {
+          x: x,
+          y: y,
+          transformOrigin: '50% 50%'
+        })]);
+        markerElemHandler.on('tap', this.onMarkerHandler);
+        this.markerCtr++;
+      }
+    },
+    onMarkerHandler: function onMarkerHandler(e) {
+      var index = this.getMarkerIndex($(e.target).attr('id'));
+
+      if (index >= 0) {
+        this.pinchzoomer.removeMarker(index, true);
+      }
+    },
+    getMarkerIndex: function getMarkerIndex(id) {
+      var markerIndex = -1;
+      var markers = this.pinchzoomer.markers();
+
+      for (var i = 0; i < markers.length; i++) {
+        var marker = markers[i];
+
+        if (marker.elem().attr('id') == id) {
+          markerIndex = i;
+          i = markers.length;
+        }
+      }
+
+      return markerIndex;
+    },
     saveData: function saveData() {
-      var markersData = _.pick(this, ['markersDataSource', 'markersDataSourceId', 'markerNameColumn', 'markerFloorColumn', 'markerTypeColumn', 'markerXPositionColumn', 'markerYPositionColumn']);
+      var markersData = _.pick(this, ['markersDataSourceId', 'markerNameColumn', 'markerFloorColumn', 'markerTypeColumn', 'markerXPositionColumn', 'markerYPositionColumn']);
 
       Fliplet.Floorplan.emit('add-markers-settings-changed', markersData);
     }
@@ -263,6 +329,26 @@ Fliplet.Floorplan.component('add-markers', {
       }
     });
     Fliplet.Floorplan.on('add-markers-save', this.saveData);
+  },
+  mounted: function mounted() {
+    var $vm = this; // vm.$nextTick is not enough
+
+    setTimeout(function () {
+      new PinchZoomer($('#floor-0'), {
+        adjustHolderSize: false,
+        maxZoom: 4,
+        initZoom: 1,
+        zoomStep: 0.25,
+        allowMouseWheelZoom: true,
+        animDuration: 0.1,
+        scaleMode: 'proportionalInside',
+        zoomToMarker: true,
+        allowCenterDrag: true
+      });
+      $vm.pinchzoomer = PinchZoomer.get('floor-0');
+      $vm.pzHandler = new Hammer($vm.pinchzoomer.elem().get(0));
+      $vm.attachEventHandler();
+    }, 10);
   },
   destroyed: function destroyed() {
     Fliplet.Floorplan.off('add-markers-save', this.saveData);

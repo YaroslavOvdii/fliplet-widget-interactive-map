@@ -1,8 +1,27 @@
-<div class="clearfix">
-  <div class="col-xs-6">
-
+<div class="add-markers-component clearfix">
+  <div v-show="savedData" class="col-xs-6 floors-wrapper">
+    <div class="floor-wrapper-holder">
+      <div v-for="(floor, index) in widgetData.floors" class="floor-wrapper" v-bind:class="{ 'active': index === selectedFloorIndex }">
+        <div class="floor-container" :id="'floor-' + index" data-elem="pinchzoomer" :data-fl-mapname="floor.name">
+          <img class="floor-image" data-elem="bg" :src="floor.image.url"/>
+        </div>
+        <div data-elem="controlHolder">
+          <div class="zoomIn" data-elem="zoomIn" data-options="onCss:{opacity:1}; offCss:{opacity:0}">
+            <i class="fa fa-plus"></i>
+          </div>
+          <div class="zoomOut" data-elem="zoomOut" data-options="onCss:{opacity:1}; offCss:{opacity:0}">
+            <i class="fa fa-minus"></i>
+          </div>
+          <div class="fullscreenToggle off"></div>
+        </div>
+      </div>
+    </div>
+    <div class="floors-button">
+      <i class="fa fa-map-marker"></i>
+      <span class="floor-button-text"><p>\{{selectedFloor.name}}</p></span>
+    </div>
   </div>
-  <div class="col-xs-6">
+  <div class="settings-holder" v-bind:class="{ 'col-xs-12': !savedData, 'col-xs-6': savedData }">
     <div class="marker-settings-wrapper">
       <div class="form-group clearfix">
         <div class="col-sm-12 control-label">
@@ -10,22 +29,23 @@
         </div>
         <div v-if="!manualSelectDataSource" class="col-sm-12">
           We have created a data source for you called <strong>\{{markersDataSource.name}}</strong>.<br>
-          <a href="#" @click.prevent="editDataSource">Edit data</a> | <a href="#" @click.prevent="chooseExistingData">Switch to another data source</a>
+          <span>
+            <a href="#" @click.prevent="editDataSource">Edit data</a> | 
+            <a href="#" @click.prevent="chooseExistingData" v-if="!savedData">Switch to another data source</a>
+            <a href="#" @click.prevent="changeSettings" v-else>Change data settings</a>
+          </span>
         </div>
         <div v-if="manualSelectDataSource" class="col-sm-12">
-          <multiselect v-model="markersDataSource" :options="dataSources" :custom-label="nameWithId" placeholder="-- Select a data source" label="name" :showLabels="false" :allowEmpty="false" :showNoResults="false"></multiselect>
-        </div>
-        <div v-if="savedDataSource" class="col-sm-12">
-          <div class="btn btn-default" @click.prevent="editDataSource">Edit data</div>
+          <multiselect v-model="markersDataSource" :options="dataSources" :custom-label="nameWithId" placeholder="-- Select a data source" label="name" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
         </div>
       </div>
-      <div>
+      <div v-if="!savedData">
         <div class="form-group clearfix">
           <div class="col-sm-12 control-label">
             <label>Select the markers' name field</label>
           </div>
           <div class="col-sm-12">
-            <multiselect v-model="markerNameColumn" :options="markerFieldColumns" placeholder="-- Select a field" :showLabels="false" :allowEmpty="false" :showNoResults="false"></multiselect>
+            <multiselect v-model="markerNameColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
           </div>
         </div>
         <div class="form-group clearfix">
@@ -33,7 +53,7 @@
             <label>Select the markers' floor field</label>
           </div>
           <div class="col-sm-12">
-            <multiselect v-model="markerFloorColumn" :options="markerFieldColumns" placeholder="-- Select a field" :showLabels="false" :allowEmpty="false" :showNoResults="false"></multiselect>
+            <multiselect v-model="markerFloorColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
           </div>
         </div>
         <div class="form-group clearfix">
@@ -41,7 +61,7 @@
             <label>Select the markers' type field</label>
           </div>
           <div class="col-sm-12">
-            <multiselect v-model="markerTypeColumn" :options="markerFieldColumns" placeholder="-- Select a field" :showLabels="false" :allowEmpty="false" :showNoResults="false"></multiselect>
+            <multiselect v-model="markerTypeColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
           </div>
         </div>
         <div class="form-group clearfix">
@@ -49,7 +69,7 @@
             <label>Select the markers' X position field</label>
           </div>
           <div class="col-sm-12">
-            <multiselect v-model="markerXPositionColumn" :options="markerFieldColumns" placeholder="-- Select a field" :showLabels="false" :allowEmpty="false" :showNoResults="false"></multiselect>
+            <multiselect v-model="markerXPositionColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
           </div>
         </div>
         <div class="form-group clearfix">
@@ -57,7 +77,42 @@
             <label>Select the markers' Y position field</label>
           </div>
           <div class="col-sm-12">
-            <multiselect v-model="markerYPositionColumn" :options="markerFieldColumns" placeholder="-- Select a field" :showLabels="false" :allowEmpty="false" :showNoResults="false"></multiselect>
+            <multiselect v-model="markerYPositionColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
+          </div>
+        </div>
+        <div class="form-group clearfix">
+          <div class="col-sm-12">
+            <div class="btn btn-default" @click.prevent="useSettings">Use these settings</div>
+          </div>
+        </div>
+      </div>
+      <div v-else>
+        <div class="form-group clearfix">
+          <div class="col-sm-12 control-label">
+            <label>Configure the markers</label>
+          </div>
+          <div class="col-sm-12">
+            <div class="marker-holder">
+              <div class="marker-name-holder">
+                <span>My name here</span> <i class="fa fa-pencil"></i>
+              </div>
+              <div class="marker-floor-holder">
+                <multiselect v-model="selectedMarkerFloor" :options="widgetData.floors" track-by="id" placeholder="-- Select a floor" label="name" :show-labels="false" :allow-empty="false">
+                  <span slot="noResult">No floors found</span>
+                </multiselect>
+              </div>
+              <div class="marker-icon-holder">
+                <multiselect v-model="selectedMarkerIcon" :options="widgetData.markers" track-by="id" placeholder="-- Select a marker style" label="name" :allow-empty="false" :show-labels="false">
+                  <template slot="singleLabel" slot-scope="{ option }">
+                    \{{ option.name }} <i :class="option.icon"></i>
+                  </template>
+                  <span slot="noResult">No marker styles found</span>
+                </multiselect>
+              </div>
+              <div class="marker-delete-holder">
+                <i class="fa fa-trash"></i>
+              </div>
+            </div>
           </div>
         </div>
       </div>

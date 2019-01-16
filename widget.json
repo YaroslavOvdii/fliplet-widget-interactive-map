@@ -15,7 +15,7 @@
       "fliplet-studio-ui",
       "fliplet-datasources",
       "bootstrap",
-      "moment"
+      "hammer.js"
     ],
     "assets": [
       "vendor/TweenMax.js",
@@ -43,8 +43,7 @@
       "bootstrap",
       "vue.js",
       "fliplet-datasources",
-      "font-awesome",
-      "moment"
+      "font-awesome"
     ],
     "assets": [
       "vendor/TweenMax.js",
@@ -54,7 +53,6 @@
     ]
   },
   "references": [
-    "linkAction.page:page",
-    "dataSourceId:dataSource"
+    "markersDataSourceId:dataSource"
   ]
 }

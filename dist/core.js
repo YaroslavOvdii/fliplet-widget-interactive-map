@@ -108,7 +108,7 @@ Fliplet.Floorplan = function () {
       eventHub.$emit(eventName, data);
     },
     component: function component(componentName, _component) {
-      if (!_component.componentName) {
+      if (!componentName || !_component.componentName) {
         throw new Error('The component name is required');
       }
 

@@ -160,7 +160,7 @@ var app = new Vue({
         organizationId: this.organizationId,
         columns: this.defaultColumns
       }).then(function (ds) {
-        _this.settings.markersDataSource = ds;
+        _this.settings.markersDataSourceId = ds.id;
         _this.settings.markerNameColumn = 'Name';
         _this.settings.markerFloorColumn = 'Floor name';
         _this.settings.markerTypeColumn = 'Marker style', _this.settings.markerXPositionColumn = 'Position X', _this.settings.markerYPositionColumn = 'Position Y';
@@ -243,7 +243,7 @@ var app = new Vue({
     },
     openAddMarkers: function openAddMarkers() {
       this.showAddMarkersUI = true;
-      Fliplet.Studio.emit('widget-mode', 'wide');
+      Fliplet.Studio.emit('widget-mode', this.settings.savedData ? 'wide' : 'normal');
     },
     goBackToSettings: function goBackToSettings() {
       this.showAddMarkersUI = false;
@@ -262,6 +262,7 @@ var app = new Vue({
         markers: this.markers
       };
       this.settings = _.assignIn(this.settings, newSettings);
+      this.settings.savedData = true;
       this.saveData();
     },
     saveData: function saveData() {

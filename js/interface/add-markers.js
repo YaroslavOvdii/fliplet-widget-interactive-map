@@ -11,8 +11,8 @@ Fliplet.Floorplan.component('add-markers', {
       type: Object,
       default: undefined
     },
-    markersDataSource: {
-      type: Object,
+    markersDataSourceId: {
+      type: Number,
       default: undefined
     },
     markerNameColumn: {
@@ -44,21 +44,29 @@ Fliplet.Floorplan.component('add-markers', {
       default: false
     }
   },
-  components: { Multiselect },
-  data: () => {
+  components: {
+    'multi-select': Multiselect
+  },
+  data() {
     return {
-      manualSelectDataSource: false
+      manualSelectDataSource: false,
+      manualSetSettings: false,
+      savedData: this.widgetData.savedData,
+      markersDataSource: _.find(this.dataSources, { id: this.markersDataSourceId }),
+      selectedFloorIndex: 0,
+      pinchzoomer: null,
+      pzHandler: undefined,
+      markerCtr: 0,
+      selectedMarkerFloor: null,
+      selectedMarkerIcon: null
     }
   },
   computed: {
-    markersDataSourceId() {
-      return this.markersDataSource.id
-    },
     markerFieldColumns() {
       return this.markersDataSource ? this.markersDataSource.columns : []
     },
-    savedDataSource() {
-      return this.widgetData.markersDataSourceId ? true : false
+    selectedFloor() {
+      return this.widgetData.floors[this.selectedFloorIndex]
     }
   },
   watch: {
@@ -71,6 +79,12 @@ Fliplet.Floorplan.component('add-markers', {
         this.markerXPositionColumn = ''
         this.markerYPositionColumn = ''
       }
+    },
+    selectedMarkerFloor(floor) {
+      console.log(floor)
+    },
+    selectedMarkerIcon(icon) {
+      console.log(icon)
     }
   },
   methods: {
@@ -133,7 +147,7 @@ Fliplet.Floorplan.component('add-markers', {
             dataSourceId: this.markersDataSourceId
           }
         }
-      });
+      })
     },
     deleteDataSource() {
       return Fliplet.DataSources.delete(this.markersDataSourceId)
@@ -146,9 +160,58 @@ Fliplet.Floorplan.component('add-markers', {
         cache: false
       })
     },
+    useSettings() {
+      this.savedData = true
+      Fliplet.Studio.emit('widget-mode', 'wide')
+    },
+    changeSettings() {
+      this.savedData = false
+      Fliplet.Studio.emit('widget-mode', 'normal')
+    },
+    attachEventHandler() {
+      this.pzHandler.on('tap', this.onTapHandler)
+    },
+    onTapHandler(e) {
+      if (!$(e.target).hasClass('marker')) {
+        const clientRect = this.pinchzoomer.elem().get(0).getBoundingClientRect()
+        const elemPosX = clientRect.left
+        const elemPosY = clientRect.top
+        const center = e.center
+        const x = (center.x - elemPosX) / (this.pinchzoomer.baseZoom() * this.pinchzoomer.zoom())
+        const y = (center.y - elemPosY) / (this.pinchzoomer.baseZoom() * this.pinchzoomer.zoom())
+        const markerElem = $("<div id='marker" + this.markerCtr + "' class='marker' style='left: -15px; top: -15px; position: absolute;' data-tooltip='Marker " + (this.markerCtr + 1) + "'></div>")
+        const markerElemHandler = new Hammer(markerElem.get(0))
+
+        this.pinchzoomer.addMarkers([new Marker(markerElem, { x: x, y: y, transformOrigin: '50% 50%' })])
+        markerElemHandler.on('tap', this.onMarkerHandler)
+
+        this.markerCtr++
+      }
+    },
+    onMarkerHandler(e) {
+      const index = this.getMarkerIndex($(e.target).attr('id'))
+        
+      if (index >= 0) {
+        this.pinchzoomer.removeMarker(index, true)
+      }
+    },
+    getMarkerIndex(id) {
+      let markerIndex = -1
+      const markers = this.pinchzoomer.markers()
+      
+      for (let i = 0; i < markers.length; i++) {
+        const marker = markers[i]
+        
+        if (marker.elem().attr('id') == id) {
+          markerIndex = i
+          i = markers.length
+        }
+      }
+      
+      return markerIndex
+    },
     saveData() {
       const markersData = _.pick(this, [
-        'markersDataSource',
         'markersDataSourceId',
         'markerNameColumn',
         'markerFloorColumn',
@@ -170,6 +233,28 @@ Fliplet.Floorplan.component('add-markers', {
     })
 
     Fliplet.Floorplan.on('add-markers-save', this.saveData)
+  },
+  mounted() {
+    const $vm = this
+    // vm.$nextTick is not enough
+    setTimeout(() => {
+      new PinchZoomer($('#floor-0'), {
+        adjustHolderSize: false,
+        maxZoom: 4,
+        initZoom: 1,
+        zoomStep: 0.25,
+        allowMouseWheelZoom: true,
+        animDuration: 0.1,
+        scaleMode: 'proportionalInside',
+        zoomToMarker: true,
+        allowCenterDrag: true
+      })
+
+      $vm.pinchzoomer = PinchZoomer.get('floor-0')
+      $vm.pzHandler = new Hammer($vm.pinchzoomer.elem().get(0))
+
+      $vm.attachEventHandler()
+    }, 10)
   },
   destroyed() {
     Fliplet.Floorplan.off('add-markers-save', this.saveData)

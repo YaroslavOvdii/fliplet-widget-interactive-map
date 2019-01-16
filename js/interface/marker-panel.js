@@ -40,14 +40,14 @@ Fliplet.Floorplan.component('marker-panel', {
         // the interface gets repopulated with the same stuff
         data: $vm.icon,
         // Events fired from the provider
-        onEvent: function(event, data) {
+        onEvent: (event, data) => {
           if (event === 'interface-validate') {
             Fliplet.Widget.toggleSaveButton(data.isValid === true)
           }
         }
-      });
+      })
 
-      window.addEventListener('message', function(event) {
+      window.addEventListener('message', (event) => {
         if (event.data === 'cancel-button-pressed') {
           window.iconPickerProvider.close()
           window.iconPickerProvider = null
@@ -86,7 +86,7 @@ Fliplet.Floorplan.component('marker-panel', {
     $colorpickerElement.colorpicker({
       container: false,
       align: 'left'
-    });
+    })
 
     $colorpickerElement.on('changeColor', (e) => {
       $vm.color = e.value
@@ -95,10 +95,10 @@ Fliplet.Floorplan.component('marker-panel', {
 
     $('#list-item-color-' + $vm.id).on('click', () => {
       $(this).prev('.input-group-addon').find('i').trigger('click')
-    });
+    })
 
     $('.input-group-addon i').on('click', () => {
       $(this).parents('.input-group-addon').next('#list-item-color-' + $vm.id).trigger('focus')
-    });
+    })
   }
 });
