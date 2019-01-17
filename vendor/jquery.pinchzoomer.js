@@ -3062,7 +3062,7 @@
       PinchZoomer[prop] = ElemZoomer[prop];
   }
   
-  PinchZoomer.defaultVars = $.extend({}, ElemZoomer.defaultVars, { appendControls:true, appendControlHolder:true, fullscreenDivCss:"fullscreenDiv", fullscreenScaleMode:"proportionalInside", preloaderUrl:"assets/preloader.gif", preload:true });
+  PinchZoomer.defaultVars = $.extend({}, ElemZoomer.defaultVars, { appendControls:true, appendControlHolder:true, fullscreenDivCss:"fullscreenDiv", fullscreenScaleMode:"proportionalInside", preloaderUrl:"", preload:true });
   
   PinchZoomer.BUTTON_CONTROL_NAMES = ["zoomIn", "zoomOut", "fullscreenToggle"];
   PinchZoomer.DEFAULT_TRANSFORM_ORIGIN = "50% 50%"

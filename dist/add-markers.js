@@ -95,8 +95,11 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-multiselect */ "./node_modules/vue-multiselect/dist/vue-multiselect.min.js");
-/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_multiselect__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js");
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-multiselect */ "./node_modules/vue-multiselect/dist/vue-multiselect.min.js");
+/* harmony import */ var vue_multiselect__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue_multiselect__WEBPACK_IMPORTED_MODULE_1__);
+
 
 Fliplet.Floorplan.component('add-markers', {
   componentName: 'Add Markers',
@@ -143,7 +146,7 @@ Fliplet.Floorplan.component('add-markers', {
     }
   },
   components: {
-    'multi-select': vue_multiselect__WEBPACK_IMPORTED_MODULE_0___default.a
+    Multiselect: vue_multiselect__WEBPACK_IMPORTED_MODULE_1___default.a
   },
   data: function data() {
     return {
@@ -153,12 +156,38 @@ Fliplet.Floorplan.component('add-markers', {
       markersDataSource: _.find(this.dataSources, {
         id: this.markersDataSourceId
       }),
-      selectedFloorIndex: 0,
       pinchzoomer: null,
       pzHandler: undefined,
+      markerElemHandler: undefined,
       markerCtr: 0,
-      selectedMarkerFloor: null,
-      selectedMarkerIcon: null
+      markersData: [{
+        'id': 1,
+        'Name': 'Hugo Carneiro',
+        'Floor name': 'Floor 1',
+        'Marker style': 'Marker 1',
+        'Position X': 100,
+        'Position Y': 100
+      }, {
+        'id': 2,
+        'Name': 'Nick Valbusa',
+        'Floor name': 'Floor 2',
+        'Marker style': 'Marker 2',
+        'Position X': 125,
+        'Position Y': 125
+      }, {
+        'id': 3,
+        'Name': 'Ben Wynne-Simmons',
+        'Floor name': 'Floor 1',
+        'Marker style': 'Marker 3',
+        'Position X': 150,
+        'Position Y': 150
+      }],
+      mappedMarkerData: [],
+      activeMarker: 0,
+      selectedFloorId: undefined,
+      selectedFloorName: undefined,
+      selectedMarkerName: '',
+      selectedMarker: undefined
     };
   },
   computed: {
@@ -179,15 +208,67 @@ Fliplet.Floorplan.component('add-markers', {
         this.markerXPositionColumn = '';
         this.markerYPositionColumn = '';
       }
-    },
-    selectedMarkerFloor: function selectedMarkerFloor(floor) {
-      console.log(floor);
-    },
-    selectedMarkerIcon: function selectedMarkerIcon(icon) {
-      console.log(icon);
     }
   },
   methods: {
+    mapMarkerData: function mapMarkerData() {
+      var _this = this;
+
+      var newMarkerData = this.markersData.map(function (marker) {
+        var markerData = _.find(_this.widgetData.markers, {
+          name: marker[_this.markerTypeColumn]
+        });
+
+        return {
+          id: marker.id,
+          name: marker[_this.markerNameColumn],
+          floor: marker[_this.markerFloorColumn],
+          type: marker[_this.markerTypeColumn],
+          icon: markerData ? markerData.icon : '',
+          color: markerData ? markerData.color : '#333333',
+          positionx: marker[_this.markerXPositionColumn],
+          positiony: marker[_this.markerYPositionColumn],
+          updateName: false,
+          copyOfName: ''
+        };
+      });
+      return newMarkerData;
+    },
+    setActiveMarker: function setActiveMarker(index) {
+      if (this.activeMarker !== index) {
+        this.activeMarker = index;
+        this.setupPinchZoomer();
+      }
+    },
+    updateFloor: function updateFloor(floorName, index) {
+      this.mappedMarkerData[index].floor = floorName;
+      this.setupPinchZoomer();
+    },
+    updateMarker: function updateMarker(marker, index) {
+      this.mappedMarkerData[index].type = marker.name;
+      this.mappedMarkerData[index].icon = marker.icon;
+      this.mappedMarkerData[index].color = marker.color;
+      this.setupPinchZoomer();
+    },
+    toggleUpdateName: function toggleUpdateName(index, currentName) {
+      var $vm = this;
+      this.mappedMarkerData[index].updateName = !this.mappedMarkerData[index].updateName;
+
+      if (currentName) {
+        this.mappedMarkerData[index].copyOfName = currentName;
+        this.$nextTick(function () {
+          return $vm.$refs['changename-' + index][0].focus();
+        });
+      }
+    },
+    cancelNameUpdate: function cancelNameUpdate(index) {
+      this.mappedMarkerData[index].name = this.mappedMarkerData[index].copyOfName;
+      this.mappedMarkerData[index].copyOfName = '';
+      this.toggleUpdateName(index);
+    },
+    deleteMarker: function deleteMarker(index) {
+      this.mappedMarkerData.splice(index, 1);
+    },
     nameWithId: function nameWithId(_ref) {
       var name = _ref.name,
           id = _ref.id;
@@ -269,25 +350,104 @@ Fliplet.Floorplan.component('add-markers', {
       this.savedData = false;
       Fliplet.Studio.emit('widget-mode', 'normal');
     },
+    setupPinchZoomer: function setupPinchZoomer() {
+      var $vm = this;
+      $vm.selectedFloorName = $vm.mappedMarkerData[$vm.activeMarker].floor;
+      $vm.selectedMarkerName = $vm.mappedMarkerData[$vm.activeMarker].name;
+      $vm.selectedMarker = $vm.mappedMarkerData[$vm.activeMarker];
+
+      var floor = _.find($vm.widgetData.floors, {
+        name: $vm.selectedFloorName
+      });
+
+      $vm.selectedFloorId = floor.id;
+      $vm.selectedFloorName = floor.name;
+
+      if ($vm.pinchzoomer) {
+        $vm.detachEventHandlers();
+        $vm.pinchzoomer = null;
+      }
+
+      new PinchZoomer($('#floor-' + floor.id), {
+        adjustHolderSize: false,
+        maxZoom: 4,
+        initZoom: 1,
+        zoomStep: 0.25,
+        allowMouseWheelZoom: true,
+        animDuration: 0.1,
+        scaleMode: 'proportionalInside',
+        zoomToMarker: true,
+        allowCenterDrag: true
+      });
+      $vm.pinchzoomer = PinchZoomer.get('floor-' + floor.id);
+      $vm.pzHandler = new Hammer($vm.pinchzoomer.elem().get(0));
+      $vm.loadMarkers();
+      $vm.attachEventHandler();
+    },
+    loadMarkers: function loadMarkers() {
+      var _this2 = this;
+
+      var $vm = this;
+      this.pinchzoomer.removeMarkers(true);
+      $vm.mappedMarkerData.forEach(function (marker, index) {
+        if (marker.floor === $vm.selectedFloorName) {
+          var markerElem = $("<i class='marker " + marker.icon + "' style='left: -15px; top: -15px; position: absolute; color: " + marker.color + "' data-tooltip='" + marker.name + "'></i>");
+          _this2.markerElemHandler = new Hammer(markerElem.get(0));
+
+          _this2.pinchzoomer.addMarkers([new Marker(markerElem, {
+            x: marker.positionx,
+            y: marker.positiony,
+            transformOrigin: '50% 50%',
+            name: marker.name
+          })]);
+
+          _this2.markerElemHandler.on('tap', _this2.onMarkerHandler);
+        }
+      });
+    },
     attachEventHandler: function attachEventHandler() {
       this.pzHandler.on('tap', this.onTapHandler);
     },
+    detachEventHandlers: function detachEventHandlers() {
+      this.pzHandler.off('tap', this.onTapHandler); // if (this.markerElemHandler) {
+      //   this.markerElemHandler.off('tap', this.onMarkerHandler)
+      // }
+    },
     onTapHandler: function onTapHandler(e) {
+      var _this3 = this;
+
+      var markers = this.pinchzoomer.markers();
+
       if (!$(e.target).hasClass('marker')) {
+        // Find a marker
+        var markerFound = _.find(markers, function (marker) {
+          return marker._vars.name === _this3.selectedMarker.name;
+        });
+
         var clientRect = this.pinchzoomer.elem().get(0).getBoundingClientRect();
         var elemPosX = clientRect.left;
         var elemPosY = clientRect.top;
         var center = e.center;
         var x = (center.x - elemPosX) / (this.pinchzoomer.baseZoom() * this.pinchzoomer.zoom());
         var y = (center.y - elemPosY) / (this.pinchzoomer.baseZoom() * this.pinchzoomer.zoom());
-        var markerElem = $("<div id='marker" + this.markerCtr + "' class='marker' style='left: -15px; top: -15px; position: absolute;' data-tooltip='Marker " + (this.markerCtr + 1) + "'></div>");
-        var markerElemHandler = new Hammer(markerElem.get(0));
-        this.pinchzoomer.addMarkers([new Marker(markerElem, {
-          x: x,
-          y: y,
-          transformOrigin: '50% 50%'
-        })]);
-        markerElemHandler.on('tap', this.onMarkerHandler);
+        var markerElem = $("<i class='marker " + this.selectedMarker.icon + "' style='left: -15px; top: -15px; position: absolute; color: " + this.selectedMarker.color + "' data-tooltip='" + this.selectedMarkerName + "'></i>");
+        this.markerElemHandler = new Hammer(markerElem.get(0));
+
+        if (markerFound) {
+          markerFound.vars(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()({
+            x: x,
+            y: y
+          }, "y", y), true);
+        } else {
+          this.pinchzoomer.addMarkers([new Marker(markerElem, {
+            x: x,
+            y: y,
+            transformOrigin: '50% 50%',
+            name: this.selectedMarker.name
+          })]);
+        }
+
+        this.markerElemHandler.on('tap', this.onMarkerHandler);
         this.markerCtr++;
       }
     },
@@ -331,29 +491,44 @@ Fliplet.Floorplan.component('add-markers', {
     Fliplet.Floorplan.on('add-markers-save', this.saveData);
   },
   mounted: function mounted() {
-    var $vm = this; // vm.$nextTick is not enough
+    var $vm = this; // @TODO get data from data source
+    // Save it to this.markersData
+    // Then run this
 
-    setTimeout(function () {
-      new PinchZoomer($('#floor-0'), {
-        adjustHolderSize: false,
-        maxZoom: 4,
-        initZoom: 1,
-        zoomStep: 0.25,
-        allowMouseWheelZoom: true,
-        animDuration: 0.1,
-        scaleMode: 'proportionalInside',
-        zoomToMarker: true,
-        allowCenterDrag: true
-      });
-      $vm.pinchzoomer = PinchZoomer.get('floor-0');
-      $vm.pzHandler = new Hammer($vm.pinchzoomer.elem().get(0));
-      $vm.attachEventHandler();
-    }, 10);
+    this.mappedMarkerData = this.mapMarkerData(); // vm.$nextTick is not enough
+
+    setTimeout(this.setupPinchZoomer, 1000);
   },
   destroyed: function destroyed() {
     Fliplet.Floorplan.off('add-markers-save', this.saveData);
   }
 });
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/defineProperty.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/defineProperty.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+module.exports = _defineProperty;
 
 /***/ }),
 

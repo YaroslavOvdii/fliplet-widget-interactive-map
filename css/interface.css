@@ -193,7 +193,7 @@ header .title-holder p {
   top: 0;
   right: 38px;
   opacity: 0;
-  color: #E60000;
+  color: #e03629;
   width: 20px;
   height: 38px;
   line-height: 38px;
@@ -314,6 +314,10 @@ header .title-holder p {
   overflow-y: auto;
 }
 
+.settings-holder.with-border {
+  border-left: 1px solid #e3e9eb;
+}
+
 .marker-settings-wrapper {
   margin: 0 -15px;
 }
@@ -420,19 +424,156 @@ header .title-holder p {
 .marker {
   width: 30px;
   height: 30px;
-  background: #333;
-  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8em;
+}
+
+.markers-ui {
+  padding: 0;
 }
 
 .marker-holder {
   display: flex;
   align-items: center;
-  justify-content: flex-end;  
+  justify-content: space-between;
+  padding-left: 15px;
+}
+
+.marker-holder:hover {
+  background-color: #eae9ec;
+}
+
+.marker-holder.active {
+  background-color: #dcdae0;
+}
+
+.marker-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.marker-name-holder,
+.marker-name-edit-holder {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  width: 190px;
 }
 
 .marker-name-holder span {
-  width: 150px;
+  display: block;
+  max-width: 170px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.marker-name-holder .fa,
+.marker-name-edit-holder .fa {
+  margin-left: 8px;
+  opacity: 0.5;
+  cursor: pointer;
+  height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.marker-name-edit-holder .fa-check-circle:hover {
+  color: #1db188;
+  opacity: 1;
+}
+
+.marker-name-edit-holder .fa-ban:hover {
+  color: #e03629;
+  opacity: 1;
+}
+
+.marker-name-edit-holder .form-control {
+  height: 33px;
+  border: none;
+  border-radius: 4px;
+  margin-left: -8px;
+  padding: 6px 8px;
+}
+
+.marker-floor-holder .btn {
+  position: relative;
+  min-width: 100px;
+  background: transparent;
+  border: none;
+}
+
+.marker-icon-holder .btn {
+  position: relative;
+  min-width: 70px;
+  background: transparent;
+  border: none;
+}
+
+.marker-floor-holder .btn .caret,
+.marker-icon-holder .btn .caret {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  margin-top: -2px;
+  opacity: 0.5;
+}
+
+.marker-floor-holder .btn:hover,
+.marker-icon-holder .btn:hover,
+.marker-floor-holder .btn:active:focus,
+.marker-icon-holder .btn:active:focus {
+  background: transparent;
+  border: none;
+}
+
+.marker-floor-holder .btn:active,
+.marker-icon-holder .btn:active {
+  box-shadow: none;
+}
+
+.marker-floor-holder .open > .dropdown-toggle.btn,
+.marker-floor-holder .open > .dropdown-toggle.btn:hover,
+.marker-floor-holder .open > .dropdown-toggle.btn:focus,
+.marker-floor-holder .open > .dropdown-toggle.btn:active,
+.marker-floor-holder .open > .dropdown-toggle.btn:active:hover,
+.marker-floor-holder .open > .dropdown-toggle.btn:active:focus,
+.marker-icon-holder .open > .dropdown-toggle.btn,
+.marker-icon-holder .open > .dropdown-toggle.btn:hover,
+.marker-icon-holder .open > .dropdown-toggle.btn:focus,
+.marker-icon-holder .open > .dropdown-toggle.btn:active,
+.marker-icon-holder .open > .dropdown-toggle.btn:active:hover,
+.marker-icon-holder .open > .dropdown-toggle.btn:active:focus {
+  background: transparent;
+  box-shadow: none;
+  border: none;
+}
+
+.marker-floor-holder .dropdown-menu,
+.marker-icon-holder .dropdown-menu {
+  top: 85%;
+  border-radius: 0;
+  border: none;
+  box-shadow: 0px 6px 20px 0px rgba(0, 0, 0, 0.1);
+}
+
+.marker-delete-holder {
+  width: 56px;
+  height: 44px;
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e03629;
+  font-size: 1.3em;
+  cursor: pointer;
+}
+
+.marker-delete-holder:hover {
+  color: #c20000;
+  background-color: rgba(0,0,0,0.05);
 }

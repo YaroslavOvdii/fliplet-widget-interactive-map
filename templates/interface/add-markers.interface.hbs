@@ -1,9 +1,9 @@
 <div class="add-markers-component clearfix">
   <div v-show="savedData" class="col-xs-6 floors-wrapper">
     <div class="floor-wrapper-holder">
-      <div v-for="(floor, index) in widgetData.floors" class="floor-wrapper" v-bind:class="{ 'active': index === selectedFloorIndex }">
-        <div class="floor-container" :id="'floor-' + index" data-elem="pinchzoomer" :data-fl-mapname="floor.name">
-          <img class="floor-image" data-elem="bg" :src="floor.image.url"/>
+      <div v-for="(floor, index) in widgetData.floors" class="floor-wrapper" v-bind:class="{ 'active': floor.id === selectedFloorId }">
+        <div class="floor-container" :id="'floor-' + floor.id" data-elem="pinchzoomer">
+          <img v-if="floor.image" class="floor-image" data-elem="bg" :src="floor.image.url"/>
         </div>
         <div data-elem="controlHolder">
           <div class="zoomIn" data-elem="zoomIn" data-options="onCss:{opacity:1}; offCss:{opacity:0}">
@@ -18,10 +18,10 @@
     </div>
     <div class="floors-button">
       <i class="fa fa-map-marker"></i>
-      <span class="floor-button-text"><p>\{{selectedFloor.name}}</p></span>
+      <span class="floor-button-text"><p>\{{selectedFloorName}}</p></span>
     </div>
   </div>
-  <div class="settings-holder" v-bind:class="{ 'col-xs-12': !savedData, 'col-xs-6': savedData }">
+  <div class="settings-holder" v-bind:class="{ 'col-xs-12': !savedData, 'col-xs-6 with-border': savedData }">
     <div class="marker-settings-wrapper">
       <div class="form-group clearfix">
         <div class="col-sm-12 control-label">
@@ -91,25 +91,37 @@
           <div class="col-sm-12 control-label">
             <label>Configure the markers</label>
           </div>
-          <div class="col-sm-12">
-            <div class="marker-holder">
-              <div class="marker-name-holder">
-                <span>My name here</span> <i class="fa fa-pencil"></i>
+          <div class="col-sm-12 markers-ui">
+            <div v-for="(markerInfo, index) in mappedMarkerData" class="marker-holder" v-bind:class="{ 'active': activeMarker === index }" @click.prevent="setActiveMarker(index)">
+              <div class="marker-wrapper">
+                <div v-if="markerInfo.updateName" class="marker-name-edit-holder">
+                  <input v-model="markerInfo.name" :ref="'changename-' + index" class="form-control" @keyup.enter="toggleUpdateName(index)" @keyup.esc="cancelNameUpdate(index)"/> <i class="fa fa-check-circle" @click.prevent="toggleUpdateName(index)"></i> <i class="fa fa-ban" @click.prevent="cancelNameUpdate(index)"></i>
+                </div>
+                <div v-else class="marker-name-holder">
+                  <span>\{{markerInfo.name}}</span> <i class="fa fa-pencil" @click.prevent="toggleUpdateName(index, markerInfo.name)"></i>
+                </div>
+                <div class="marker-floor-holder">
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      \{{markerInfo.floor}} <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                      <li v-for="floor in widgetData.floors"><a href="#" @click.prevent="updateFloor(floor.name, index)">\{{floor.name}}</a></li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="marker-icon-holder">
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i :class="markerInfo.icon + ' fa-fw'" :style="'color: ' + markerInfo.color"></i> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                      <li v-for="marker in widgetData.markers"><a href="#" @click.prevent="updateMarker(marker, index)">\{{marker.name}} <i :class="marker.icon + ' fa-fw'" :style="'color: ' + marker.color"></i></a></li>
+                    </ul>
+                  </div>
+                </div>
               </div>
-              <div class="marker-floor-holder">
-                <multiselect v-model="selectedMarkerFloor" :options="widgetData.floors" track-by="id" placeholder="-- Select a floor" label="name" :show-labels="false" :allow-empty="false">
-                  <span slot="noResult">No floors found</span>
-                </multiselect>
-              </div>
-              <div class="marker-icon-holder">
-                <multiselect v-model="selectedMarkerIcon" :options="widgetData.markers" track-by="id" placeholder="-- Select a marker style" label="name" :allow-empty="false" :show-labels="false">
-                  <template slot="singleLabel" slot-scope="{ option }">
-                    \{{ option.name }} <i :class="option.icon"></i>
-                  </template>
-                  <span slot="noResult">No marker styles found</span>
-                </multiselect>
-              </div>
-              <div class="marker-delete-holder">
+              <div class="marker-delete-holder" @click.prevent="deleteMarker(index)">
                 <i class="fa fa-trash"></i>
               </div>
             </div>
