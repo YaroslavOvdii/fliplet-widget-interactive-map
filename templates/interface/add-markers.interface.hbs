@@ -1,24 +1,32 @@
 <div class="add-markers-component clearfix">
   <div v-show="savedData" class="col-xs-6 floors-wrapper">
-    <div class="floor-wrapper-holder">
-      <div v-for="(floor, index) in widgetData.floors" class="floor-wrapper" v-bind:class="{ 'active': floor.id === selectedFloorId }">
-        <div class="floor-container" :id="'floor-' + floor.id" data-elem="pinchzoomer">
-          <img v-if="floor.image" class="floor-image" data-elem="bg" :src="floor.image.url"/>
-        </div>
-        <div data-elem="controlHolder">
-          <div class="zoomIn" data-elem="zoomIn" data-options="onCss:{opacity:1}; offCss:{opacity:0}">
-            <i class="fa fa-plus"></i>
-          </div>
-          <div class="zoomOut" data-elem="zoomOut" data-options="onCss:{opacity:1}; offCss:{opacity:0}">
-            <i class="fa fa-minus"></i>
-          </div>
-          <div class="fullscreenToggle off"></div>
-        </div>
+    <div v-if="isLoading" class="floors-loading-holder">
+      <div class="spinner-holder animated">
+        <div class="spinner-overlay">Loading...</div>
+        <p>Loading the floor plan... Please wait!</p>
       </div>
     </div>
-    <div class="floors-button">
-      <i class="fa fa-map-marker"></i>
-      <span class="floor-button-text"><p>\{{selectedFloorName}}</p></span>
+    <div v-else class="floors-container">
+      <div class="floor-wrapper-holder">
+        <div v-for="(floor, index) in widgetData.floors" class="floor-wrapper" v-bind:class="{ 'active': selectedMarkerData.floor && floor.id === selectedMarkerData.floor.id }">
+          <div class="floor-container" :id="'floor-' + floor.id" data-elem="pinchzoomer">
+            <img v-if="floor.image" class="floor-image" data-elem="bg" :src="floor.image.url"/>
+          </div>
+          <div data-elem="controlHolder">
+            <div class="zoomIn" data-elem="zoomIn" data-options="onCss:{opacity:1}; offCss:{opacity:0}">
+              <i class="fa fa-plus"></i>
+            </div>
+            <div class="zoomOut" data-elem="zoomOut" data-options="onCss:{opacity:1}; offCss:{opacity:0}">
+              <i class="fa fa-minus"></i>
+            </div>
+            <div class="fullscreenToggle off"></div>
+          </div>
+        </div>
+      </div>
+      <div v-if="selectedMarkerData.floor && selectedMarkerData.floor.name" class="floors-button">
+        <i class="fa fa-map-marker"></i>
+        <span class="floor-button-text"><p>\{{selectedMarkerData.floor.name}}</p></span>
+      </div>
     </div>
   </div>
   <div class="settings-holder" v-bind:class="{ 'col-xs-12': !savedData, 'col-xs-6 with-border': savedData }">
@@ -91,19 +99,25 @@
           <div class="col-sm-12 control-label">
             <label>Configure the markers</label>
           </div>
-          <div class="col-sm-12 markers-ui">
+          <div v-if="isLoading" class="col-sm-12 markers-ui-loading">
+            <div class="spinner-holder animated">
+              <div class="spinner-overlay">Loading...</div>
+              <p>Loading the floor plan... Please wait!</p>
+            </div>
+          </div>
+          <div v-else class="col-sm-12 markers-ui">
             <div v-for="(markerInfo, index) in mappedMarkerData" class="marker-holder" v-bind:class="{ 'active': activeMarker === index }" @click.prevent="setActiveMarker(index)">
               <div class="marker-wrapper">
-                <div v-if="markerInfo.updateName" class="marker-name-edit-holder">
-                  <input v-model="markerInfo.name" :ref="'changename-' + index" class="form-control" @keyup.enter="toggleUpdateName(index)" @keyup.esc="cancelNameUpdate(index)"/> <i class="fa fa-check-circle" @click.prevent="toggleUpdateName(index)"></i> <i class="fa fa-ban" @click.prevent="cancelNameUpdate(index)"></i>
+                <div v-if="markerInfo.data.updateName" class="marker-name-edit-holder">
+                  <input v-model="markerInfo.data.name" :ref="'changename-' + index" class="form-control" @keyup.enter="confirmName(index)" @keyup.esc="cancelNameUpdate(index)"/> <i class="fa fa-check-circle" @click.prevent="confirmName(index)"></i> <i class="fa fa-ban" @click.prevent="cancelNameUpdate(index)"></i>
                 </div>
                 <div v-else class="marker-name-holder">
-                  <span>\{{markerInfo.name}}</span> <i class="fa fa-pencil" @click.prevent="toggleUpdateName(index, markerInfo.name)"></i>
+                  <span>\{{markerInfo.data.name}}</span> <i class="fa fa-pencil" @click.prevent="toUpdateName(index, markerInfo.data.name)"></i>
                 </div>
                 <div class="marker-floor-holder">
                   <div class="btn-group">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      \{{markerInfo.floor}} <span class="caret"></span>
+                      \{{markerInfo.data.floor}} <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right">
                       <li v-for="floor in widgetData.floors"><a href="#" @click.prevent="updateFloor(floor.name, index)">\{{floor.name}}</a></li>
@@ -113,7 +127,7 @@
                 <div class="marker-icon-holder">
                   <div class="btn-group">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <i :class="markerInfo.icon + ' fa-fw'" :style="'color: ' + markerInfo.color"></i> <span class="caret"></span>
+                      <i :class="markerInfo.data.icon + ' fa-fw'" :style="'color: ' + markerInfo.data.color"></i> <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right">
                       <li v-for="marker in widgetData.markers"><a href="#" @click.prevent="updateMarker(marker, index)">\{{marker.name}} <i :class="marker.icon + ' fa-fw'" :style="'color: ' + marker.color"></i></a></li>

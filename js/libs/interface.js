@@ -1,6 +1,6 @@
 const widgetId = parseInt(Fliplet.Widget.getDefaultId(), 10)
 const widgetData = Fliplet.Widget.getData(widgetId) || {}
-console.log('DATA', widgetData)
+console.log('DATA', widgetData) // @TODO: Remove
 
 import * as Sortable from 'sortablejs/Sortable.js'
 
@@ -79,8 +79,6 @@ const app = new Vue({
       this.floors.splice(event.newIndex, 0, this.floors.splice(event.oldIndex, 1)[0])
     },
     deleteFloor(index) {
-      const $vm = this
-
       Fliplet.Modal.confirm({
         title: 'Delete floorplan',
         message: '<p>Are you sure you want to delete this floor?</p>'
@@ -89,7 +87,7 @@ const app = new Vue({
           return
         }
 
-        $vm.floors.splice(index, 1)
+        this.floors.splice(index, 1)
       })
     },
     onAddMarker() {
@@ -105,8 +103,6 @@ const app = new Vue({
       this.markers.push(newItem)
     },
     deleteMarker(index) {
-      const $vm = this
-
       Fliplet.Modal.confirm({
         title: 'Delete floorplan',
         message: '<p>Are you sure you want to delete this floor?</p>'
@@ -115,11 +111,15 @@ const app = new Vue({
           return
         }
 
-        $vm.markers.splice(index, 1)
+        this.markers.splice(index, 1)
       })
     },
     onPanelSettingChanged(panelData) {
       this.floors.forEach((panel, index) => {
+        if (panelData.name == panel.name && panelData.id !== panel.id) {
+          panelData.error = 'Floors must have different names'
+        }
+
         if (panelData.id === panel.id) {
           // To overcome the array change caveat
           // https://vuejs.org/v2/guide/list.html#Caveats
@@ -129,6 +129,10 @@ const app = new Vue({
     },
     onMarkerPanelSettingChanged(panelData) {
       this.markers.forEach((panel, index) => {
+        if (panelData.name == panel.name && panelData.id !== panel.id) {
+          panelData.error = 'Marker styles must have different names'
+        }
+
         if (panelData.id === panel.id) {
           // To overcome the array change caveat
           // https://vuejs.org/v2/guide/list.html#Caveats
@@ -174,8 +178,6 @@ const app = new Vue({
     }
   },
   async created() {
-    const $vm = this
-
     Fliplet.Floorplan.on('floor-panel-settings-changed', this.onPanelSettingChanged)
     Fliplet.Floorplan.on('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
     Fliplet.Floorplan.on('add-markers-settings-changed', this.onAddMarkersSettingChanged)
@@ -196,7 +198,7 @@ const app = new Vue({
         && event.data.event === 'overlay-close'
         && event.data.data
         && event.data.data.dataSourceId) {
-        $vm.loadDataSources()
+        this.loadDataSources()
       }
     })
 
@@ -212,9 +214,9 @@ const app = new Vue({
       }
 
       Fliplet.Floorplan.emit('floors-save')
-        Fliplet.Floorplan.emit('markers-save')
+      Fliplet.Floorplan.emit('markers-save')
       Fliplet.Floorplan.emit('add-markers-save')
-      $vm.prepareToSaveData()
+      this.prepareToSaveData()
     })
   },
   destroyed() {

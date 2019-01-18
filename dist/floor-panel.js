@@ -118,15 +118,16 @@ Fliplet.Floorplan.component('floor-panel', {
     }
   },
   methods: {
-    onChangeData: function onChangeData() {
+    onInputData: function onInputData() {
       var componentData = _.pick(this, ['id', 'name', 'image', 'type', 'isFromNew']);
 
       Fliplet.Floorplan.emit('floor-panel-settings-changed', componentData);
     },
     openFloorPicker: function openFloorPicker() {
-      var $vm = this;
+      var _this = this;
+
       var filePickerData = {
-        selectFiles: $vm.image ? [$vm.image] : [],
+        selectFiles: this.image ? [this.image] : [],
         selectMultiple: false,
         type: 'image',
         fileExtension: ['JPG', 'JPEG', 'PNG', 'GIF', 'TIFF'],
@@ -147,8 +148,10 @@ Fliplet.Floorplan.component('floor-panel', {
         }
       });
       window.filePickerProvider.then(function (result) {
-        $vm.image = result.data[0];
-        $vm.onChangeData();
+        _this.image = result.data[0];
+
+        _this.onInputData();
+
         window.filePickerProvider = null;
         Fliplet.Studio.emit('widget-save-label-reset');
         return Promise.resolve();
@@ -156,10 +159,10 @@ Fliplet.Floorplan.component('floor-panel', {
     }
   },
   created: function created() {
-    Fliplet.Floorplan.on('floors-save', this.onChangeData);
+    Fliplet.Floorplan.on('floors-save', this.onInputData);
   },
   destroyed: function destroyed() {
-    Fliplet.Floorplan.off('floors-save', this.onChangeData);
+    Fliplet.Floorplan.off('floors-save', this.onInputData);
   }
 });
 

@@ -5,7 +5,6 @@
       <a id="help_tip" href="#">Need help?</a>
     </header>
     <div class="loading-message">
-      <!-- Show loading animation -->
       <div class="spinner-holder animated">
         <div class="spinner-overlay">Loading...</div>
         <p>Loading the floor plan... Please wait!</p>
@@ -31,10 +30,11 @@
                       <span class="panel-title-text">\{{floor.name}}</span>
                       <span class="fa panel-chevron fa-chevron-up"></span>
                     </h4>
-                    <a href="#" v-on:click.prevent.stop="deleteFloor(idx)"><span class="icon-delete fa fa-trash"></span></a>
+                    <a href="#" @click.prevent="deleteFloor(idx)"><span class="icon-delete fa fa-trash"></span></a>
                   </div>
                   <div :id="'collapse-' + floor.id" class="panel-collapse collapse" v-bind:class="{ in: floor.isFromNew }">
                     <div class="panel-body">
+                      <div class="error-holder" v-if="floor.error">\{{floor.error}}</div>
 
                       <component :is="floor.type" v-bind="floor"></component>
 
@@ -62,10 +62,11 @@
                       <span class="panel-title-text">\{{marker.name}}</span>
                       <span class="fa panel-chevron fa-chevron-up"></span>
                     </h4>
-                    <a href="#" v-on:click.prevent.stop="deleteMarker(idx)"><span class="icon-delete fa fa-trash"></span></a>
+                    <a href="#" @click.prevent="deleteMarker(idx)"><span class="icon-delete fa fa-trash"></span></a>
                   </div>
                   <div :id="'collapse-' + marker.id" class="panel-collapse collapse" v-bind:class="{ in: marker.isFromNew }">
                     <div class="panel-body">
+                      <div class="error-holder" v-if="marker.error">\{{marker.error}}</div>
 
                       <component :is="marker.type" v-bind="marker"></component>
 

@@ -49,46 +49,23 @@ Fliplet.Floorplan.component('add-markers', {
   },
   data() {
     return {
+      isLoading: true,
       manualSelectDataSource: false,
       manualSetSettings: false,
       savedData: this.widgetData.savedData,
       markersDataSource: _.find(this.dataSources, { id: this.markersDataSourceId }),
+      dataSourceConnection: undefined,
       pinchzoomer: null,
       pzHandler: undefined,
       markerElemHandler: undefined,
-      markerCtr: 0,
-      markersData: [
-        {
-          'id': 1,
-          'Name': 'Hugo Carneiro',
-          'Floor name': 'Floor 1',
-          'Marker style': 'Marker 1',
-          'Position X': 100,
-          'Position Y': 100
-        },
-        {
-          'id': 2,
-          'Name': 'Nick Valbusa',
-          'Floor name': 'Floor 2',
-          'Marker style': 'Marker 2',
-          'Position X': 125,
-          'Position Y': 125
-        },
-        {
-          'id': 3,
-          'Name': 'Ben Wynne-Simmons',
-          'Floor name': 'Floor 1',
-          'Marker style': 'Marker 3',
-          'Position X': 150,
-          'Position Y': 150
-        }
-      ],
+      markersData: undefined,
       mappedMarkerData: [],
       activeMarker: 0,
-      selectedFloorId: undefined,
-      selectedFloorName: undefined,
-      selectedMarkerName: '',
-      selectedMarker: undefined
+      selectedMarkerData: {
+        floor: undefined,
+        marker: undefined
+      },
+      saveDebounced: _.debounce(this.saveToDataSource, 10000)
     }
   },
   computed: {
@@ -114,62 +91,83 @@ Fliplet.Floorplan.component('add-markers', {
   methods: {
     mapMarkerData() {
       const newMarkerData = this.markersData.map((marker) => {
-        const markerData = _.find(this.widgetData.markers, { name: marker[this.markerTypeColumn] })
-        return { 
+        const markerData = _.find(this.widgetData.markers, { name: marker.data[this.markerTypeColumn] })
+        return {
           id: marker.id,
-          name: marker[this.markerNameColumn],
-          floor: marker[this.markerFloorColumn],
-          type: marker[this.markerTypeColumn],
-          icon: markerData ? markerData.icon : '',
-          color: markerData ? markerData.color : '#333333',
-          positionx: marker[this.markerXPositionColumn],
-          positiony: marker[this.markerYPositionColumn],
-          updateName: false,
-          copyOfName: ''
+          data: {
+            name: marker.data[this.markerNameColumn],
+            floor: marker.data[this.markerFloorColumn],
+            type: marker.data[this.markerTypeColumn],
+            icon: markerData ? markerData.icon : '',
+            color: markerData ? markerData.color : '#333333',
+            size: markerData ? markerData.size : '24px',
+            positionx: marker.data[this.markerXPositionColumn],
+            positiony: marker.data[this.markerYPositionColumn],
+            updateName: false,
+            copyOfName: ''
+          }
         }
       })
 
       return newMarkerData
     },
-    setActiveMarker(index) {
-      if (this.activeMarker !== index) {
+    setActiveMarker(index, forced) {
+      if (this.activeMarker !== index || forced) {
         this.activeMarker = index
         this.setupPinchZoomer()
       }
     },
     updateFloor(floorName, index) {
-      this.mappedMarkerData[index].floor = floorName
+      this.mappedMarkerData[index].data.floor = floorName
+      this.saveDebounced()
       this.setupPinchZoomer()
     },
     updateMarker(marker, index) {
-      this.mappedMarkerData[index].type = marker.name
-      this.mappedMarkerData[index].icon = marker.icon
-      this.mappedMarkerData[index].color = marker.color
+      this.mappedMarkerData[index].data.type = marker.name
+      this.mappedMarkerData[index].data.icon = marker.icon
+      this.mappedMarkerData[index].data.color = marker.color
+      this.mappedMarkerData[index].data.size = marker.size
+      this.saveDebounced()
       this.setupPinchZoomer()
     },
-    toggleUpdateName(index, currentName) {
-      const $vm = this
-      this.mappedMarkerData[index].updateName = !this.mappedMarkerData[index].updateName
+    toUpdateName(index, currentName) {
+      this.mappedMarkerData[index].data.updateName = !this.mappedMarkerData[index].data.updateName
+      this.mappedMarkerData[index].data.copyOfName = currentName
+      this.$nextTick(() => this.$refs['changename-' + index][0].focus())
+    },
+    confirmName(index, fromCancel) {
+      this.mappedMarkerData[index].data.updateName = !this.mappedMarkerData[index].data.updateName
 
-      if (currentName) {
-        this.mappedMarkerData[index].copyOfName = currentName
-        this.$nextTick(() => $vm.$refs['changename-' + index][0].focus())
+      if (!fromCancel) {
+        this.saveDebounced()
+        this.setupPinchZoomer()
       }
     },
     cancelNameUpdate(index) {
-      this.mappedMarkerData[index].name = this.mappedMarkerData[index].copyOfName
-      this.mappedMarkerData[index].copyOfName = ''
-      this.toggleUpdateName(index)
+      this.mappedMarkerData[index].data.name = this.mappedMarkerData[index].data.copyOfName
+      this.mappedMarkerData[index].data.copyOfName = ''
+      this.confirmName(index, true)
     },
     deleteMarker(index) {
+      const markerId = $('.floor-wrapper-holder')
+        .find('.marker[data-tooltip="' + this.mappedMarkerData[index].data.name + '"]')
+        .attr('id')
+      const markerIndex = this.getMarkerIndex(markerId)
+        
+      if (markerIndex >= 0) {
+        this.pinchzoomer.removeMarker(markerIndex, true)
+      }
+
       this.mappedMarkerData.splice(index, 1)
+      this.setActiveMarker(0, true)
+      this.saveDebounced()
     },
     nameWithId({ name, id }) {
       return `${name} — [${id}]`
     },
     createNewData() {
-      const $vm = this
       const name = `${this.appName} - Markers`
+
       Fliplet.Modal.prompt({
         title: 'Please type a name for your data source:',
         value: name
@@ -185,12 +183,11 @@ Fliplet.Floorplan.component('add-markers', {
           organizationId: organizationId
         })
       }).then((ds) => {
-        $vm.dataSources.push(ds)
-        $vm.selectedDataSource = ds.id
+        this.dataSources.push(ds)
+        this.selectedDataSource = ds.id
       })
     },
     chooseExistingData() {
-      const $vm = this
       Fliplet.Modal.confirm({
         title: 'Changing data source',
         message: '<p>If you continue the data source we created for you will be deleted.</p><p>Are you sure you want to continue?</p>'
@@ -199,15 +196,15 @@ Fliplet.Floorplan.component('add-markers', {
           return
         }
 
-        return $vm.deleteDataSource()
+        return this.deleteDataSource()
       }).then(() => {
         // Remove from dataSources
-        $vm.dataSources = _.filter($vm.dataSources, (ds) => {
-          return ds.id !== $vm.markersDataSourceId
+        this.dataSources = _.filter(this.dataSources, (ds) => {
+          return ds.id !== this.markersDataSourceId
         })
-        $vm.markersDataSource = null
+        this.markersDataSource = null
 
-        $vm.manualSelectDataSource = true
+        this.manualSelectDataSource = true
       }) 
     },
     editDataSource() {
@@ -245,21 +242,20 @@ Fliplet.Floorplan.component('add-markers', {
       Fliplet.Studio.emit('widget-mode', 'normal')
     },
     setupPinchZoomer() {
-      const $vm = this
-
-      $vm.selectedFloorName = $vm.mappedMarkerData[$vm.activeMarker].floor
-      $vm.selectedMarkerName = $vm.mappedMarkerData[$vm.activeMarker].name
-      $vm.selectedMarker = $vm.mappedMarkerData[$vm.activeMarker]
-      const floor = _.find($vm.widgetData.floors, { name: $vm.selectedFloorName })
-      $vm.selectedFloorId = floor.id
-      $vm.selectedFloorName = floor.name
-
-      if ($vm.pinchzoomer) {
-        $vm.detachEventHandlers()
-        $vm.pinchzoomer = null
+      if (!this.mappedMarkerData.length) {
+        return
       }
 
-      new PinchZoomer($('#floor-' + floor.id), {
+      const floorName = this.mappedMarkerData[this.activeMarker].data.floor
+      this.selectedMarkerData.marker = this.mappedMarkerData[this.activeMarker]
+      this.selectedMarkerData.floor = _.find(this.widgetData.floors, { name: floorName })
+
+      if (this.pinchzoomer) {
+        this.detachEventHandlers()
+        this.pinchzoomer = null
+      }
+
+      new PinchZoomer($('#floor-' + this.selectedMarkerData.floor.id), {
         adjustHolderSize: false,
         maxZoom: 4,
         initZoom: 1,
@@ -271,34 +267,64 @@ Fliplet.Floorplan.component('add-markers', {
         allowCenterDrag: true
       })
 
-      $vm.pinchzoomer = PinchZoomer.get('floor-' + floor.id)
-      $vm.pzHandler = new Hammer($vm.pinchzoomer.elem().get(0))
+      this.pinchzoomer = PinchZoomer.get('floor-' + this.selectedMarkerData.floor.id)
+      this.pzHandler = new Hammer(this.pinchzoomer.elem().get(0))
 
-      $vm.loadMarkers()
-      $vm.attachEventHandler()
+      this.addMarkers(true)
+      this.attachEventHandler()
     },
-    loadMarkers() {
-      const $vm = this
-      this.pinchzoomer.removeMarkers(true)
+    addMarkers(fromLoad, options) {
+      let markerElem = undefined
+      options = options || {}
 
-      $vm.mappedMarkerData.forEach((marker, index) => {
-        if (marker.floor === $vm.selectedFloorName) {
-          const markerElem = $("<i class='marker " + marker.icon + "' style='left: -15px; top: -15px; position: absolute; color: " + marker.color + "' data-tooltip='" + marker.name + "'></i>")
-          this.markerElemHandler = new Hammer(markerElem.get(0))
-          this.pinchzoomer.addMarkers([new Marker(markerElem, { x: marker.positionx, y: marker.positiony, transformOrigin: '50% 50%', name: marker.name })])
-          this.markerElemHandler.on('tap', this.onMarkerHandler)
+      if (fromLoad) {
+        this.pinchzoomer.removeMarkers(true)
+
+        this.mappedMarkerData.forEach((marker, index) => {
+          if (marker.data.floor === this.selectedMarkerData.floor.name) {
+            markerElem = $("<i id='marker-" + index + "' class='marker " + marker.data.icon + "' style='left: -15px; top: -15px; position: absolute; color: " + marker.data.color + "; font-size: " + marker.data.size + ";' data-tooltip='" + marker.data.name + "'></i>")
+            this.markerElemHandler = new Hammer(markerElem.get(0))
+            this.pinchzoomer.addMarkers([new Marker(markerElem, { x: marker.data.positionx, y: marker.data.positiony, transformOrigin: '50% 50%', name: marker.data.name })])
+            this.markerElemHandler.on('tap', this.onMarkerHandler)
+          }
+        })
+        return
+      }
+
+      markerElem = $("<i id='marker-" + options.index + "' class='marker " + this.selectedMarkerData.marker.data.icon + "' style='left: -15px; top: -15px; position: absolute; color: " + this.selectedMarkerData.marker.data.color + "; font-size: " + this.selectedMarkerData.marker.data.size + ";' data-tooltip='" + this.selectedMarkerData.marker.data.name + "'></i>")
+      this.markerElemHandler = new Hammer(markerElem.get(0))
+
+      if (options.existingMarker) {
+        options.existingMarker.vars({x: options.x, y: options.y}, true)
+        this.updateMarkerCoordinates({
+          x: options.x,
+          y: options.y,
+          marker: options.existingMarker._vars
+        })
+      } else {
+        this.pinchzoomer.addMarkers([new Marker(markerElem, { x: options.x, y: options.y, transformOrigin: '50% 50%', name: this.selectedMarkerData.marker.data.name })])
+      }
+      
+      this.markerElemHandler.on('tap', this.onMarkerHandler)
+    },
+    updateMarkerCoordinates(coordinates) {
+      if (!coordinates) {
+        return
+      }
+
+      this.mappedMarkerData.forEach((marker, index) => {
+        if (marker.data.name === coordinates.marker.name) {
+          this.mappedMarkerData[index].data.positionx = coordinates.x
+          this.mappedMarkerData[index].data.positiony = coordinates.y
         }
       })
+      this.saveDebounced()
     },
     attachEventHandler() {
       this.pzHandler.on('tap', this.onTapHandler)
     },
     detachEventHandlers() {
       this.pzHandler.off('tap', this.onTapHandler)
-
-      // if (this.markerElemHandler) {
-      //   this.markerElemHandler.off('tap', this.onMarkerHandler)
-      // }
     },
     onTapHandler(e) {
       const markers = this.pinchzoomer.markers()
@@ -306,7 +332,7 @@ Fliplet.Floorplan.component('add-markers', {
       if (!$(e.target).hasClass('marker')) {
         // Find a marker
         const markerFound = _.find(markers, (marker) => {
-          return marker._vars.name === this.selectedMarker.name
+          return marker._vars.name === this.selectedMarkerData.marker.data.name
         })
 
         const clientRect = this.pinchzoomer.elem().get(0).getBoundingClientRect()
@@ -316,24 +342,19 @@ Fliplet.Floorplan.component('add-markers', {
         const x = (center.x - elemPosX) / (this.pinchzoomer.baseZoom() * this.pinchzoomer.zoom())
         const y = (center.y - elemPosY) / (this.pinchzoomer.baseZoom() * this.pinchzoomer.zoom())
 
-        const markerElem = $("<i class='marker " + this.selectedMarker.icon + "' style='left: -15px; top: -15px; position: absolute; color: " + this.selectedMarker.color + "' data-tooltip='" + this.selectedMarkerName + "'></i>")
-        this.markerElemHandler = new Hammer(markerElem.get(0))
-
-        if (markerFound) {
-          markerFound.vars({x: x, y, y}, true)
-        } else {
-          this.pinchzoomer.addMarkers([new Marker(markerElem, { x: x, y: y, transformOrigin: '50% 50%', name: this.selectedMarker.name })])
-        }
-        
-        this.markerElemHandler.on('tap', this.onMarkerHandler)
-
-        this.markerCtr++
+        this.addMarkers(false, {
+          x: x,
+          y: y,
+          index: markers.length - 1,
+          existingMarker: markerFound
+        })
       }
     },
     onMarkerHandler(e) {
       const index = this.getMarkerIndex($(e.target).attr('id'))
+      const name = $(e.target).attr('data-tooltip')
         
-      if (index >= 0) {
+      if (index >= 0 && name === this.selectedMarkerData.marker.data.name) {
         this.pinchzoomer.removeMarker(index, true)
       }
     },
@@ -352,6 +373,39 @@ Fliplet.Floorplan.component('add-markers', {
       
       return markerIndex
     },
+    getMarkersData() {
+      return Fliplet.DataSources.connect(this.markersDataSourceId, { offline: false })
+        .then((connection) => {
+          // If you want to do specific queries to return your rows
+          // See the documentation here: https://developers.fliplet.com/API/fliplet-datasources.html
+          this.dataSourceConnection = connection // To keep the connection to update/delete data later on
+          return connection.find();
+        })
+    },
+    cleanData() {
+      const newData = []
+
+      this.mappedMarkerData.forEach((marker, index) => {
+        const newObj = {
+          id: marker.id,
+          data: {}
+        }
+
+        newObj.data[this.markerNameColumn] = marker.data.name
+        newObj.data[this.markerFloorColumn] = marker.data.floor
+        newObj.data[this.markerTypeColumn] = marker.data.type
+        newObj.data[this.markerXPositionColumn] = marker.data.positionx
+        newObj.data[this.markerYPositionColumn] = marker.data.positiony
+
+        newData.push(newObj)
+      })
+
+      return newData
+    },
+    saveToDataSource() {
+      const data = this.cleanData()
+      this.dataSourceConnection.commit(data)
+    },
     saveData() {
       const markersData = _.pick(this, [
         'markersDataSourceId',
@@ -364,12 +418,16 @@ Fliplet.Floorplan.component('add-markers', {
       Fliplet.Floorplan.emit('add-markers-settings-changed', markersData)
     }
   },
-  created() {
-    const $vm = this
+  async created() {
+    this.markersData = await this.getMarkersData()
+    console.log(this.markersData)
+    this.isLoading = false
+    this.mappedMarkerData = this.mapMarkerData()
+
     Fliplet.Studio.onMessage((event) => {
       if (event.data && event.data.event === 'overlay-close' && event.data.data && event.data.data.dataSourceId) {
-        $vm.reloadDataSources().then((dataSources) => {
-          $vm.dataSources = dataSources
+        this.reloadDataSources().then((dataSources) => {
+          this.dataSources = dataSources
         })
       }
     })
@@ -377,13 +435,6 @@ Fliplet.Floorplan.component('add-markers', {
     Fliplet.Floorplan.on('add-markers-save', this.saveData)
   },
   mounted() {
-    const $vm = this
-
-    // @TODO get data from data source
-    // Save it to this.markersData
-    // Then run this
-    this.mappedMarkerData = this.mapMarkerData()
-
     // vm.$nextTick is not enough
     setTimeout(this.setupPinchZoomer, 1000)
   },

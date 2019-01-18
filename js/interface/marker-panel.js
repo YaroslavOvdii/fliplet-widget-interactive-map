@@ -17,6 +17,10 @@ Fliplet.Floorplan.component('marker-panel', {
       type: String,
       default: '#333333'
     },
+    size: {
+      type: String,
+      default: '24px'
+    },
     type: {
       type: String,
       default: 'marker-panel'
@@ -27,18 +31,17 @@ Fliplet.Floorplan.component('marker-panel', {
     }
   },
   methods: {
-    onChangeData() {
-      const componentData = _.pick(this, ['id', 'name', 'icon', 'color', 'type', 'isFromNew'])
+    onInputData() {
+      const componentData = _.pick(this, ['id', 'name', 'icon', 'color', 'size', 'type', 'isFromNew'])
       Fliplet.Floorplan.emit('marker-panel-settings-changed', componentData)
     },
     openIconPicker() {
-      const $vm = this
-      $vm.icon = $vm.icon || ''
+      this.icon = this.icon || ''
 
       window.iconPickerProvider = Fliplet.Widget.open('com.fliplet.icon-selector', {
         // Also send the data I have locally, so that
         // the interface gets repopulated with the same stuff
-        data: $vm.icon,
+        data: this.icon,
         // Events fired from the provider
         onEvent: (event, data) => {
           if (event === 'interface-validate') {
@@ -64,9 +67,9 @@ Fliplet.Floorplan.component('marker-panel', {
 
       window.iconPickerProvider.then((data) => {
         if (data.data) {
-          $vm.icon = data.data.icon
+          this.icon = data.data.icon
         }
-        $vm.onChangeData()
+        this.onInputData()
         window.iconPickerProvider = null
         Fliplet.Studio.emit('widget-save-label-reset')
         return Promise.resolve()
@@ -74,10 +77,10 @@ Fliplet.Floorplan.component('marker-panel', {
     }
   },
   created() {
-    Fliplet.Floorplan.on('markers-save', this.onChangeData)
+    Fliplet.Floorplan.on('markers-save', this.onInputData)
   },
   destroyed() {
-    Fliplet.Floorplan.off('markers-save', this.onChangeData)
+    Fliplet.Floorplan.off('markers-save', this.onInputData)
   },
   mounted() {
     const $vm = this
@@ -90,7 +93,7 @@ Fliplet.Floorplan.component('marker-panel', {
 
     $colorpickerElement.on('changeColor', (e) => {
       $vm.color = e.value
-      $vm.onChangeData()
+      $vm.onInputData()
     })
 
     $('#list-item-color-' + $vm.id).on('click', () => {

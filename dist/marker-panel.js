@@ -112,6 +112,10 @@ Fliplet.Floorplan.component('marker-panel', {
       type: String,
       default: '#333333'
     },
+    size: {
+      type: String,
+      default: '24px'
+    },
     type: {
       type: String,
       default: 'marker-panel'
@@ -122,18 +126,19 @@ Fliplet.Floorplan.component('marker-panel', {
     }
   },
   methods: {
-    onChangeData: function onChangeData() {
-      var componentData = _.pick(this, ['id', 'name', 'icon', 'color', 'type', 'isFromNew']);
+    onInputData: function onInputData() {
+      var componentData = _.pick(this, ['id', 'name', 'icon', 'color', 'size', 'type', 'isFromNew']);
 
       Fliplet.Floorplan.emit('marker-panel-settings-changed', componentData);
     },
     openIconPicker: function openIconPicker() {
-      var $vm = this;
-      $vm.icon = $vm.icon || '';
+      var _this = this;
+
+      this.icon = this.icon || '';
       window.iconPickerProvider = Fliplet.Widget.open('com.fliplet.icon-selector', {
         // Also send the data I have locally, so that
         // the interface gets repopulated with the same stuff
-        data: $vm.icon,
+        data: this.icon,
         // Events fired from the provider
         onEvent: function onEvent(event, data) {
           if (event === 'interface-validate') {
@@ -155,10 +160,11 @@ Fliplet.Floorplan.component('marker-panel', {
       });
       window.iconPickerProvider.then(function (data) {
         if (data.data) {
-          $vm.icon = data.data.icon;
+          _this.icon = data.data.icon;
         }
 
-        $vm.onChangeData();
+        _this.onInputData();
+
         window.iconPickerProvider = null;
         Fliplet.Studio.emit('widget-save-label-reset');
         return Promise.resolve();
@@ -166,13 +172,13 @@ Fliplet.Floorplan.component('marker-panel', {
     }
   },
   created: function created() {
-    Fliplet.Floorplan.on('markers-save', this.onChangeData);
+    Fliplet.Floorplan.on('markers-save', this.onInputData);
   },
   destroyed: function destroyed() {
-    Fliplet.Floorplan.off('markers-save', this.onChangeData);
+    Fliplet.Floorplan.off('markers-save', this.onInputData);
   },
   mounted: function mounted() {
-    var _this = this;
+    var _this2 = this;
 
     var $vm = this;
     var $colorpickerElement = $('#list-item-color-' + $vm.id).parents('[colorpicker-component]');
@@ -182,13 +188,13 @@ Fliplet.Floorplan.component('marker-panel', {
     });
     $colorpickerElement.on('changeColor', function (e) {
       $vm.color = e.value;
-      $vm.onChangeData();
+      $vm.onInputData();
     });
     $('#list-item-color-' + $vm.id).on('click', function () {
-      $(_this).prev('.input-group-addon').find('i').trigger('click');
+      $(_this2).prev('.input-group-addon').find('i').trigger('click');
     });
     $('.input-group-addon i').on('click', function () {
-      $(_this).parents('.input-group-addon').next('#list-item-color-' + $vm.id).trigger('focus');
+      $(_this2).parents('.input-group-addon').next('#list-item-color-' + $vm.id).trigger('focus');
     });
   }
 });

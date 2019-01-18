@@ -105,7 +105,8 @@ __webpack_require__.r(__webpack_exports__);
 
 var widgetId = parseInt(Fliplet.Widget.getDefaultId(), 10);
 var widgetData = Fliplet.Widget.getData(widgetId) || {};
-console.log('DATA', widgetData);
+console.log('DATA', widgetData); // @TODO: Remove
+
 
 Vue.directive('sortable', {
   inserted: function inserted(el, binding) {
@@ -180,7 +181,8 @@ var app = new Vue({
       this.floors.splice(event.newIndex, 0, this.floors.splice(event.oldIndex, 1)[0]);
     },
     deleteFloor: function deleteFloor(index) {
-      var $vm = this;
+      var _this2 = this;
+
       Fliplet.Modal.confirm({
         title: 'Delete floorplan',
         message: '<p>Are you sure you want to delete this floor?</p>'
@@ -189,7 +191,7 @@ var app = new Vue({
           return;
         }
 
-        $vm.floors.splice(index, 1);
+        _this2.floors.splice(index, 1);
       });
     },
     onAddMarker: function onAddMarker() {
@@ -204,7 +206,8 @@ var app = new Vue({
       this.markers.push(newItem);
     },
     deleteMarker: function deleteMarker(index) {
-      var $vm = this;
+      var _this3 = this;
+
       Fliplet.Modal.confirm({
         title: 'Delete floorplan',
         message: '<p>Are you sure you want to delete this floor?</p>'
@@ -213,28 +216,36 @@ var app = new Vue({
           return;
         }
 
-        $vm.markers.splice(index, 1);
+        _this3.markers.splice(index, 1);
       });
     },
     onPanelSettingChanged: function onPanelSettingChanged(panelData) {
-      var _this2 = this;
+      var _this4 = this;
 
       this.floors.forEach(function (panel, index) {
+        if (panelData.name == panel.name && panelData.id !== panel.id) {
+          panelData.error = 'Floors must have different names';
+        }
+
         if (panelData.id === panel.id) {
           // To overcome the array change caveat
           // https://vuejs.org/v2/guide/list.html#Caveats
-          Vue.set(_this2.floors, index, panelData);
+          Vue.set(_this4.floors, index, panelData);
         }
       });
     },
     onMarkerPanelSettingChanged: function onMarkerPanelSettingChanged(panelData) {
-      var _this3 = this;
+      var _this5 = this;
 
       this.markers.forEach(function (panel, index) {
+        if (panelData.name == panel.name && panelData.id !== panel.id) {
+          panelData.error = 'Marker styles must have different names';
+        }
+
         if (panelData.id === panel.id) {
           // To overcome the array change caveat
           // https://vuejs.org/v2/guide/list.html#Caveats
-          Vue.set(_this3.markers, index, panelData);
+          Vue.set(_this5.markers, index, panelData);
         }
       });
     },
@@ -275,35 +286,35 @@ var app = new Vue({
     var _created = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
     /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-      var $vm;
+      var _this6 = this;
+
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              $vm = this;
               Fliplet.Floorplan.on('floor-panel-settings-changed', this.onPanelSettingChanged);
               Fliplet.Floorplan.on('marker-panel-settings-changed', this.onMarkerPanelSettingChanged);
               Fliplet.Floorplan.on('add-markers-settings-changed', this.onAddMarkersSettingChanged); // Create data source on first time
 
               if (this.autoDataSource) {
-                _context.next = 7;
+                _context.next = 6;
                 break;
               }
 
-              _context.next = 7;
+              _context.next = 6;
               return this.createDataSource();
 
-            case 7:
-              _context.next = 9;
+            case 6:
+              _context.next = 8;
               return this.loadDataSources();
 
-            case 9:
+            case 8:
               this.dataSources = _context.sent;
               // Switches UI to ready state
               $(selector).removeClass('is-loading');
               Fliplet.Studio.onMessage(function (event) {
                 if (event.data && event.data.event === 'overlay-close' && event.data.data && event.data.data.dataSourceId) {
-                  $vm.loadDataSources();
+                  _this6.loadDataSources();
                 }
               });
               Fliplet.Widget.onSaveRequest(function () {
@@ -320,10 +331,11 @@ var app = new Vue({
                 Fliplet.Floorplan.emit('floors-save');
                 Fliplet.Floorplan.emit('markers-save');
                 Fliplet.Floorplan.emit('add-markers-save');
-                $vm.prepareToSaveData();
+
+                _this6.prepareToSaveData();
               });
 
-            case 13:
+            case 12:
             case "end":
               return _context.stop();
           }
