@@ -1,0 +1,86 @@
+<div v-bind:class="{ 'is-loading': isLoading }" data-interactive-floorplan-id="{{ id }}">
+  <div v-show="containsData" class="floorplan-component-wrapper">
+    <div class="floor-wrapper-holder">
+      <div class="floor-wrapper" v-for="(floor, index) in floors" v-bind:class="{ 'active': selectedFloorData && floor.id === selectedFloorData.id }">
+        <div class="floor-container" :id="'floor-' + floor.id">
+          <img v-if="floor.image" class="floor-image" :data-src="floor.image.url" data-elem="bg" src="#"/>
+        </div>
+        <div data-elem="controlHolder">
+          <div class="zoomIn" data-elem="zoomIn" data-options="onCss:{opacity:1}; offCss:{opacity:0}">
+            <i class="fa fa-plus"></i>
+          </div>
+          <div class="zoomOut" data-elem="zoomOut" data-options="onCss:{opacity:1}; offCss:{opacity:0}">
+            <i class="fa fa-minus"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="floorplan-label-wrapper">
+      <div class="floorplan-label" v-bind:class="{ 'active': selectedMarkerToggle }">
+        <div class="floorplan-label-icon" v-if="selectedMarkerData">
+          <i :class="'fa-fw ' + selectedMarkerData.icon" :style="'color: ' + selectedMarkerData.color + ';'"></i>
+        </div>
+        <div class="floorplan-label-text" v-if="selectedMarkerData">
+          <p>\{{ selectedMarkerData.name }}</p>
+        </div>
+        <div class="floorplan-label-cancel" @click.prevent="removeSelectedMarker"><i class="fa fa-times"></i></div>
+      </div>
+    </div>
+    <div class="floorplan-search-icon" v-bind:class="{ 'active': mappedMarkerData && mappedMarkerData.length }" @click.prevent="toggleSearchOverlay">
+      <i class="fa fa-search"></i>
+    </div>
+    <div class="floors-button" v-bind:class="{ 'active': selectedFloorData && selectedFloorData.name }" v-if="selectedFloorData && selectedFloorData.name" @click.prevent="toggleFloorOverlay">
+      <i class="fa fa-map-marker"></i>
+      <div class="floors-button-text"><p>\{{ selectedFloorData.name }}</p></div>
+      <i class="fa fa-angle-right"></i>
+    </div>
+
+    <!-- Floors Overlay -->
+    <div class="floorplan-floors-overlay">
+      <div class="floorplan-overlay-topbar">
+        <p class="floorplan-overlay-title">FLOORS</p>
+        <div class="floorplan-overlay-close" @click.prevent="closeFloorsOverlay"><i class="fa fa-times"></i></div>
+      </div>
+      <div class="floorplan-overlay-scroll-container">
+        <div class="floorplan-overlay-list">
+          <div class="floor-list-item" v-for="(floor, index) in floors" v-bind:class="{ 'active': selectedFloorData && floor.id === selectedFloorData.id }" @click.prevent="setActiveFloor(index)">
+            <p class="floor-list-text">\{{floor.name}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Overlay -->
+    <div class="floorplan-search-overlay">
+      <div class="floorplan-overlay-topbar">
+        <div class="search-header">
+          <p class="floorplan-overlay-title">SEARCH</p>
+          <div class="floorplan-overlay-close" @click.prevent="closeSearchOverlay">
+            <i class="fa fa-times"></i>
+          </div>
+        </div>
+        <div class="floorplan-overlay-search-holder">
+          <input type="search" name="marker-name-search" class="form-control" placeholder="Type to search">
+          <span class="clear-search">Clear</span>
+        </div>
+      </div>
+      <div class="floorplan-overlay-scroll-container">
+        <div class="floorplan-overlay-list">
+          <div class="marker-list-item" v-for="(marker, index) in mappedMarkerData" @click.prevent="selectedMarker(marker, index)">
+            <div class="search-marker"><i :class="'fa-fw ' + marker.data.icon" :style="'color: ' + marker.data.color + ';'"></i></div>
+            <p class="marker-list-text">\{{ marker.data.name }} <span>\{{ marker.data.floor }}</span></p>
+          </div>
+        </div>
+        <div class="floorplan-overlay-not-found">
+          <p>We couldn't find a marker with the name <strong>""</strong>.</p>
+          <p>Please try a different name.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div v-show="!containsData" class="flooplan-app-placeholder">
+    <h3>Interactive floor plan</h3>
+    <p>Click here to edit the settings.</p>
+  </div>
+</div>

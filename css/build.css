@@ -1,0 +1,411 @@
+body {
+  padding-bottom: 0 !important;
+}
+
+.flooplan-app-placeholder {
+  padding: 20px;
+  text-align: center;
+  background: rgba(51,51,51,0.1);
+  border: 4px solid rgba(51,51,51,0.15);
+}
+
+.floorplan-component-wrapper {
+  position: relative;
+  height: 100vh;
+}
+
+body.fl-with-top-menu .floorplan-component-wrapper {
+  height: calc(100vh - 44px);
+  height: calc(100vh - (44px + env(safe-area-inset-bottom) + env(safe-area-inset-top)));
+}
+
+body.fl-with-bottom-menu .floorplan-component-wrapper {
+  height: calc(100vh - 65px);
+  height: calc(100vh - (65px + env(safe-area-inset-bottom) + env(safe-area-inset-top)));
+}
+
+.floor-wrapper-holder {
+  width: 100%;
+  height: 100%;
+}
+
+.floor-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100% !important;
+  overflow: auto;
+  display: none;
+  opacity: 0;
+}
+
+.floor-wrapper.active {
+  display: block;
+  opacity: 1;
+  overflow: hidden;
+  cursor: auto;
+}
+
+.floor-container {
+  position: relative;
+}
+
+.floor-container img {
+  max-width: none;
+  width: 100%;
+}
+
+.floorplan-label-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-height: 0;
+  padding: 5px;
+  pointer-events: none;
+}
+
+.floorplan-label {
+  width: auto;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  top: -100px;
+  padding: 0 10px;
+  border-radius: 100px;
+  color: #ffffff;
+  background-color: #333333;
+  pointer-events: all;
+  transition: top 0.25s ease-out;
+}
+
+.floorplan-label.active {
+  top: 0;
+}
+
+.floorplan-label-icon {
+  width: 30px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.floorplan-label-text p {
+  font-size: 16px;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1;
+}
+
+.floorplan-label-cancel {
+  font-size: 16px;
+  opacity: 0.7;
+  width: 30px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.floorplan-label-cancel .fa {
+  margin-top: -3px;
+}
+
+.floorplan-search-icon {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 23px;
+  color: #ffffff;
+  background-color: #333333;
+  border-radius: 50%;
+  pointer-events: all;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.25s ease-out;
+}
+
+.floorplan-search-icon.active {
+  opacity: 1;
+}
+
+.floorplan-search-icon .fa {
+  margin-top: -2px;
+}
+
+.floors-button {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  width: auto;
+  height: 40px;
+  padding: 0 10px;
+  font-size: 23px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  color: #ffffff;
+  background-color: #333333;
+  border-radius: 200px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.25s ease-out;
+}
+
+.floors-button.active {
+  opacity: 1;
+}
+
+.floors-button .fa-map-marker {
+  margin-top: -2px;
+  margin-right: 8px;
+}
+
+.floors-button-text p {
+  font-size: 16px;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1;
+}
+
+.floors-button .fa-angle-right {
+  font-size: 1.2em;
+  margin-top: -2px;
+  margin-left: 5px;
+  opacity: 0.6;
+}
+
+.zoomIn,
+.zoomOut {
+  position: absolute;
+  right: 5px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 23px;
+  color: #ffffff;
+  background-color: #333333;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.zoomIn {
+  bottom: 50px;
+}
+
+.zoomOut {
+  bottom: 95px;
+}
+
+.zoomIn.off,
+.zoomOut.off,
+.fullscreenToggle.off {
+  display: none;
+}
+
+.marker {
+  position: absolute!important;
+  z-index: 9;
+  bottom: auto!important;
+  right: auto!important;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marker .fa {
+  pointer-events: none;
+}
+
+.marker .active-state {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  transform: translate3d(-50%, -50%, 0);
+}
+
+.marker.active .active-state {
+  display: block;
+  -webkit-animation: pulse 1.2s ease-out infinite none;
+  animation: pulse 1.2s ease-out infinite none;
+}
+
+@keyframes pulse {
+  0% {
+    transform: translate3d(-50%, -50%, 0) scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate3d(-50%, -50%, 0) scale(3);
+    opacity: 0;
+  }
+}
+
+.floorplan-search-overlay,
+.floorplan-floors-overlay {
+  position: fixed;
+  background-color: #333333;
+  color: #ffffff;
+  z-index: 1013;
+  width: 100%;
+  max-width: 500px;
+  height: 100vh;
+  top: 0;
+  right: 0;
+  transform: translate3d(100%, 0, 0);
+  transition: all 0.1s;
+}
+
+.floorplan-search-overlay.overlay-open,
+.floorplan-floors-overlay.overlay-open {
+  transform: translate3d(0, 0, 0);
+}
+
+.floorplan-overlay-topbar {
+  position: absolute;
+  top: 0;
+  top: env(safe-area-inset-top);
+  left: 0;
+  width: 100%;
+  padding: 15px 20px;
+  line-height: 1;
+  background-color: #333333;
+  z-index: 1;
+}
+
+.floorplan-floors-overlay .floorplan-overlay-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.floorplan-overlay-title {
+  margin: 0;
+}
+
+.floorplan-overlay-close {
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.floorplan-overlay-scroll-container {
+  position: relative;
+  top: 65px;
+  top: calc(65px + env(safe-area-inset-top));
+  height: calc(100% - 65px);
+  height: calc(100% - (65px + env(safe-area-inset-top)));
+  width: 100%;
+  overflow: auto;
+}
+
+.floorplan-search-overlay .floorplan-overlay-scroll-container {
+  top: 104px;
+  top: calc(104px + env(safe-area-inset-top));
+  height: calc(100% - 104px);
+  height: calc(100% - (104px + env(safe-area-inset-top)));
+}
+
+.floorplan-overlay-list {
+  margin: 0;
+  padding: 0 20px 20px 0;
+  padding-bottom: calc(20px + env(safe-area-inset-bottom));
+}
+
+.marker-list-item,
+.floor-list-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  position: relative;
+  margin: 0 0 15px;
+  padding: 0 15px;
+  cursor: pointer;
+  border-left: solid 5px transparent;
+}
+
+.floor-list-item.active {
+  border-left-color: #ffffff;
+}
+
+.floor-list-text,
+.marker-list-text {
+  margin: 0;
+  font-size: 16px;
+}
+
+.floorplan-overlay-topbar .search-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.floorplan-overlay-search-holder {
+  position: relative;
+}
+
+.floorplan-overlay-search-holder .form-control {
+  border-radius: 40px;
+  box-shadow: none;
+  padding-right: 55px;
+}
+
+.floorplan-overlay-search-holder span {
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  height: 32px;
+  line-height: 32px;
+  border-radius: 32px;
+  padding: 0px 10px;
+  text-align: center;
+  font-size: 0.8em;
+  background: rgba($bodyTextColor, 0.5);
+  color: $bodyBackground;
+  cursor: pointer;
+  transition: opacity 0.1s ease-in-out;
+}
+
+.floorplan-overlay-search-holder span:active {
+  box-shadow: inset 0px 2px 2px 0px rgba($bodyTextColor, 0.2);
+}
+
+.floorplan-overlay-search-holder.searching span {
+  opacity: 1;
+  visibility: visible;
+}
+
+.floorplan-overlay-not-found {
+  margin: 0;
+  padding: 0 20px 20px;
+  text-align: center;
+}
+
+.search-marker {
+  position: relative;
+  margin-right: 10px;
+}
+
+.marker-list-text span {
+  margin-left: 10px;
+  opacity: 0.5;
+  font-size: 12px;
+}
