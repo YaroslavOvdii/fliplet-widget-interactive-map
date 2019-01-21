@@ -84,6 +84,7 @@
           </div>
           <div class="col-sm-8">
             <div class="btn btn-default" @click.prevent="openAddMarkers">Mark floor(s)</div>
+            <p v-if="hasError" class="text-danger">You need to add at least one floor and one marker style before continuing.</p>
           </div>
         </div>
       </form>
