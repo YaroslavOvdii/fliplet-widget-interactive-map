@@ -105,8 +105,6 @@ __webpack_require__.r(__webpack_exports__);
 
 var widgetId = parseInt(Fliplet.Widget.getDefaultId(), 10);
 var widgetData = Fliplet.Widget.getData(widgetId) || {};
-console.log('DATA', widgetData); // @TODO: Remove
-
 
 Vue.directive('sortable', {
   inserted: function inserted(el, binding) {
@@ -130,6 +128,7 @@ var app = new Vue({
       settings: widgetData,
       floors: widgetData.floors || [],
       markers: widgetData.markers || [],
+      hasError: false,
       showAddMarkersUI: false
     };
   },
@@ -253,6 +252,12 @@ var app = new Vue({
       this.settings = _.assignIn(this.settings, addMarkersData);
     },
     openAddMarkers: function openAddMarkers() {
+      if (!this.floors.length || !this.markers.length) {
+        this.hasError = true;
+        return;
+      }
+
+      this.hasError = false;
       this.showAddMarkersUI = true;
       Fliplet.Studio.emit('widget-mode', this.settings.savedData ? 'wide' : 'normal');
     },

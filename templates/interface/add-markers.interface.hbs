@@ -7,7 +7,10 @@
       </div>
     </div>
     <div v-else class="floors-container">
-      <div class="floor-wrapper-holder">
+      <div v-show="!mappedMarkerData.length" class="no-markers">
+        Your floor plans will appear here once you create a new marker.
+      </div>
+      <div v-show="mappedMarkerData.length" class="floor-wrapper-holder">
         <div v-for="(floor, index) in widgetData.floors" class="floor-wrapper" v-bind:class="{ 'active': selectedMarkerData.floor && floor.id === selectedMarkerData.floor.id }">
           <div class="floor-container" :id="'floor-' + floor.id" data-elem="pinchzoomer">
             <img v-if="floor.image" class="floor-image" data-elem="bg" :src="floor.image.url"/>
@@ -106,7 +109,10 @@
             </div>
           </div>
           <div v-else class="col-sm-12 markers-ui">
-            <div v-for="(markerInfo, index) in mappedMarkerData" class="marker-holder" v-bind:class="{ 'active': activeMarker === index }" @click.prevent="setActiveMarker(index)">
+            <div v-if="!mappedMarkerData.length" class="no-markers">
+              Use the button below to add a new marker to your floor plan.
+            </div>
+            <div v-else v-for="(markerInfo, index) in mappedMarkerData" class="marker-holder" v-bind:class="{ 'active': activeMarker === index }" @click.prevent="setActiveMarker(index)">
               <div class="marker-wrapper">
                 <div v-if="markerInfo.data.updateName" class="marker-name-edit-holder">
                   <input v-model="markerInfo.data.name" :ref="'changename-' + index" class="form-control" @keyup.enter="confirmName(index)" @keyup.esc="cancelNameUpdate(index)"/> <i class="fa fa-check-circle" @click.prevent="confirmName(index)"></i> <i class="fa fa-ban" @click.prevent="cancelNameUpdate(index)"></i>
@@ -142,6 +148,9 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="settings-buttons-wrapper">
+      <div class="btn btn-secondary" @click.prevent="addNewMarker">Add new marker</div>
     </div>
   </div>
 </div>

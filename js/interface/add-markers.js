@@ -65,7 +65,7 @@ Fliplet.Floorplan.component('add-markers', {
         floor: undefined,
         marker: undefined
       },
-      saveDebounced: _.debounce(this.saveToDataSource, 10000)
+      saveDebounced: _.debounce(this.saveToDataSource, 1000)
     }
   },
   computed: {
@@ -255,19 +255,18 @@ Fliplet.Floorplan.component('add-markers', {
         this.pinchzoomer = null
       }
 
-      new PinchZoomer($('#floor-' + this.selectedMarkerData.floor.id), {
+      this.pinchzoomer = new PinchZoomer($('#floor-' + this.selectedMarkerData.floor.id), {
         adjustHolderSize: false,
         maxZoom: 4,
         initZoom: 1,
         zoomStep: 0.25,
-        allowMouseWheelZoom: true,
+        allowMouseWheelZoom: false,
         animDuration: 0.1,
         scaleMode: 'proportionalInside',
         zoomToMarker: true,
         allowCenterDrag: true
       })
 
-      this.pinchzoomer = PinchZoomer.get('floor-' + this.selectedMarkerData.floor.id)
       this.pzHandler = new Hammer(this.pinchzoomer.elem().get(0))
 
       this.addMarkers(true)
@@ -379,7 +378,7 @@ Fliplet.Floorplan.component('add-markers', {
           // If you want to do specific queries to return your rows
           // See the documentation here: https://developers.fliplet.com/API/fliplet-datasources.html
           this.dataSourceConnection = connection // To keep the connection to update/delete data later on
-          return connection.find();
+          return connection.find()
         })
     },
     cleanData() {
@@ -406,6 +405,26 @@ Fliplet.Floorplan.component('add-markers', {
       const data = this.cleanData()
       this.dataSourceConnection.commit(data)
     },
+    addNewMarker() {
+      const newObj = {}
+      const markerLength = this.mappedMarkerData.length
+
+      newObj[this.markerNameColumn] = `New marker ${markerLength + 1}`
+      newObj[this.markerFloorColumn] = this.widgetData.floors.length ? this.widgetData.floors[0].name : ''
+      newObj[this.markerTypeColumn] = this.widgetData.markers.length ? this.widgetData.markers[0].name : ''
+      newObj[this.markerXPositionColumn] = ''
+      newObj[this.markerYPositionColumn] = ''
+
+      this.dataSourceConnection.insert(newObj)
+        .then(() => {
+          return this.getMarkersData()
+        })
+        .then((data) => {
+          this.markersData = data
+          this.mappedMarkerData = this.mapMarkerData()
+          this.setActiveMarker(0, true)
+        })
+    },
     saveData() {
       const markersData = _.pick(this, [
         'markersDataSourceId',
@@ -420,15 +439,21 @@ Fliplet.Floorplan.component('add-markers', {
   },
   async created() {
     this.markersData = await this.getMarkersData()
-    console.log(this.markersData)
     this.isLoading = false
     this.mappedMarkerData = this.mapMarkerData()
 
     Fliplet.Studio.onMessage((event) => {
       if (event.data && event.data.event === 'overlay-close' && event.data.data && event.data.data.dataSourceId) {
-        this.reloadDataSources().then((dataSources) => {
-          this.dataSources = dataSources
-        })
+        this.reloadDataSources()
+          .then((dataSources) => {
+            this.dataSources = dataSources
+            return this.getMarkersData()
+          })
+          .then((data) => {
+            this.markersData = data
+            this.mappedMarkerData = this.mapMarkerData()
+            this.setupPinchZoomer()
+          })
       }
     })
 

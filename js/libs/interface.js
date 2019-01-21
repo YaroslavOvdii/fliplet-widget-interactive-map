@@ -1,6 +1,5 @@
 const widgetId = parseInt(Fliplet.Widget.getDefaultId(), 10)
 const widgetData = Fliplet.Widget.getData(widgetId) || {}
-console.log('DATA', widgetData) // @TODO: Remove
 
 import * as Sortable from 'sortablejs/Sortable.js'
 
@@ -28,6 +27,7 @@ const app = new Vue({
       settings: widgetData,
       floors: widgetData.floors || [],
       markers: widgetData.markers || [],
+      hasError: false,
       showAddMarkersUI: false
     }
   },
@@ -144,6 +144,12 @@ const app = new Vue({
       this.settings = _.assignIn(this.settings, addMarkersData)
     },
     openAddMarkers() {
+      if (!this.floors.length || !this.markers.length) {
+        this.hasError = true
+        return
+      }
+      
+      this.hasError = false
       this.showAddMarkersUI = true
       Fliplet.Studio.emit('widget-mode', this.settings.savedData ? 'wide' : 'normal')
     },

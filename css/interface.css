@@ -264,6 +264,10 @@ header .title-holder p {
   margin-top: 40px;
 }
 
+.add-markers-form-group .text-danger {
+  margin-top: 5px;
+}
+
 /* COLORPICKER */
 [colorpicker-component] {
   width: 100%;
@@ -311,7 +315,7 @@ header .title-holder p {
 }
 
 .settings-holder {
-  padding: 20px 15px;
+  padding: 20px 15px 92px;
   overflow-y: auto;
 }
 
@@ -587,4 +591,19 @@ header .title-holder p {
 .marker-delete-holder:hover {
   color: #c20000;
   background-color: rgba(0,0,0,0.05);
+}
+
+.no-markers {
+  padding: 50px 60px;
+  opacity: 0.4;
+  text-align: center;
+}
+
+.settings-buttons-wrapper {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 15px;
+  border-top: 1px solid #e3e9eb;
 }

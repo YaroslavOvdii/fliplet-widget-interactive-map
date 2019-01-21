@@ -171,7 +171,7 @@ Fliplet.Floorplan.component('add-markers', {
         floor: undefined,
         marker: undefined
       },
-      saveDebounced: _.debounce(this.saveToDataSource, 10000)
+      saveDebounced: _.debounce(this.saveToDataSource, 1000)
     };
   },
   computed: {
@@ -374,18 +374,17 @@ Fliplet.Floorplan.component('add-markers', {
         this.pinchzoomer = null;
       }
 
-      new PinchZoomer($('#floor-' + this.selectedMarkerData.floor.id), {
+      this.pinchzoomer = new PinchZoomer($('#floor-' + this.selectedMarkerData.floor.id), {
         adjustHolderSize: false,
         maxZoom: 4,
         initZoom: 1,
         zoomStep: 0.25,
-        allowMouseWheelZoom: true,
+        allowMouseWheelZoom: false,
         animDuration: 0.1,
         scaleMode: 'proportionalInside',
         zoomToMarker: true,
         allowCenterDrag: true
       });
-      this.pinchzoomer = PinchZoomer.get('floor-' + this.selectedMarkerData.floor.id);
       this.pzHandler = new Hammer(this.pinchzoomer.elem().get(0));
       this.addMarkers(true);
       this.attachEventHandler();
@@ -544,6 +543,25 @@ Fliplet.Floorplan.component('add-markers', {
       var data = this.cleanData();
       this.dataSourceConnection.commit(data);
     },
+    addNewMarker: function addNewMarker() {
+      var _this10 = this;
+
+      var newObj = {};
+      var markerLength = this.mappedMarkerData.length;
+      newObj[this.markerNameColumn] = "New marker ".concat(markerLength + 1);
+      newObj[this.markerFloorColumn] = this.widgetData.floors.length ? this.widgetData.floors[0].name : '';
+      newObj[this.markerTypeColumn] = this.widgetData.markers.length ? this.widgetData.markers[0].name : '';
+      newObj[this.markerXPositionColumn] = '';
+      newObj[this.markerYPositionColumn] = '';
+      this.dataSourceConnection.insert(newObj).then(function () {
+        return _this10.getMarkersData();
+      }).then(function (data) {
+        _this10.markersData = data;
+        _this10.mappedMarkerData = _this10.mapMarkerData();
+
+        _this10.setActiveMarker(0, true);
+      });
+    },
     saveData: function saveData() {
       var markersData = _.pick(this, ['markersDataSourceId', 'markerNameColumn', 'markerFloorColumn', 'markerTypeColumn', 'markerXPositionColumn', 'markerYPositionColumn']);
 
@@ -554,7 +572,7 @@ Fliplet.Floorplan.component('add-markers', {
     var _created = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
     /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-      var _this10 = this;
+      var _this11 = this;
 
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
         while (1) {
@@ -565,19 +583,24 @@ Fliplet.Floorplan.component('add-markers', {
 
             case 2:
               this.markersData = _context.sent;
-              console.log(this.markersData);
               this.isLoading = false;
               this.mappedMarkerData = this.mapMarkerData();
               Fliplet.Studio.onMessage(function (event) {
                 if (event.data && event.data.event === 'overlay-close' && event.data.data && event.data.data.dataSourceId) {
-                  _this10.reloadDataSources().then(function (dataSources) {
-                    _this10.dataSources = dataSources;
+                  _this11.reloadDataSources().then(function (dataSources) {
+                    _this11.dataSources = dataSources;
+                    return _this11.getMarkersData();
+                  }).then(function (data) {
+                    _this11.markersData = data;
+                    _this11.mappedMarkerData = _this11.mapMarkerData();
+
+                    _this11.setupPinchZoomer();
                   });
                 }
               });
               Fliplet.Floorplan.on('add-markers-save', this.saveData);
 
-            case 8:
+            case 7:
             case "end":
               return _context.stop();
           }
