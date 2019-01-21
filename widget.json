@@ -1,5 +1,5 @@
 {
-  "name": "Interactive Floorplan",
+  "name": "Interactive Floor Plan",
   "package": "com.fliplet.interactive-floorplan",
   "version": "1.0.0",
   "icon": "img/icon.png",
@@ -9,13 +9,13 @@
   "interface": {
     "dependencies": [
       "fliplet-core",
-      "handlebars",
-      "lodash",
-      "vue.js",
       "fliplet-studio-ui",
       "fliplet-datasources",
+      "lodash",
+      "hammer.js",
       "bootstrap",
-      "hammer.js"
+      "handlebars",
+      "vue.js"
     ],
     "assets": [
       "vendor/TweenMax.js",
@@ -39,11 +39,13 @@
   "build": {
     "dependencies": [
       "fliplet-core",
-      "handlebars",
-      "bootstrap",
-      "vue.js",
       "fliplet-datasources",
-      "font-awesome"
+      "lodash",
+      "hammer.js",
+      "bootstrap",
+      "handlebars",
+      "font-awesome",
+      "vue.js"
     ],
     "assets": [
       "vendor/TweenMax.js",
