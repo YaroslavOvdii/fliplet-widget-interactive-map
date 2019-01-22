@@ -283,7 +283,7 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   top: env(safe-area-inset-top);
   left: 0;
   width: 100%;
-  padding: 15px 20px;
+  padding: 0px 20px;
   line-height: 1;
   background-color: #333333;
   z-index: 1;
@@ -292,7 +292,13 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
 .floorplan-floors-overlay .floorplan-overlay-topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  padding: 0 20px 0 55px;
+  height: 55px;
+}
+
+.floorplan-search-overlay .floorplan-overlay-topbar {
+  padding: 0;
 }
 
 .floorplan-overlay-title {
@@ -300,30 +306,38 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
 }
 
 .floorplan-overlay-close {
-  font-size: 25px;
+  font-size: 34px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
 }
 
 .floorplan-overlay-scroll-container {
   position: relative;
-  top: 65px;
-  top: calc(65px + env(safe-area-inset-top));
-  height: calc(100% - 65px);
-  height: calc(100% - (65px + env(safe-area-inset-top)));
+  top: 55px;
+  top: calc(55px + env(safe-area-inset-top));
+  height: calc(100% - 55px);
+  height: calc(100% - (55px + env(safe-area-inset-top)));
   width: 100%;
   overflow: auto;
 }
 
 .floorplan-search-overlay .floorplan-overlay-scroll-container {
-  top: 104px;
-  top: calc(104px + env(safe-area-inset-top));
-  height: calc(100% - 104px);
-  height: calc(100% - (104px + env(safe-area-inset-top)));
+  top: 89px;
+  top: calc(89px + env(safe-area-inset-top));
+  height: calc(100% - 89px);
+  height: calc(100% - (89px + env(safe-area-inset-top)));
 }
 
 .floorplan-overlay-list {
   margin: 0;
-  padding: 0 20px 20px 0;
+  padding: 20px 20px 20px 0;
   padding-bottom: calc(20px + env(safe-area-inset-bottom));
 }
 
@@ -350,14 +364,17 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
 }
 
 .floorplan-overlay-topbar .search-header {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 15px;
+  height: 55px;
+  padding: 0px 20px 0 55px;
 }
 
 .floorplan-overlay-search-holder {
   position: relative;
+  padding: 0 20px;
 }
 
 .floorplan-overlay-search-holder .form-control {

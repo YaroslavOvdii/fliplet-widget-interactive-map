@@ -36,6 +36,8 @@ Fliplet.Widget.instance('interactive-floorplan', function(data) {
     },
     watch: {
       searchValue() {
+        this.noSearchResults = false
+
         if (this.searchTimeout) {
           clearTimeout(this.searchTimeout)
           this.searchTimeout = null
@@ -46,12 +48,10 @@ Fliplet.Widget.instance('interactive-floorplan', function(data) {
     methods: {
       filterMarkers() {
         if (!this.searchValue) {
-          this.noSearchResults = false
           this.searchMarkerData = _.cloneDeep(this.mappedMarkerData)
           return
         }
 
-        this.noSearchResults = false
         this.searchMarkerData = _.filter(this.mappedMarkerData, (marker) => {
           return _.some(['name', 'floor'], (key) => {
             return marker.data[key] && marker.data[key].toString().toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1
@@ -166,11 +166,8 @@ Fliplet.Widget.instance('interactive-floorplan', function(data) {
         this.toggleFloorOverlay(false)
       },
       setActiveMarker(markerIndex) {
-        if (this.activeMarker !== markerIndex) {
-          this.activeMarker = markerIndex
-          this.setupPinchZoomer()
-        }
-
+        this.activeMarker = markerIndex
+        this.setupPinchZoomer()
         this.toggleSearchOverlay(false)
       },
       selectedMarker(markerData) {
