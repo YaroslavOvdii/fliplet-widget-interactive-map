@@ -19,6 +19,7 @@ Fliplet.Widget.instance('interactive-floorplan', function(data) {
         markerYPositionColumn: data.markerYPositionColumn || undefined,
         markersData: undefined,
         mappedMarkerData: [],
+        searchMarkerData: undefined,
         pinchzoomer: null,
         pzHandler: undefined,
         markerElemHandler: undefined,
@@ -27,10 +28,40 @@ Fliplet.Widget.instance('interactive-floorplan', function(data) {
         selectedFloorData: undefined,
         selectedMarkerData: undefined,
         selectedMarkerToggle: false,
-        selectedPinchMarker: undefined
+        selectedPinchMarker: undefined,
+        searchTimeout: null,
+        searchValue: '',
+        noSearchResults: false
+      }
+    },
+    watch: {
+      searchValue() {
+        if (this.searchTimeout) {
+          clearTimeout(this.searchTimeout)
+          this.searchTimeout = null
+        }
+        this.searchTimeout = setTimeout(this.filterMarkers, 500)
       }
     },
     methods: {
+      filterMarkers() {
+        if (!this.searchValue) {
+          this.noSearchResults = false
+          this.searchMarkerData = _.cloneDeep(this.mappedMarkerData)
+          return
+        }
+
+        this.noSearchResults = false
+        this.searchMarkerData = _.filter(this.mappedMarkerData, (marker) => {
+          return _.some(['name', 'floor'], (key) => {
+            return marker.data[key] && marker.data[key].toString().toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1
+          })
+        })
+
+        if (!this.searchMarkerData.length) {
+          this.noSearchResults = true
+        }
+      },
       mapMarkerData() {
         const newMarkerData = this.markersData.map((marker) => {
           const markerData = _.find(this.markerStyles, { name: marker.data[this.markerTypeColumn] })
@@ -142,8 +173,9 @@ Fliplet.Widget.instance('interactive-floorplan', function(data) {
 
         this.toggleSearchOverlay(false)
       },
-      selectedMarker(markerData, markerIndex) {
+      selectedMarker(markerData) {
         const floorIndex = _.findIndex(this.floors, (o) => { return o.name == markerData.data.floor })
+        const markerIndex = _.findIndex(this.mappedMarkerData, (o) => { return o.data.name == markerData.data.name })
 
         this.setActiveFloor(floorIndex, true)
         this.setActiveMarker(markerIndex)
@@ -173,6 +205,8 @@ Fliplet.Widget.instance('interactive-floorplan', function(data) {
         this.toggleSearchOverlay(false)
       },
       toggleSearchOverlay(forceOpen) {
+        this.searchValue = ''
+
         if (typeof forceOpen === 'undefined') {
           $(selector).find('.floorplan-search-overlay').toggleClass('overlay-open')
           return
@@ -194,7 +228,14 @@ Fliplet.Widget.instance('interactive-floorplan', function(data) {
     async mounted() {
       this.markersData = await this.connectToDataSource(this.markersDataSource)
       this.mappedMarkerData = this.mapMarkerData()
+      this.searchMarkerData = _.cloneDeep(this.mappedMarkerData)
       this.$nextTick(this.setupPinchZoomer)
     },
+    beforeDestroy() {
+      if (this.searchTimeout) {
+        clearTimeout(this.searchTimeout)
+        this.searchTimeout = null
+      }
+    }
   });
 });
