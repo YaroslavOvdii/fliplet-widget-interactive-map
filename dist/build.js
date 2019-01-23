@@ -384,6 +384,21 @@ Fliplet().then(function () {
 
           $(selector).find('.floorplan-search-overlay')[forceOpen ? 'addClass' : 'removeClass']('overlay-open');
         },
+        onLabelClick: function onLabelClick() {
+          var _this8 = this;
+
+          Fliplet.Hooks.run('flFloorplanOnLabelClick', {
+            selectedMarker: this.selectedMarkerData,
+            config: this,
+            id: _data.id,
+            uuid: _data.uuid,
+            container: $(selector)
+          }).then(function () {
+            if (_this8.labelAction) {
+              _this8.labelAction();
+            }
+          });
+        },
         connectToDataSource: function connectToDataSource(options) {
           return Fliplet.DataSources.connect(this.markersDataSourceId, options).then(function (connection) {
             return connection.find();
@@ -402,7 +417,7 @@ Fliplet().then(function () {
           });
         },
         init: function init() {
-          var _this8 = this;
+          var _this9 = this;
 
           var cache = {
             offline: true
@@ -413,33 +428,33 @@ Fliplet().then(function () {
             uuid: _data.uuid,
             container: $(selector)
           }).then(function () {
-            if (_this8.getData) {
-              _this8.connectToDataSource = _this8.getData;
+            if (_this9.getData) {
+              _this9.connectToDataSource = _this9.getData;
 
-              if (_this8.hasOwnProperty('cache')) {
-                cache.offline = _this8.cache;
+              if (_this9.hasOwnProperty('cache')) {
+                cache.offline = _this9.cache;
               }
             }
 
-            return _this8.connectToDataSource(cache);
+            return _this9.connectToDataSource(cache);
           }).then(function (data) {
-            _this8.markersData = data;
-            _this8.mappedMarkerData = _this8.mapMarkerData();
+            _this9.markersData = data;
+            _this9.mappedMarkerData = _this9.mapMarkerData();
             return Fliplet.Hooks.run('flFloorplanBeforeRenderMap', {
-              config: _this8,
+              config: _this9,
               id: data.id,
               uuid: data.uuid,
               container: $(selector)
             });
           }).then(function () {
-            _this8.searchMarkerData = _.cloneDeep(_this8.mappedMarkerData); // Check if startOnMarker is set
+            _this9.searchMarkerData = _.cloneDeep(_this9.mappedMarkerData); // Check if startOnMarker is set
 
-            if (_this8.startOnMarker) {
-              _this8.selectMarkerOnStart();
-            } else if (_this8.startOnFloor) {
-              _this8.selectFloorOnStart();
+            if (_this9.startOnMarker) {
+              _this9.selectMarkerOnStart();
+            } else if (_this9.startOnFloor) {
+              _this9.selectFloorOnStart();
             } else {
-              _this8.$nextTick(_this8.setupPinchZoomer);
+              _this9.$nextTick(_this9.setupPinchZoomer);
             }
 
             return;

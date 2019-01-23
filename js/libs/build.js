@@ -240,6 +240,19 @@ Fliplet().then(function () {
           
           $(selector).find('.floorplan-search-overlay')[forceOpen ? 'addClass' : 'removeClass']('overlay-open')
         },
+        onLabelClick() {
+          Fliplet.Hooks.run('flFloorplanOnLabelClick', {
+            selectedMarker: this.selectedMarkerData,
+            config: this,
+            id: data.id,
+            uuid: data.uuid,
+            container: $(selector)
+          }).then(() => {
+            if (this.labelAction) {
+              this.labelAction()
+            }
+          })
+        },
         connectToDataSource(options) {
           return Fliplet.DataSources.connect(this.markersDataSourceId, options)
             .then((connection) => {
