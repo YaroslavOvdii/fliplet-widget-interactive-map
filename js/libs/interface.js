@@ -95,8 +95,8 @@ const app = new Vue({
         id: this.makeid(8),
         isFromNew: true,
         name: `Marker ${this.markers.length + 1}`,
-        icon: '',
-        color: '#333333',
+        icon: 'fa fa-circle',
+        color: '#337ab7',
         type: 'marker-panel'
       }
 

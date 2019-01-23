@@ -106,11 +106,11 @@ Fliplet.Floorplan.component('marker-panel', {
     },
     icon: {
       type: String,
-      default: ''
+      default: 'fa fa-circle'
     },
     color: {
       type: String,
-      default: '#333333'
+      default: '#337ab7'
     },
     size: {
       type: String,
