@@ -2,6 +2,16 @@ body {
   padding-bottom: 0 !important;
 }
 
+[data-interactive-floorplan-id] {
+  opacity: 1;
+  transition: opacity 0.25s ease-out;
+}
+
+[data-interactive-floorplan-id].is-loading {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .flooplan-app-placeholder {
   padding: 20px;
   text-align: center;
