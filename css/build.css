@@ -66,31 +66,28 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
 
 .floorplan-label-wrapper {
   position: absolute;
-  top: 0;
-  left: 0;
-  min-height: 0;
-  padding: 5px;
-  pointer-events: none;
-}
-
-.floorplan-label {
+  top: -100px;
+  left: 5px;
   width: auto;
   height: 40px;
   display: flex;
   align-items: center;
-  overflow: hidden;
-  position: relative;
-  top: -100px;
   padding: 0 10px;
   border-radius: 100px;
   color: #ffffff;
   background-color: #333333;
-  pointer-events: all;
   transition: top 0.25s ease-out;
 }
 
-.floorplan-label.active {
-  top: 0;
+.floorplan-label-wrapper.active {
+  top: 5px;
+}
+
+.floorplan-label {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  height: 100%;
 }
 
 .floorplan-label-icon {

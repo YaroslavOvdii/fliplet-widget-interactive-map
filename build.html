@@ -16,16 +16,16 @@
       </div>
     </div>
 
-    <div class="floorplan-label-wrapper">
-      <div class="floorplan-label" v-bind:class="{ 'active': selectedMarkerToggle }">
+    <div class="floorplan-label-wrapper" v-bind:class="{ 'active': selectedMarkerToggle }">
+      <div class="floorplan-label" @click.prevent="onLabelClick">
         <div class="floorplan-label-icon" v-if="selectedMarkerData">
           <i :class="'fa-fw ' + selectedMarkerData.icon" :style="'color: ' + selectedMarkerData.color + ';'"></i>
         </div>
         <div class="floorplan-label-text" v-if="selectedMarkerData">
           <p>\{{ selectedMarkerData.name }}</p>
         </div>
-        <div class="floorplan-label-cancel" @click.prevent="removeSelectedMarker"><i class="fa fa-times"></i></div>
       </div>
+      <div class="floorplan-label-cancel" @click.prevent="removeSelectedMarker"><i class="fa fa-times"></i></div>
     </div>
     <div class="floorplan-search-icon" v-bind:class="{ 'active': mappedMarkerData && mappedMarkerData.length }" @click.prevent="toggleSearchOverlay">
       <i class="fa fa-search"></i>
