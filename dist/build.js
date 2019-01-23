@@ -108,10 +108,9 @@ Fliplet.Widget.instance('interactive-floorplan', function (_data) {
     el: $(selector)[0],
     data: function data() {
       return {
-        isLoading: true,
-        containsData: _data.floors.length && _data.markers.length,
-        floors: _data.floors.length ? _data.floors : [],
-        markerStyles: _data.markers.length ? _data.markers : [],
+        containsData: _data.floors && _data.floors.length && _data.markers && _data.markers.length,
+        floors: _data.floors && _data.floors.length ? _data.floors : [],
+        markerStyles: _data.markers && _data.markers.length ? _data.markers : [],
         markersDataSource: _data.markersDataSourceId || undefined,
         markerNameColumn: _data.markerNameColumn || undefined,
         markerFloorColumn: _data.markerFloorColumn || undefined,
@@ -346,6 +345,18 @@ Fliplet.Widget.instance('interactive-floorplan', function (_data) {
         };
         return Fliplet.DataSources.connect(id, cache).then(function (connection) {
           return connection.find();
+        }).catch(function (error) {
+          Fliplet.UI.Toast({
+            message: 'Error loading data',
+            actions: [{
+              label: 'Details',
+              action: function action() {
+                Fliplet.UI.Toast({
+                  html: error.message || error
+                });
+              }
+            }]
+          });
         });
       }
     },
@@ -357,16 +368,24 @@ Fliplet.Widget.instance('interactive-floorplan', function (_data) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                _context.next = 2;
+                if (!this.containsData) {
+                  _context.next = 7;
+                  break;
+                }
+
+                _context.next = 3;
                 return this.connectToDataSource(this.markersDataSource);
 
-              case 2:
+              case 3:
                 this.markersData = _context.sent;
                 this.mappedMarkerData = this.mapMarkerData();
                 this.searchMarkerData = _.cloneDeep(this.mappedMarkerData);
                 this.$nextTick(this.setupPinchZoomer);
 
-              case 6:
+              case 7:
+                $(selector).removeClass('is-loading');
+
+              case 8:
               case "end":
                 return _context.stop();
             }

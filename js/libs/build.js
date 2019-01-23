@@ -7,10 +7,9 @@ Fliplet.Widget.instance('interactive-floorplan', function(data) {
     el: $(selector)[0],
     data() {
       return {
-        isLoading: true,
-        containsData: data.floors.length && data.markers.length,
-        floors: data.floors.length ? data.floors : [],
-        markerStyles: data.markers.length ? data.markers : [],
+        containsData: data.floors && data.floors.length && data.markers && data.markers.length,
+        floors: data.floors && data.floors.length ? data.floors : [],
+        markerStyles: data.markers && data.markers.length ? data.markers : [],
         markersDataSource: data.markersDataSourceId || undefined,
         markerNameColumn: data.markerNameColumn || undefined,
         markerFloorColumn: data.markerFloorColumn || undefined,
@@ -220,13 +219,32 @@ Fliplet.Widget.instance('interactive-floorplan', function(data) {
           .then((connection) => {
             return connection.find()
           })
+          .catch((error) => {
+            Fliplet.UI.Toast({
+              message: 'Error loading data',
+              actions: [
+                {
+                  label: 'Details',
+                  action: function () {
+                    Fliplet.UI.Toast({
+                      html: error.message || error
+                    });
+                  }
+                }
+              ]
+            })
+          })
       }
     },
     async mounted() {
-      this.markersData = await this.connectToDataSource(this.markersDataSource)
-      this.mappedMarkerData = this.mapMarkerData()
-      this.searchMarkerData = _.cloneDeep(this.mappedMarkerData)
-      this.$nextTick(this.setupPinchZoomer)
+      if (this.containsData) {
+        this.markersData = await this.connectToDataSource(this.markersDataSource)
+        this.mappedMarkerData = this.mapMarkerData()
+        this.searchMarkerData = _.cloneDeep(this.mappedMarkerData)
+        this.$nextTick(this.setupPinchZoomer)
+      }
+
+      $(selector).removeClass('is-loading')
     },
     beforeDestroy() {
       if (this.searchTimeout) {
