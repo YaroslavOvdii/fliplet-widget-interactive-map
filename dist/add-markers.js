@@ -171,6 +171,7 @@ Fliplet.Floorplan.component('add-markers', {
         floor: undefined,
         marker: undefined
       },
+      selectedPinchMarker: undefined,
       saveDebounced: _.debounce(this.saveToDataSource, 1000)
     };
   },
@@ -359,6 +360,8 @@ Fliplet.Floorplan.component('add-markers', {
       Fliplet.Studio.emit('widget-mode', 'normal');
     },
     setupPinchZoomer: function setupPinchZoomer() {
+      debugger;
+
       if (!this.mappedMarkerData.length) {
         return;
       }
@@ -379,7 +382,7 @@ Fliplet.Floorplan.component('add-markers', {
         maxZoom: 4,
         initZoom: 1,
         zoomStep: 0.25,
-        allowMouseWheelZoom: false,
+        allowMouseWheelZoom: true,
         animDuration: 0.1,
         scaleMode: 'proportionalInside',
         zoomToMarker: true,
@@ -389,6 +392,7 @@ Fliplet.Floorplan.component('add-markers', {
       this.pzHandler = new Hammer(this.pinchzoomer.elem().get(0));
       this.addMarkers(true);
       this.attachEventHandler();
+      this.selectPinchMarker();
     },
     addMarkers: function addMarkers(fromLoad, options) {
       var _this5 = this;
@@ -400,14 +404,15 @@ Fliplet.Floorplan.component('add-markers', {
         this.pinchzoomer.removeMarkers(true);
         this.mappedMarkerData.forEach(function (marker, index) {
           if (marker.data.floor === _this5.selectedMarkerData.floor.name) {
-            markerElem = $("<i id='marker-" + index + "' class='marker " + marker.data.icon + "' style='left: -15px; top: -15px; position: absolute; color: " + marker.data.color + "; font-size: " + marker.data.size + ";' data-tooltip='" + marker.data.name + "'></i>");
+            markerElem = $("<div id='marker-" + index + "' class='marker' data-tooltip='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute;'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state' style='background-color: " + marker.data.color + ";'></div></div>");
             _this5.markerElemHandler = new Hammer(markerElem.get(0));
 
             _this5.pinchzoomer.addMarkers([new Marker(markerElem, {
               x: marker.data.positionx,
               y: marker.data.positiony,
               transformOrigin: '50% 50%',
-              name: marker.data.name
+              name: marker.data.name,
+              id: marker.id
             })]);
 
             _this5.markerElemHandler.on('tap', _this5.onMarkerHandler);
@@ -416,7 +421,7 @@ Fliplet.Floorplan.component('add-markers', {
         return;
       }
 
-      markerElem = $("<i id='marker-" + options.index + "' class='marker " + this.selectedMarkerData.marker.data.icon + "' style='left: -15px; top: -15px; position: absolute; color: " + this.selectedMarkerData.marker.data.color + "; font-size: " + this.selectedMarkerData.marker.data.size + ";' data-tooltip='" + this.selectedMarkerData.marker.data.name + "'></i>");
+      markerElem = $("<div id='marker-" + options.index + "' class='marker' data-tooltip='" + this.selectedMarkerData.marker.data.name + "' style='left: -15px; top: -15px; position: absolute;'><i class='" + this.selectedMarkerData.marker.data.icon + "' style='color: " + this.selectedMarkerData.marker.data.color + "; font-size: " + this.selectedMarkerData.marker.data.size + ";'></i><div class='active-state' style='background-color: " + this.selectedMarkerData.marker.data.color + ";'></div></div>");
       this.markerElemHandler = new Hammer(markerElem.get(0));
 
       if (options.existingMarker) {
@@ -434,7 +439,8 @@ Fliplet.Floorplan.component('add-markers', {
           x: options.x,
           y: options.y,
           transformOrigin: '50% 50%',
-          name: this.selectedMarkerData.marker.data.name
+          name: this.selectedMarkerData.marker.data.name,
+          id: this.selectedMarkerData.marker.id
         })]);
       }
 
@@ -494,6 +500,30 @@ Fliplet.Floorplan.component('add-markers', {
         this.pinchzoomer.removeMarker(index, true);
       }
     },
+    selectPinchMarker: function selectPinchMarker() {
+      var _this8 = this;
+
+      debugger; // Remove any active marker
+
+      $('.marker').removeClass('active'); // Get markers
+
+      var markers = this.pinchzoomer.markers(); // Store first marker
+
+      var marker = markers[0]; // Find the new selected marker from pinchzoomer
+
+      this.selectedPinchMarker = _.find(markers, function (marker) {
+        return marker._vars.id === _this8.mappedMarkerData[_this8.activeMarker].id;
+      }); // Apply class active
+
+      if (this.selectedPinchMarker) {
+        $(this.selectedPinchMarker.elem().get(0)).addClass('active');
+      } else {
+        this.activeMarker = _.findIndex(this.mappedMarkerData, function (o) {
+          return o.id == marker._vars.id;
+        });
+        $(markers[0].elem().get(0)).addClass('active');
+      }
+    },
     getMarkerIndex: function getMarkerIndex(id) {
       var markerIndex = -1;
       var markers = this.pinchzoomer.markers();
@@ -510,20 +540,20 @@ Fliplet.Floorplan.component('add-markers', {
       return markerIndex;
     },
     getMarkersData: function getMarkersData() {
-      var _this8 = this;
+      var _this9 = this;
 
       return Fliplet.DataSources.connect(this.markersDataSourceId, {
         offline: false
       }).then(function (connection) {
         // If you want to do specific queries to return your rows
         // See the documentation here: https://developers.fliplet.com/API/fliplet-datasources.html
-        _this8.dataSourceConnection = connection; // To keep the connection to update/delete data later on
+        _this9.dataSourceConnection = connection; // To keep the connection to update/delete data later on
 
         return connection.find();
       });
     },
     cleanData: function cleanData() {
-      var _this9 = this;
+      var _this10 = this;
 
       var newData = [];
       this.mappedMarkerData.forEach(function (marker, index) {
@@ -531,11 +561,11 @@ Fliplet.Floorplan.component('add-markers', {
           id: marker.id,
           data: {}
         };
-        newObj.data[_this9.markerNameColumn] = marker.data.name;
-        newObj.data[_this9.markerFloorColumn] = marker.data.floor;
-        newObj.data[_this9.markerTypeColumn] = marker.data.type;
-        newObj.data[_this9.markerXPositionColumn] = marker.data.positionx;
-        newObj.data[_this9.markerYPositionColumn] = marker.data.positiony;
+        newObj.data[_this10.markerNameColumn] = marker.data.name;
+        newObj.data[_this10.markerFloorColumn] = marker.data.floor;
+        newObj.data[_this10.markerTypeColumn] = marker.data.type;
+        newObj.data[_this10.markerXPositionColumn] = marker.data.positionx;
+        newObj.data[_this10.markerYPositionColumn] = marker.data.positiony;
         newData.push(newObj);
       });
       return newData;
@@ -545,22 +575,26 @@ Fliplet.Floorplan.component('add-markers', {
       this.dataSourceConnection.commit(data);
     },
     addNewMarker: function addNewMarker() {
-      var _this10 = this;
+      var _this11 = this;
 
       var newObj = {};
       var markerLength = this.mappedMarkerData.length;
       newObj[this.markerNameColumn] = "New marker ".concat(markerLength + 1);
       newObj[this.markerFloorColumn] = this.widgetData.floors.length ? this.widgetData.floors[0].name : '';
       newObj[this.markerTypeColumn] = this.widgetData.markers.length ? this.widgetData.markers[0].name : '';
-      newObj[this.markerXPositionColumn] = '';
-      newObj[this.markerYPositionColumn] = '';
+      newObj[this.markerXPositionColumn] = '100';
+      newObj[this.markerYPositionColumn] = '100';
       this.dataSourceConnection.insert(newObj).then(function () {
-        return _this10.getMarkersData();
+        return _this11.getMarkersData();
       }).then(function (data) {
-        _this10.markersData = data;
-        _this10.mappedMarkerData = _this10.mapMarkerData();
+        _this11.markersData = data;
+        _this11.mappedMarkerData = _this11.mapMarkerData();
 
-        _this10.setActiveMarker(0, true);
+        var newMarkerIndex = _.findIndex(_this11.mappedMarkerData, function (o) {
+          return o.data.name == newObj[_this11.markerNameColumn];
+        });
+
+        _this11.setActiveMarker(newMarkerIndex, true);
       });
     },
     saveData: function saveData() {
@@ -573,7 +607,7 @@ Fliplet.Floorplan.component('add-markers', {
     var _created = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
     /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-      var _this11 = this;
+      var _this12 = this;
 
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
         while (1) {
@@ -588,14 +622,14 @@ Fliplet.Floorplan.component('add-markers', {
               this.mappedMarkerData = this.mapMarkerData();
               Fliplet.Studio.onMessage(function (event) {
                 if (event.data && event.data.event === 'overlay-close' && event.data.data && event.data.data.dataSourceId) {
-                  _this11.reloadDataSources().then(function (dataSources) {
-                    _this11.dataSources = dataSources;
-                    return _this11.getMarkersData();
+                  _this12.reloadDataSources().then(function (dataSources) {
+                    _this12.dataSources = dataSources;
+                    return _this12.getMarkersData();
                   }).then(function (data) {
-                    _this11.markersData = data;
-                    _this11.mappedMarkerData = _this11.mapMarkerData();
+                    _this12.markersData = data;
+                    _this12.mappedMarkerData = _this12.mapMarkerData();
 
-                    _this11.setupPinchZoomer();
+                    _this12.setupPinchZoomer();
                   });
                 }
               });

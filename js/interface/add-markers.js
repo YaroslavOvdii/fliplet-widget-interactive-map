@@ -65,6 +65,7 @@ Fliplet.Floorplan.component('add-markers', {
         floor: undefined,
         marker: undefined
       },
+      selectedPinchMarker: undefined,
       saveDebounced: _.debounce(this.saveToDataSource, 1000)
     }
   },
@@ -242,6 +243,7 @@ Fliplet.Floorplan.component('add-markers', {
       Fliplet.Studio.emit('widget-mode', 'normal')
     },
     setupPinchZoomer() {
+      debugger
       if (!this.mappedMarkerData.length) {
         return
       }
@@ -260,7 +262,7 @@ Fliplet.Floorplan.component('add-markers', {
         maxZoom: 4,
         initZoom: 1,
         zoomStep: 0.25,
-        allowMouseWheelZoom: false,
+        allowMouseWheelZoom: true,
         animDuration: 0.1,
         scaleMode: 'proportionalInside',
         zoomToMarker: true,
@@ -272,6 +274,7 @@ Fliplet.Floorplan.component('add-markers', {
 
       this.addMarkers(true)
       this.attachEventHandler()
+      this.selectPinchMarker()
     },
     addMarkers(fromLoad, options) {
       let markerElem = undefined
@@ -282,16 +285,16 @@ Fliplet.Floorplan.component('add-markers', {
 
         this.mappedMarkerData.forEach((marker, index) => {
           if (marker.data.floor === this.selectedMarkerData.floor.name) {
-            markerElem = $("<i id='marker-" + index + "' class='marker " + marker.data.icon + "' style='left: -15px; top: -15px; position: absolute; color: " + marker.data.color + "; font-size: " + marker.data.size + ";' data-tooltip='" + marker.data.name + "'></i>")
+            markerElem = $("<div id='marker-" + index + "' class='marker' data-tooltip='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute;'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state' style='background-color: " + marker.data.color + ";'></div></div>")
             this.markerElemHandler = new Hammer(markerElem.get(0))
-            this.pinchzoomer.addMarkers([new Marker(markerElem, { x: marker.data.positionx, y: marker.data.positiony, transformOrigin: '50% 50%', name: marker.data.name })])
+            this.pinchzoomer.addMarkers([new Marker(markerElem, { x: marker.data.positionx, y: marker.data.positiony, transformOrigin: '50% 50%', name: marker.data.name, id: marker.id })])
             this.markerElemHandler.on('tap', this.onMarkerHandler)
           }
         })
         return
       }
 
-      markerElem = $("<i id='marker-" + options.index + "' class='marker " + this.selectedMarkerData.marker.data.icon + "' style='left: -15px; top: -15px; position: absolute; color: " + this.selectedMarkerData.marker.data.color + "; font-size: " + this.selectedMarkerData.marker.data.size + ";' data-tooltip='" + this.selectedMarkerData.marker.data.name + "'></i>")
+      markerElem = $("<div id='marker-" + options.index + "' class='marker' data-tooltip='" + this.selectedMarkerData.marker.data.name + "' style='left: -15px; top: -15px; position: absolute;'><i class='" + this.selectedMarkerData.marker.data.icon + "' style='color: " + this.selectedMarkerData.marker.data.color + "; font-size: " + this.selectedMarkerData.marker.data.size + ";'></i><div class='active-state' style='background-color: " + this.selectedMarkerData.marker.data.color + ";'></div></div>")
       this.markerElemHandler = new Hammer(markerElem.get(0))
 
       if (options.existingMarker) {
@@ -302,7 +305,7 @@ Fliplet.Floorplan.component('add-markers', {
           marker: options.existingMarker._vars
         })
       } else {
-        this.pinchzoomer.addMarkers([new Marker(markerElem, { x: options.x, y: options.y, transformOrigin: '50% 50%', name: this.selectedMarkerData.marker.data.name })])
+        this.pinchzoomer.addMarkers([new Marker(markerElem, { x: options.x, y: options.y, transformOrigin: '50% 50%', name: this.selectedMarkerData.marker.data.name, id: this.selectedMarkerData.marker.id })])
       }
       
       this.markerElemHandler.on('tap', this.onMarkerHandler)
@@ -356,6 +359,27 @@ Fliplet.Floorplan.component('add-markers', {
         
       if (index >= 0 && name === this.selectedMarkerData.marker.data.name) {
         this.pinchzoomer.removeMarker(index, true)
+      }
+    },
+    selectPinchMarker() {
+      debugger
+      // Remove any active marker
+      $('.marker').removeClass('active')
+      // Get markers
+      const markers = this.pinchzoomer.markers()
+      // Store first marker
+      const marker = markers[0]
+
+      // Find the new selected marker from pinchzoomer
+      this.selectedPinchMarker = _.find(markers, (marker) => {
+        return marker._vars.id === this.mappedMarkerData[this.activeMarker].id
+      })
+      // Apply class active
+      if (this.selectedPinchMarker) {
+        $(this.selectedPinchMarker.elem().get(0)).addClass('active')
+      } else {
+        this.activeMarker = _.findIndex(this.mappedMarkerData, (o) => { return o.id == marker._vars.id })
+        $(markers[0].elem().get(0)).addClass('active')
       }
     },
     getMarkerIndex(id) {
@@ -413,8 +437,8 @@ Fliplet.Floorplan.component('add-markers', {
       newObj[this.markerNameColumn] = `New marker ${markerLength + 1}`
       newObj[this.markerFloorColumn] = this.widgetData.floors.length ? this.widgetData.floors[0].name : ''
       newObj[this.markerTypeColumn] = this.widgetData.markers.length ? this.widgetData.markers[0].name : ''
-      newObj[this.markerXPositionColumn] = ''
-      newObj[this.markerYPositionColumn] = ''
+      newObj[this.markerXPositionColumn] = '100'
+      newObj[this.markerYPositionColumn] = '100'
 
       this.dataSourceConnection.insert(newObj)
         .then(() => {
@@ -423,7 +447,10 @@ Fliplet.Floorplan.component('add-markers', {
         .then((data) => {
           this.markersData = data
           this.mappedMarkerData = this.mapMarkerData()
-          this.setActiveMarker(0, true)
+          const newMarkerIndex = _.findIndex(this.mappedMarkerData, (o) => {
+            return o.data.name == newObj[this.markerNameColumn]
+          })
+          this.setActiveMarker(newMarkerIndex, true)
         })
     },
     saveData() {
