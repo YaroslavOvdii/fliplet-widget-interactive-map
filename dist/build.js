@@ -101,310 +101,391 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__);
 
 
-var formBuilderInstances = [];
-Fliplet.Widget.instance('interactive-floorplan', function (_data) {
-  var selector = '[data-interactive-floorplan-id="' + _data.id + '"]';
-  var $floorplan = new Vue({
-    el: $(selector)[0],
-    data: function data() {
-      return {
-        containsData: _data.floors && _data.floors.length && _data.markers && _data.markers.length,
-        floors: _data.floors && _data.floors.length ? _data.floors : [],
-        markerStyles: _data.markers && _data.markers.length ? _data.markers : [],
-        markersDataSource: _data.markersDataSourceId || undefined,
-        markerNameColumn: _data.markerNameColumn || undefined,
-        markerFloorColumn: _data.markerFloorColumn || undefined,
-        markerTypeColumn: _data.markerTypeColumn || undefined,
-        markerXPositionColumn: _data.markerXPositionColumn || undefined,
-        markerYPositionColumn: _data.markerYPositionColumn || undefined,
-        markersData: undefined,
-        mappedMarkerData: [],
-        searchMarkerData: undefined,
-        pinchzoomer: null,
-        pzHandler: undefined,
-        markerElemHandler: undefined,
-        activeFloor: 0,
-        activeMarker: 0,
-        selectedFloorData: undefined,
-        selectedMarkerData: undefined,
-        selectedMarkerToggle: false,
-        selectedPinchMarker: undefined,
-        searchTimeout: null,
-        searchValue: '',
-        noSearchResults: false
-      };
-    },
-    watch: {
-      searchValue: function searchValue() {
-        this.noSearchResults = false;
+Fliplet().then(function () {
+  Fliplet.Widget.instance('interactive-floorplan', function (_data) {
+    var selector = '[data-interactive-floorplan-id="' + _data.id + '"]';
+    var $floorplan = new Vue({
+      el: $(selector)[0],
+      data: function data() {
+        return {
+          containsData: _data.floors && _data.floors.length && _data.markers && _data.markers.length,
+          floors: _data.floors && _data.floors.length ? _data.floors : [],
+          markerStyles: _data.markers && _data.markers.length ? _data.markers : [],
+          markersDataSourceId: _data.markersDataSourceId || undefined,
+          markerNameColumn: _data.markerNameColumn || undefined,
+          markerFloorColumn: _data.markerFloorColumn || undefined,
+          markerTypeColumn: _data.markerTypeColumn || undefined,
+          markerXPositionColumn: _data.markerXPositionColumn || undefined,
+          markerYPositionColumn: _data.markerYPositionColumn || undefined,
+          markersData: undefined,
+          mappedMarkerData: [],
+          searchMarkerData: undefined,
+          pinchzoomer: null,
+          pzHandler: undefined,
+          markerElemHandler: undefined,
+          activeFloor: 0,
+          activeMarker: 0,
+          selectedFloorData: undefined,
+          selectedMarkerData: undefined,
+          selectedMarkerToggle: false,
+          selectedPinchMarker: undefined,
+          searchTimeout: null,
+          searchValue: '',
+          noSearchResults: false
+        };
+      },
+      watch: {
+        searchValue: function searchValue() {
+          this.noSearchResults = false;
 
+          if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = null;
+          }
+
+          this.searchTimeout = setTimeout(this.filterMarkers, 500);
+        }
+      },
+      methods: {
+        filterMarkers: function filterMarkers() {
+          var _this = this;
+
+          if (!this.searchValue) {
+            this.searchMarkerData = _.cloneDeep(this.mappedMarkerData);
+            return;
+          }
+
+          this.searchMarkerData = _.filter(this.mappedMarkerData, function (marker) {
+            return _.some(['name', 'floor'], function (key) {
+              return marker.data[key] && marker.data[key].toString().toLowerCase().indexOf(_this.searchValue.toLowerCase()) > -1;
+            });
+          });
+
+          if (!this.searchMarkerData.length) {
+            this.noSearchResults = true;
+          }
+        },
+        mapMarkerData: function mapMarkerData() {
+          var _this2 = this;
+
+          var newMarkerData = this.markersData.map(function (marker) {
+            var markerData = _.find(_this2.markerStyles, {
+              name: marker.data[_this2.markerTypeColumn]
+            });
+
+            return {
+              id: marker.id,
+              data: {
+                name: marker.data[_this2.markerNameColumn],
+                floor: marker.data[_this2.markerFloorColumn],
+                type: marker.data[_this2.markerTypeColumn],
+                icon: markerData ? markerData.icon : '',
+                color: markerData ? markerData.color : '#333333',
+                size: markerData ? markerData.size : '24px',
+                positionx: marker.data[_this2.markerXPositionColumn],
+                positiony: marker.data[_this2.markerYPositionColumn]
+              }
+            };
+          });
+          return newMarkerData;
+        },
+        setupPinchZoomer: function setupPinchZoomer() {
+          if (!this.mappedMarkerData.length) {
+            return;
+          }
+
+          this.selectedFloorData = this.floors[this.activeFloor];
+          this.selectedMarkerData = this.mappedMarkerData[this.activeMarker].data;
+          this.selectedMarkerToggle = true;
+
+          if (this.pinchzoomer) {
+            this.pinchzoomer = null;
+          }
+
+          this.pinchzoomer = new PinchZoomer($('#floor-' + this.selectedFloorData.id), {
+            adjustHolderSize: false,
+            maxZoom: 4,
+            initZoom: 1,
+            zoomStep: 0.25,
+            allowMouseWheelZoom: true,
+            animDuration: 0.1,
+            scaleMode: 'proportionalInside',
+            allowCenterDrag: true
+          });
+          this.pzHandler = new Hammer(this.pinchzoomer.elem().get(0));
+          this.addMarkers(true);
+          this.selectPinchMarker();
+        },
+        selectPinchMarker: function selectPinchMarker() {
+          var _this3 = this;
+
+          // Remove any active marker
+          $('.marker').removeClass('active'); // Get markers
+
+          var markers = this.pinchzoomer.markers(); // Store first marker
+
+          var marker = markers[0]; // Find the new selected marker from pinchzoomer
+
+          this.selectedPinchMarker = _.find(markers, function (marker) {
+            return marker._vars.id === _this3.mappedMarkerData[_this3.activeMarker].id;
+          }); // Apply class active
+
+          if (this.selectedPinchMarker) {
+            $(this.selectedPinchMarker.elem().get(0)).addClass('active');
+          } else {
+            this.activeMarker = _.findIndex(this.mappedMarkerData, function (o) {
+              return o.id == marker._vars.id;
+            });
+            this.selectedMarkerData = this.mappedMarkerData[this.activeMarker].data;
+            $(markers[0].elem().get(0)).addClass('active');
+          }
+        },
+        addMarkers: function addMarkers(fromLoad, options) {
+          var _this4 = this;
+
+          this.pinchzoomer.removeMarkers(true);
+          this.mappedMarkerData.forEach(function (marker, index) {
+            if (marker.data.floor === _this4.selectedFloorData.name) {
+              var markerElem = $("<div id='marker-" + index + "' class='marker' data-tooltip='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; width: " + marker.data.size + "; height: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state' style='background-color: " + marker.data.color + ";'></div></div>");
+              _this4.markerElemHandler = new Hammer(markerElem.get(0));
+
+              _this4.pinchzoomer.addMarkers([new Marker(markerElem, {
+                x: marker.data.positionx,
+                y: marker.data.positiony,
+                transformOrigin: '50% 50%',
+                name: marker.data.name,
+                id: marker.id
+              })]);
+
+              _this4.markerElemHandler.on('tap', _this4.onMarkerHandler);
+            }
+          });
+        },
+        onMarkerHandler: function onMarkerHandler(e) {
+          var markers = this.pinchzoomer.markers();
+          var id = $(e.target).attr('id');
+
+          var marker = _.find(markers, function (o) {
+            return o.elem().attr('id') == id;
+          });
+
+          this.activeMarker = _.findIndex(this.mappedMarkerData, function (o) {
+            return o.id == marker._vars.id;
+          });
+          this.selectPinchMarker();
+          this.selectedMarkerData = this.mappedMarkerData[this.activeMarker].data;
+          this.selectedMarkerToggle = true;
+        },
+        setActiveFloor: function setActiveFloor(floorIndex, fromSearch) {
+          if (this.activeFloor !== floorIndex) {
+            this.activeFloor = floorIndex;
+          }
+
+          if (!fromSearch) {
+            this.setupPinchZoomer();
+          }
+
+          this.toggleFloorOverlay(false);
+        },
+        setActiveMarker: function setActiveMarker(markerIndex) {
+          this.activeMarker = markerIndex;
+          this.setupPinchZoomer();
+          this.toggleSearchOverlay(false);
+        },
+        selectedMarker: function selectedMarker(markerData) {
+          var floorIndex = _.findIndex(this.floors, function (o) {
+            return o.name == markerData.data.floor;
+          });
+
+          var markerIndex = _.findIndex(this.mappedMarkerData, function (o) {
+            return o.data.name == markerData.data.name;
+          });
+
+          this.setActiveFloor(floorIndex, true);
+          this.setActiveMarker(markerIndex);
+        },
+        selectMarkerOnStart: function selectMarkerOnStart() {
+          var _this5 = this;
+
+          var markerIndex = undefined;
+
+          if (!_.hasIn(this.startOnMarker, 'id') && !_.hasIn(this.startOnMarker, 'name')) {
+            this.$nextTick(this.setupPinchZoomer);
+            return;
+          }
+
+          if (_.hasIn(this.startOnMarker, 'id')) {
+            markerIndex = _.findIndex(this.mappedMarkerData, function (o) {
+              return o.id == _this5.startOnMarker.id;
+            });
+          }
+
+          if (_.hasIn(this.startOnMarker, 'name')) {
+            markerIndex = _.findIndex(this.mappedMarkerData, function (o) {
+              return o.data.name == _this5.startOnMarker.name;
+            });
+          }
+
+          var floorName = this.mappedMarkerData[markerIndex].data.floor;
+
+          var floorIndex = _.findIndex(this.floors, function (o) {
+            return o.name == floorName;
+          });
+
+          this.setActiveFloor(floorIndex, true);
+          this.setActiveMarker(markerIndex);
+        },
+        selectFloorOnStart: function selectFloorOnStart() {
+          var _this6 = this;
+
+          if (!_.hasIn(this.startOnFloor, 'name')) {
+            this.$nextTick(this.setupPinchZoomer);
+            return;
+          }
+
+          var floorIndex = _.findIndex(this.floors, function (o) {
+            return o.name == _this6.startOnFloor.name;
+          });
+
+          this.setActiveFloor(floorIndex);
+        },
+        removeSelectedMarker: function removeSelectedMarker() {
+          var _this7 = this;
+
+          this.selectedMarkerToggle = false; // Wait for animation
+
+          setTimeout(function () {
+            // Remove any active marker
+            $('.marker').removeClass('active');
+            _this7.selectedMarkerData = undefined;
+          }, 250);
+        },
+        closeFloorsOverlay: function closeFloorsOverlay() {
+          this.toggleFloorOverlay(false);
+        },
+        toggleFloorOverlay: function toggleFloorOverlay(forceOpen) {
+          if (typeof forceOpen === 'undefined') {
+            $(selector).find('.floorplan-floors-overlay').toggleClass('overlay-open');
+            return;
+          }
+
+          $(selector).find('.floorplan-floors-overlay')[forceOpen ? 'addClass' : 'removeClass']('overlay-open');
+        },
+        closeSearchOverlay: function closeSearchOverlay() {
+          this.toggleSearchOverlay(false);
+        },
+        toggleSearchOverlay: function toggleSearchOverlay(forceOpen) {
+          this.searchValue = '';
+
+          if (typeof forceOpen === 'undefined') {
+            $(selector).find('.floorplan-search-overlay').toggleClass('overlay-open');
+            return;
+          }
+
+          $(selector).find('.floorplan-search-overlay')[forceOpen ? 'addClass' : 'removeClass']('overlay-open');
+        },
+        connectToDataSource: function connectToDataSource(options) {
+          return Fliplet.DataSources.connect(this.markersDataSourceId, options).then(function (connection) {
+            return connection.find();
+          }).catch(function (error) {
+            Fliplet.UI.Toast({
+              message: 'Error loading data',
+              actions: [{
+                label: 'Details',
+                action: function action() {
+                  Fliplet.UI.Toast({
+                    html: error.message || error
+                  });
+                }
+              }]
+            });
+          });
+        },
+        init: function init() {
+          var _this8 = this;
+
+          var cache = {
+            offline: true
+          };
+          return Fliplet.Hooks.run('flFloorplanBeforeGetData', {
+            config: this,
+            id: _data.id,
+            uuid: _data.uuid,
+            container: $(selector)
+          }).then(function () {
+            if (_this8.getData) {
+              _this8.connectToDataSource = _this8.getData;
+
+              if (_this8.hasOwnProperty('cache')) {
+                cache.offline = _this8.cache;
+              }
+            }
+
+            return _this8.connectToDataSource(cache);
+          }).then(function (data) {
+            _this8.markersData = data;
+            _this8.mappedMarkerData = _this8.mapMarkerData();
+            return Fliplet.Hooks.run('flFloorplanBeforeRenderMap', {
+              config: _this8,
+              id: data.id,
+              uuid: data.uuid,
+              container: $(selector)
+            });
+          }).then(function () {
+            _this8.searchMarkerData = _.cloneDeep(_this8.mappedMarkerData); // Check if startOnMarker is set
+
+            if (_this8.startOnMarker) {
+              _this8.selectMarkerOnStart();
+            } else if (_this8.startOnFloor) {
+              _this8.selectFloorOnStart();
+            } else {
+              _this8.$nextTick(_this8.setupPinchZoomer);
+            }
+
+            return;
+          });
+        }
+      },
+      mounted: function () {
+        var _mounted = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
+        /*#__PURE__*/
+        _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+          return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  if (!this.containsData) {
+                    _context.next = 3;
+                    break;
+                  }
+
+                  _context.next = 3;
+                  return this.init();
+
+                case 3:
+                  $(selector).removeClass('is-loading');
+
+                case 4:
+                case "end":
+                  return _context.stop();
+              }
+            }
+          }, _callee, this);
+        }));
+
+        function mounted() {
+          return _mounted.apply(this, arguments);
+        }
+
+        return mounted;
+      }(),
+      beforeDestroy: function beforeDestroy() {
         if (this.searchTimeout) {
           clearTimeout(this.searchTimeout);
           this.searchTimeout = null;
         }
-
-        this.searchTimeout = setTimeout(this.filterMarkers, 500);
       }
-    },
-    methods: {
-      filterMarkers: function filterMarkers() {
-        var _this = this;
-
-        if (!this.searchValue) {
-          this.searchMarkerData = _.cloneDeep(this.mappedMarkerData);
-          return;
-        }
-
-        this.searchMarkerData = _.filter(this.mappedMarkerData, function (marker) {
-          return _.some(['name', 'floor'], function (key) {
-            return marker.data[key] && marker.data[key].toString().toLowerCase().indexOf(_this.searchValue.toLowerCase()) > -1;
-          });
-        });
-
-        if (!this.searchMarkerData.length) {
-          this.noSearchResults = true;
-        }
-      },
-      mapMarkerData: function mapMarkerData() {
-        var _this2 = this;
-
-        var newMarkerData = this.markersData.map(function (marker) {
-          var markerData = _.find(_this2.markerStyles, {
-            name: marker.data[_this2.markerTypeColumn]
-          });
-
-          return {
-            id: marker.id,
-            data: {
-              name: marker.data[_this2.markerNameColumn],
-              floor: marker.data[_this2.markerFloorColumn],
-              type: marker.data[_this2.markerTypeColumn],
-              icon: markerData ? markerData.icon : '',
-              color: markerData ? markerData.color : '#333333',
-              size: markerData ? markerData.size : '24px',
-              positionx: marker.data[_this2.markerXPositionColumn],
-              positiony: marker.data[_this2.markerYPositionColumn]
-            }
-          };
-        });
-        return newMarkerData;
-      },
-      setupPinchZoomer: function setupPinchZoomer() {
-        if (!this.mappedMarkerData.length) {
-          return;
-        }
-
-        this.selectedFloorData = this.floors[this.activeFloor];
-        this.selectedMarkerData = this.mappedMarkerData[this.activeMarker].data;
-        this.selectedMarkerToggle = true;
-
-        if (this.pinchzoomer) {
-          this.pinchzoomer = null;
-        }
-
-        this.pinchzoomer = new PinchZoomer($('#floor-' + this.selectedFloorData.id), {
-          adjustHolderSize: false,
-          maxZoom: 4,
-          initZoom: 1,
-          zoomStep: 0.25,
-          allowMouseWheelZoom: true,
-          animDuration: 0.1,
-          scaleMode: 'proportionalInside',
-          allowCenterDrag: true
-        });
-        this.pzHandler = new Hammer(this.pinchzoomer.elem().get(0));
-        this.addMarkers(true);
-        this.selectPinchMarker();
-      },
-      selectPinchMarker: function selectPinchMarker() {
-        var _this3 = this;
-
-        // Remove any active marker
-        $('.marker').removeClass('active'); // Get markers
-
-        var markers = this.pinchzoomer.markers(); // Store first marker
-
-        var marker = markers[0]; // Find the new selected marker from pinchzoomer
-
-        this.selectedPinchMarker = _.find(markers, function (marker) {
-          return marker._vars.id === _this3.mappedMarkerData[_this3.activeMarker].id;
-        }); // Apply class active
-
-        if (this.selectedPinchMarker) {
-          $(this.selectedPinchMarker.elem().get(0)).addClass('active');
-        } else {
-          this.activeMarker = _.findIndex(this.mappedMarkerData, function (o) {
-            return o.id == marker._vars.id;
-          });
-          this.selectedMarkerData = this.mappedMarkerData[this.activeMarker].data;
-          $(markers[0].elem().get(0)).addClass('active');
-        }
-      },
-      addMarkers: function addMarkers(fromLoad, options) {
-        var _this4 = this;
-
-        this.pinchzoomer.removeMarkers(true);
-        this.mappedMarkerData.forEach(function (marker, index) {
-          if (marker.data.floor === _this4.selectedFloorData.name) {
-            var markerElem = $("<div id='marker-" + index + "' class='marker' data-tooltip='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; width: " + marker.data.size + "; height: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state' style='background-color: " + marker.data.color + ";'></div></div>");
-            _this4.markerElemHandler = new Hammer(markerElem.get(0));
-
-            _this4.pinchzoomer.addMarkers([new Marker(markerElem, {
-              x: marker.data.positionx,
-              y: marker.data.positiony,
-              transformOrigin: '50% 50%',
-              name: marker.data.name,
-              id: marker.id
-            })]);
-
-            _this4.markerElemHandler.on('tap', _this4.onMarkerHandler);
-          }
-        });
-      },
-      onMarkerHandler: function onMarkerHandler(e) {
-        var markers = this.pinchzoomer.markers();
-        var id = $(e.target).attr('id');
-
-        var marker = _.find(markers, function (o) {
-          return o.elem().attr('id') == id;
-        });
-
-        this.activeMarker = _.findIndex(this.mappedMarkerData, function (o) {
-          return o.id == marker._vars.id;
-        });
-        this.selectPinchMarker();
-        this.selectedMarkerData = this.mappedMarkerData[this.activeMarker].data;
-        this.selectedMarkerToggle = true;
-      },
-      setActiveFloor: function setActiveFloor(floorIndex, fromSearch) {
-        if (this.activeFloor !== floorIndex) {
-          this.activeFloor = floorIndex;
-        }
-
-        if (!fromSearch) {
-          this.setupPinchZoomer();
-        }
-
-        this.toggleFloorOverlay(false);
-      },
-      setActiveMarker: function setActiveMarker(markerIndex) {
-        this.activeMarker = markerIndex;
-        this.setupPinchZoomer();
-        this.toggleSearchOverlay(false);
-      },
-      selectedMarker: function selectedMarker(markerData) {
-        var floorIndex = _.findIndex(this.floors, function (o) {
-          return o.name == markerData.data.floor;
-        });
-
-        var markerIndex = _.findIndex(this.mappedMarkerData, function (o) {
-          return o.data.name == markerData.data.name;
-        });
-
-        this.setActiveFloor(floorIndex, true);
-        this.setActiveMarker(markerIndex);
-      },
-      removeSelectedMarker: function removeSelectedMarker() {
-        var _this5 = this;
-
-        this.selectedMarkerToggle = false; // Wait for animation
-
-        setTimeout(function () {
-          // Remove any active marker
-          $('.marker').removeClass('active');
-          _this5.selectedMarkerData = undefined;
-        }, 250);
-      },
-      closeFloorsOverlay: function closeFloorsOverlay() {
-        this.toggleFloorOverlay(false);
-      },
-      toggleFloorOverlay: function toggleFloorOverlay(forceOpen) {
-        if (typeof forceOpen === 'undefined') {
-          $(selector).find('.floorplan-floors-overlay').toggleClass('overlay-open');
-          return;
-        }
-
-        $(selector).find('.floorplan-floors-overlay')[forceOpen ? 'addClass' : 'removeClass']('overlay-open');
-      },
-      closeSearchOverlay: function closeSearchOverlay() {
-        this.toggleSearchOverlay(false);
-      },
-      toggleSearchOverlay: function toggleSearchOverlay(forceOpen) {
-        this.searchValue = '';
-
-        if (typeof forceOpen === 'undefined') {
-          $(selector).find('.floorplan-search-overlay').toggleClass('overlay-open');
-          return;
-        }
-
-        $(selector).find('.floorplan-search-overlay')[forceOpen ? 'addClass' : 'removeClass']('overlay-open');
-      },
-      connectToDataSource: function connectToDataSource(id) {
-        var cache = {
-          offline: true
-        };
-        return Fliplet.DataSources.connect(id, cache).then(function (connection) {
-          return connection.find();
-        }).catch(function (error) {
-          Fliplet.UI.Toast({
-            message: 'Error loading data',
-            actions: [{
-              label: 'Details',
-              action: function action() {
-                Fliplet.UI.Toast({
-                  html: error.message || error
-                });
-              }
-            }]
-          });
-        });
-      }
-    },
-    mounted: function () {
-      var _mounted = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
-      /*#__PURE__*/
-      _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                if (!this.containsData) {
-                  _context.next = 7;
-                  break;
-                }
-
-                _context.next = 3;
-                return this.connectToDataSource(this.markersDataSource);
-
-              case 3:
-                this.markersData = _context.sent;
-                this.mappedMarkerData = this.mapMarkerData();
-                this.searchMarkerData = _.cloneDeep(this.mappedMarkerData);
-                this.$nextTick(this.setupPinchZoomer);
-
-              case 7:
-                $(selector).removeClass('is-loading');
-
-              case 8:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee, this);
-      }));
-
-      function mounted() {
-        return _mounted.apply(this, arguments);
-      }
-
-      return mounted;
-    }(),
-    beforeDestroy: function beforeDestroy() {
-      if (this.searchTimeout) {
-        clearTimeout(this.searchTimeout);
-        this.searchTimeout = null;
-      }
-    }
+    });
   });
 });
 
