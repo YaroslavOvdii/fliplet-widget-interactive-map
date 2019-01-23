@@ -158,6 +158,11 @@ const app = new Vue({
       Fliplet.Studio.emit('widget-mode', 'normal')
     },
     prepareToSaveData() {
+      if (!this.floors.length || !this.markers.length) {
+        this.hasError = true
+        return
+      }
+
       // Mark 'isFromNew' as false
       this.floors.forEach((floor) => {
         floor.isFromNew = false

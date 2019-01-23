@@ -266,7 +266,12 @@ var app = new Vue({
       Fliplet.Studio.emit('widget-mode', 'normal');
     },
     prepareToSaveData: function prepareToSaveData() {
-      // Mark 'isFromNew' as false
+      if (!this.floors.length || !this.markers.length) {
+        this.hasError = true;
+        return;
+      } // Mark 'isFromNew' as false
+
+
       this.floors.forEach(function (floor) {
         floor.isFromNew = false;
       });
