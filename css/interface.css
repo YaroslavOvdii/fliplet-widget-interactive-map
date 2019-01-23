@@ -323,6 +323,10 @@ header .title-holder p {
   overflow-y: auto;
 }
 
+.settings-holder .less-bottom-padding {
+  padding-bottom: 20px;
+}
+
 .settings-holder.with-border {
   border-left: 1px solid #e3e9eb;
 }
@@ -436,12 +440,51 @@ header .title-holder p {
 }
 
 .marker {
-  width: 30px;
-  height: 30px;
+  position: absolute!important;
+  z-index: 9;
+  bottom: auto!important;
+  right: auto!important;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  width: 30px;
+  height: 30px;
+  overflow: visible;
+}
+
+.marker .fa {
+  pointer-events: none;
+}
+
+.marker .active-state {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  transform: translate3d(-50%, -50%, 0);
+}
+
+.marker.active .active-state {
+  display: block;
+  -webkit-animation: pulse 1.2s ease-out infinite none;
+  animation: pulse 1.2s ease-out infinite none;
+}
+
+@keyframes pulse {
+  0% {
+    transform: translate3d(-50%, -50%, 0) scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate3d(-50%, -50%, 0) scale(3);
+    opacity: 0;
+  }
 }
 
 .markers-ui {
