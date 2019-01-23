@@ -255,7 +255,7 @@ Fliplet.Floorplan.component('add-markers', {
         this.pinchzoomer = null
       }
 
-      this.pinchzoomer = new PinchZoomer($('#floor-' + this.selectedMarkerData.floor.id), {
+      new PinchZoomer($('#floor-' + this.selectedMarkerData.floor.id), {
         adjustHolderSize: false,
         maxZoom: 4,
         initZoom: 1,
@@ -267,6 +267,7 @@ Fliplet.Floorplan.component('add-markers', {
         allowCenterDrag: true
       })
 
+      this.pinchzoomer = PinchZoomer.get('floor-' + this.selectedMarkerData.floor.id)
       this.pzHandler = new Hammer(this.pinchzoomer.elem().get(0))
 
       this.addMarkers(true)
