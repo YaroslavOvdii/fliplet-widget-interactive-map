@@ -32,7 +32,7 @@
       </div>
     </div>
   </div>
-  <div class="settings-holder" v-bind:class="{ 'col-xs-12': !savedData, 'col-xs-6 with-border': savedData }">
+  <div class="settings-holder" v-bind:class="{ 'col-xs-12 less-bottom-padding': !savedData, 'col-xs-6 with-border': savedData }">
     <div class="marker-settings-wrapper">
       <div class="form-group clearfix">
         <div class="col-sm-12 control-label">
@@ -149,7 +149,7 @@
         </div>
       </div>
     </div>
-    <div class="settings-buttons-wrapper">
+    <div class="settings-buttons-wrapper" v-if="savedData">
       <div class="btn btn-secondary" @click.prevent="addNewMarker">Add new marker</div>
     </div>
   </div>
