@@ -12,7 +12,7 @@
       </div>
       <div v-show="mappedMarkerData.length" class="floor-wrapper-holder">
         <div v-for="(floor, index) in widgetData.floors" class="floor-wrapper" v-bind:class="{ 'active': selectedMarkerData.floor && floor.id === selectedMarkerData.floor.id }">
-          <div class="floor-container" :id="'floor-' + floor.id" data-elem="pinchzoomer">
+          <div class="floor-container" :id="'floor-' + floor.id">
             <img v-if="floor.image" class="floor-image" data-elem="bg" :src="floor.image.url"/>
           </div>
           <div data-elem="controlHolder">
@@ -97,8 +97,8 @@
           </div>
         </div>
       </div>
-      <div v-else>
-        <div class="form-group clearfix">
+      <div v-else class="markers-ui-wrapper">
+        <div class="form-group clearfix markers-ui-holder">
           <div class="col-sm-12 control-label">
             <label>Configure the markers</label>
           </div>

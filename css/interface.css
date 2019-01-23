@@ -320,11 +320,12 @@ header .title-holder p {
 
 .settings-holder {
   padding: 20px 15px 92px;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .settings-holder .less-bottom-padding {
   padding-bottom: 20px;
+  overflow-y: auto;
 }
 
 .settings-holder.with-border {
@@ -333,6 +334,7 @@ header .title-holder p {
 
 .marker-settings-wrapper {
   margin: 0 -15px;
+  height: 100%;
 }
 
 .marker-settings-wrapper .button-wrapper .btn + .btn {
@@ -487,8 +489,19 @@ header .title-holder p {
   }
 }
 
+.markers-ui-wrapper {
+  height: calc(100% - 65px);
+}
+
+.markers-ui-holder {
+  height: 100%;
+  margin: 0;
+}
+
 .markers-ui {
   padding: 0;
+  height: calc(100% - 25px);
+  overflow: auto;
 }
 
 .markers-ui-loading,
