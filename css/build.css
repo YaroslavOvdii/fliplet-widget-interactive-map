@@ -198,23 +198,38 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 23px;
   color: #ffffff;
   background-color: #333333;
   border-radius: 50%;
   cursor: pointer;
+  font: normal normal normal 23px/1 FontAwesome;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .zoomIn {
-  bottom: 50px;
-}
-
-.zoomOut {
   bottom: 95px;
 }
 
+.zoomIn:before {
+  content: "\f067";
+}
+
+.zoomOut {
+  bottom: 50px;
+}
+
+.zoomOut:before {
+  content: "\f068";
+}
+
 .zoomIn.off,
-.zoomOut.off,
+.zoomOut.off {
+  opacity: 0.1;
+  cursor: default;
+}
+
 .fullscreenToggle.off {
   display: none;
 }

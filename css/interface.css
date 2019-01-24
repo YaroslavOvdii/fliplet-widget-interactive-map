@@ -420,7 +420,7 @@ header .title-holder p {
 .zoomIn.off,
 .zoomOut.off {
   opacity: 0.1;
-  pointer-events: none;
+  cursor: default;
 }
 
 .fullscreenToggle.off {
