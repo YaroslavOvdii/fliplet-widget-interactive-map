@@ -15,20 +15,14 @@
           <div class="floor-container" :id="'floor-' + floor.id">
             <img v-if="floor.image" class="floor-image" data-elem="bg" :src="floor.image.url"/>
           </div>
-          <div data-elem="controlHolder">
-            <div class="zoomIn" data-elem="zoomIn" data-options="onCss:{opacity:1}; offCss:{opacity:0}">
-              <i class="fa fa-plus"></i>
-            </div>
-            <div class="zoomOut" data-elem="zoomOut" data-options="onCss:{opacity:1}; offCss:{opacity:0}">
-              <i class="fa fa-minus"></i>
-            </div>
-            <div class="fullscreenToggle off"></div>
-          </div>
         </div>
       </div>
       <div v-if="selectedMarkerData.floor && selectedMarkerData.floor.name" class="floors-button">
         <i class="fa fa-map-marker"></i>
         <span class="floor-button-text"><p>\{{selectedMarkerData.floor.name}}</p></span>
+      </div>
+      <div v-if="selectedMarkerData.floor && selectedMarkerData.floor.name" class="floor-hint-holder">
+        <div class="floor-hint">Click the image to set the marker position</div>
       </div>
     </div>
   </div>
