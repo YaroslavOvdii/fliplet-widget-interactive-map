@@ -355,7 +355,7 @@ Fliplet.Floorplan.component('add-markers', {
     },
     useSettings: function useSettings() {
       this.savedData = true;
-      Fliplet.Studio.emit('widget-mode', 'wide');
+      Fliplet.Studio.emit('widget-mode', 'full-screen');
     },
     changeSettings: function changeSettings() {
       this.savedData = false;

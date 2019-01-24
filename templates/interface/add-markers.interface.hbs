@@ -1,5 +1,5 @@
 <div class="add-markers-component clearfix">
-  <div v-show="savedData" class="col-xs-6 floors-wrapper">
+  <div v-show="savedData" class="col-xs-8 floors-wrapper">
     <div v-if="isLoading" class="floors-loading-holder">
       <div class="spinner-holder animated">
         <div class="spinner-overlay">Loading...</div>
@@ -32,7 +32,7 @@
       </div>
     </div>
   </div>
-  <div class="settings-holder" v-bind:class="{ 'col-xs-12 less-bottom-padding': !savedData, 'col-xs-6 with-border': savedData }">
+  <div class="settings-holder" v-bind:class="{ 'col-xs-12 less-bottom-padding': !savedData, 'col-xs-4 with-border': savedData }">
     <div class="marker-settings-wrapper">
       <div class="form-group clearfix">
         <div class="col-sm-12 control-label">

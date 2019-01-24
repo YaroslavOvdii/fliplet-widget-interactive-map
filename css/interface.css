@@ -319,7 +319,7 @@ header .title-holder p {
 }
 
 .settings-holder {
-  padding: 20px 15px 92px;
+  padding: 20px 15px 77px;
   overflow: hidden;
 }
 
@@ -490,7 +490,7 @@ header .title-holder p {
 }
 
 .markers-ui-wrapper {
-  height: calc(100% - 65px);
+  height: calc(100% - 100px);
 }
 
 .markers-ui-holder {
@@ -536,7 +536,7 @@ header .title-holder p {
   display: flex;
   align-items: center;
   height: 44px;
-  width: 190px;
+  width: 138px;
 }
 
 .marker-name-holder span {

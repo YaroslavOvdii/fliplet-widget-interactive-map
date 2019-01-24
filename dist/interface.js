@@ -259,7 +259,7 @@ var app = new Vue({
 
       this.hasError = false;
       this.showAddMarkersUI = true;
-      Fliplet.Studio.emit('widget-mode', this.settings.savedData ? 'wide' : 'normal');
+      Fliplet.Studio.emit('widget-mode', this.settings.savedData ? 'full-screen' : 'normal');
     },
     goBackToSettings: function goBackToSettings() {
       this.showAddMarkersUI = false;
