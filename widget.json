@@ -1,6 +1,6 @@
 {
-  "name": "Interactive Floor Plan",
-  "package": "com.fliplet.interactive-floorplan",
+  "name": "Interactive map",
+  "package": "com.fliplet.interactive-map",
   "version": "1.0.0",
   "icon": "img/icon.png",
   "tags": ["type:component", "category:general"],
