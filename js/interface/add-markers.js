@@ -152,10 +152,13 @@ Fliplet.Floorplan.component('add-markers', {
       this.confirmName(index, true)
     },
     deleteMarker(index) {
+      const markers = this.pinchzoomer.markers()
       const markerId = $('.floor-wrapper-holder')
         .find('.marker[data-tooltip="' + this.mappedMarkerData[index].data.name + '"]')
         .attr('id')
-      const markerIndex = this.getMarkerIndex(markerId)
+      const markerIndex = _.findIndex(markers, (marker) => {
+        return marker._vars.id === markerId
+      })
         
       if (markerIndex >= 0) {
         this.pinchzoomer.removeMarker(markerIndex, true)

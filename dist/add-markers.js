@@ -266,8 +266,12 @@ Fliplet.Floorplan.component('add-markers', {
       this.confirmName(index, true);
     },
     deleteMarker: function deleteMarker(index) {
+      var markers = this.pinchzoomer.markers();
       var markerId = $('.floor-wrapper-holder').find('.marker[data-tooltip="' + this.mappedMarkerData[index].data.name + '"]').attr('id');
-      var markerIndex = this.getMarkerIndex(markerId);
+
+      var markerIndex = _.findIndex(markers, function (marker) {
+        return marker._vars.id === markerId;
+      });
 
       if (markerIndex >= 0) {
         this.pinchzoomer.removeMarker(markerIndex, true);
