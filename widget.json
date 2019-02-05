@@ -11,19 +11,15 @@
       "fliplet-core",
       "fliplet-studio-ui",
       "fliplet-datasources",
-      "lodash",
-      "hammer.js",
+      "fliplet-ui-panzoom",
       "bootstrap",
       "handlebars",
       "vue.js"
     ],
     "assets": [
-      "vendor/TweenMax.js",
-      "vendor/jquery.pinchzoomer.js",
       "vendor/bootstrap-colorpicker.min.js",
       "vendor/bootstrap-colorpicker.css",
 
-      "js/config/default-table.js",
       "js/interface.templates.js",
       "dist/core.js",
 
@@ -40,16 +36,13 @@
     "dependencies": [
       "fliplet-core",
       "fliplet-datasources",
-      "lodash",
-      "hammer.js",
+      "fliplet-ui-panzoom",
       "bootstrap",
       "handlebars",
       "font-awesome",
       "vue.js"
     ],
     "assets": [
-      "vendor/TweenMax.js",
-      "vendor/jquery.pinchzoomer.js",
       "dist/build.js",
       "css/build.css"
     ]
