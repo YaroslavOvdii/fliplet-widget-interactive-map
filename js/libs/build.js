@@ -18,11 +18,13 @@ Fliplet().then(function () {
           markersData: undefined,
           mappedMarkerData: [],
           searchMarkerData: undefined,
-          pinchzoomer: null,
+          flPanZoomInstance: null,
+          pzElement: undefined,
           pzHandler: undefined,
           markerElemHandler: undefined,
           activeFloor: 0,
           activeMarker: 0,
+          imageLoaded: false,
           selectedFloorData: undefined,
           selectedMarkerData: undefined,
           selectedMarkerToggle: false,
@@ -80,31 +82,33 @@ Fliplet().then(function () {
 
           return newMarkerData
         },
-        setupPinchZoomer() {
+        setupFlPanZoom() {
           if (!this.mappedMarkerData.length) {
             return
           }
 
+          this.imageLoaded = false
           this.selectedFloorData = this.floors[this.activeFloor]
           this.selectedMarkerData = this.mappedMarkerData[this.activeMarker].data
           this.selectedMarkerToggle = true
 
-          if (this.pinchzoomer) {
-            this.pinchzoomer = null
+          if (this.flPanZoomInstance) {
+            this.flPanZoomInstance = null
           }
 
-          this.pinchzoomer = new PinchZoomer($('#floor-' + this.selectedFloorData.id), {
-            adjustHolderSize: false,
+          this.pzElement = $('#floor-' + this.selectedFloorData.id)
+
+          this.flPanZoomInstance = Fliplet.UI.PanZoom.create(this.pzElement, {
             maxZoom: 4,
-            initZoom: 1,
             zoomStep: 0.25,
-            allowMouseWheelZoom: true,
-            animDuration: 0.1,
-            scaleMode: 'proportionalInside',
-            allowCenterDrag: true
+            animDuration: 0.1
           })
 
-          this.pzHandler = new Hammer(this.pinchzoomer.elem().get(0))
+          this.flPanZoomInstance.on('floorImageLoaded', (e) => {
+            this.imageLoaded = true
+          })
+
+          this.pzHandler = new Hammer(this.pzElement.get(0))
 
           this.addMarkers(true)
           this.selectPinchMarker()
@@ -113,41 +117,41 @@ Fliplet().then(function () {
           // Remove any active marker
           $('.marker').removeClass('active')
           // Get markers
-          const markers = this.pinchzoomer.markers()
+          const markers = this.flPanZoomInstance.markers.getAll()
           // Store first marker
           const marker = markers[0]
 
-          // Find the new selected marker from pinchzoomer
+          // Find the new selected marker from flPanZoomInstance
           this.selectedPinchMarker = _.find(markers, (marker) => {
-            return marker._vars.id === this.mappedMarkerData[this.activeMarker].id
+            return marker.vars.id === this.mappedMarkerData[this.activeMarker].id
           })
           // Apply class active
           if (this.selectedPinchMarker) {
-            $(this.selectedPinchMarker.elem().get(0)).addClass('active')
+            $(this.selectedPinchMarker.getElement().get(0)).addClass('active')
           } else {
-            this.activeMarker = _.findIndex(this.mappedMarkerData, (o) => { return o.id == marker._vars.id })
+            this.activeMarker = _.findIndex(this.mappedMarkerData, (o) => { return o.id == marker.vars.id })
             this.selectedMarkerData = this.mappedMarkerData[this.activeMarker].data
-            $(markers[0].elem().get(0)).addClass('active')
+            $(markers[0].getElement().get(0)).addClass('active')
           }
         },
         addMarkers(fromLoad, options) {
-          this.pinchzoomer.removeMarkers(true)
+          this.flPanZoomInstance.markers.removeAll()
 
           this.mappedMarkerData.forEach((marker, index) => {
             if (marker.data.floor === this.selectedFloorData.name) {
-              const markerElem = $("<div id='marker-" + index + "' class='marker' data-tooltip='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; width: " + marker.data.size + "; height: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state' style='background-color: " + marker.data.color + ";'></div></div>")
+              const markerElem = $("<div id='" + marker.id + "' class='marker' data-tooltip='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; width: " + marker.data.size + "; height: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state' style='background-color: " + marker.data.color + ";'></div></div>")
 
               this.markerElemHandler = new Hammer(markerElem.get(0))
-              this.pinchzoomer.addMarkers([new Marker(markerElem, { x: marker.data.positionx, y: marker.data.positiony, transformOrigin: '50% 50%', name: marker.data.name, id: marker.id })])
+              this.flPanZoomInstance.markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, { x: marker.data.positionx, y: marker.data.positiony, name: marker.data.name, id: marker.id })])
               this.markerElemHandler.on('tap', this.onMarkerHandler)
             }
           })
         },
         onMarkerHandler(e) {
-          const markers = this.pinchzoomer.markers()
+          const markers = this.flPanZoomInstance.markers.getAll()
           const id = $(e.target).attr('id')
-          const marker = _.find(markers, (o) => { return o.elem().attr('id') == id })
-          this.activeMarker = _.findIndex(this.mappedMarkerData, (o) => { return o.id == marker._vars.id })
+          const marker = _.find(markers, (o) => { return o.vars.id == id })
+          this.activeMarker = _.findIndex(this.mappedMarkerData, (o) => { return o.id == marker.vars.id })
           this.selectPinchMarker()
           this.selectedMarkerData = this.mappedMarkerData[this.activeMarker].data
           this.selectedMarkerToggle = true
@@ -158,14 +162,14 @@ Fliplet().then(function () {
           }
 
           if (!fromSearch) {
-            this.setupPinchZoomer()
+            this.setupFlPanZoom()
           }
 
           this.toggleFloorOverlay(false)
         },
         setActiveMarker(markerIndex) {
           this.activeMarker = markerIndex
-          this.setupPinchZoomer()
+          this.setupFlPanZoom()
           this.toggleSearchOverlay(false)
         },
         selectedMarker(markerData) {
@@ -179,7 +183,7 @@ Fliplet().then(function () {
           let markerIndex = undefined
 
           if (!_.hasIn(this.startOnMarker, 'id') && !_.hasIn(this.startOnMarker, 'name')) {
-            this.$nextTick(this.setupPinchZoomer)
+            this.$nextTick(this.setupFlPanZoom)
             return
           }
 
@@ -199,7 +203,7 @@ Fliplet().then(function () {
         },
         selectFloorOnStart() {
           if (!_.hasIn(this.startOnFloor, 'name')) {
-            this.$nextTick(this.setupPinchZoomer)
+            this.$nextTick(this.setupFlPanZoom)
             return
           }
 
@@ -311,7 +315,7 @@ Fliplet().then(function () {
             } else if (this.startOnFloor) {
               this.selectFloorOnStart()
             } else {
-              this.$nextTick(this.setupPinchZoomer)
+              this.$nextTick(this.setupFlPanZoom)
             }
 
             return
