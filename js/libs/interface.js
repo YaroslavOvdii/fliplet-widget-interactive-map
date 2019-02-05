@@ -2,6 +2,7 @@ const widgetId = parseInt(Fliplet.Widget.getDefaultId(), 10)
 const widgetData = Fliplet.Widget.getData(widgetId) || {}
 
 import * as Sortable from 'sortablejs/Sortable.js'
+import flFloorplanColumns from '../config/default-table'
 
 Vue.directive('sortable', {
   inserted(el, binding) {
@@ -19,7 +20,7 @@ const app = new Vue({
     return {
       appName: Fliplet.Env.get('appName'),
       organizationId: Fliplet.Env.get('organizationId'),
-      defaultColumns: window.flFloorplanColumns,
+      defaultColumns: flFloorplanColumns,
       autoDataSource: widgetData.autoDataSource || false,
       dataSources: [],
       filePickerProvider: null,
@@ -150,6 +151,7 @@ const app = new Vue({
       }
       
       this.hasError = false
+      this.prepareToSaveData(true)
       this.showAddMarkersUI = true
       Fliplet.Studio.emit('widget-mode', this.settings.savedData ? 'full-screen' : 'normal')
     },
@@ -157,7 +159,7 @@ const app = new Vue({
       this.showAddMarkersUI = false
       Fliplet.Studio.emit('widget-mode', 'normal')
     },
-    prepareToSaveData() {
+    prepareToSaveData(stopComplete) {
       if (!this.floors.length || !this.markers.length) {
         this.hasError = true
         return
@@ -179,12 +181,14 @@ const app = new Vue({
       this.settings = _.assignIn(this.settings, newSettings)
       this.settings.savedData = true
 
-      this.saveData()
+      this.saveData(stopComplete)
     },
-    saveData() {
+    saveData(stopComplete) {
       Fliplet.Widget.save(this.settings)
         .then(() => {
-          Fliplet.Widget.complete()
+          if (!stopComplete) {
+            Fliplet.Widget.complete()
+          }
         })
     }
   },

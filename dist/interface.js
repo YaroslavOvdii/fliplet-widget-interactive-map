@@ -86,6 +86,20 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./js/config/default-table.js":
+/*!************************************!*\
+  !*** ./js/config/default-table.js ***!
+  \************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var flFloorplanColumns = ['Name', 'Floor name', 'Marker style', 'Position X', 'Position Y'];
+/* harmony default export */ __webpack_exports__["default"] = (flFloorplanColumns);
+
+/***/ }),
+
 /***/ "./js/libs/interface.js":
 /*!******************************!*\
   !*** ./js/libs/interface.js ***!
@@ -101,10 +115,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var sortablejs_Sortable_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! sortablejs/Sortable.js */ "./node_modules/sortablejs/Sortable.js");
 /* harmony import */ var sortablejs_Sortable_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(sortablejs_Sortable_js__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _config_default_table__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../config/default-table */ "./js/config/default-table.js");
 
 
 var widgetId = parseInt(Fliplet.Widget.getDefaultId(), 10);
 var widgetData = Fliplet.Widget.getData(widgetId) || {};
+
 
 Vue.directive('sortable', {
   inserted: function inserted(el, binding) {
@@ -120,7 +136,7 @@ var app = new Vue({
     return {
       appName: Fliplet.Env.get('appName'),
       organizationId: Fliplet.Env.get('organizationId'),
-      defaultColumns: window.flFloorplanColumns,
+      defaultColumns: _config_default_table__WEBPACK_IMPORTED_MODULE_3__["default"],
       autoDataSource: widgetData.autoDataSource || false,
       dataSources: [],
       filePickerProvider: null,
@@ -258,6 +274,7 @@ var app = new Vue({
       }
 
       this.hasError = false;
+      this.prepareToSaveData(true);
       this.showAddMarkersUI = true;
       Fliplet.Studio.emit('widget-mode', this.settings.savedData ? 'full-screen' : 'normal');
     },
@@ -265,7 +282,7 @@ var app = new Vue({
       this.showAddMarkersUI = false;
       Fliplet.Studio.emit('widget-mode', 'normal');
     },
-    prepareToSaveData: function prepareToSaveData() {
+    prepareToSaveData: function prepareToSaveData(stopComplete) {
       if (!this.floors.length || !this.markers.length) {
         this.hasError = true;
         return;
@@ -284,11 +301,13 @@ var app = new Vue({
       };
       this.settings = _.assignIn(this.settings, newSettings);
       this.settings.savedData = true;
-      this.saveData();
+      this.saveData(stopComplete);
     },
-    saveData: function saveData() {
+    saveData: function saveData(stopComplete) {
       Fliplet.Widget.save(this.settings).then(function () {
-        Fliplet.Widget.complete();
+        if (!stopComplete) {
+          Fliplet.Widget.complete();
+        }
       });
     }
   },
