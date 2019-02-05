@@ -11,9 +11,9 @@
         Your floor plans will appear here once you create a new marker.
       </div>
       <div v-show="mappedMarkerData.length" class="floor-wrapper-holder">
-        <div v-for="(floor, index) in widgetData.floors" class="floor-wrapper" v-bind:class="{ 'active': selectedMarkerData.floor && floor.id === selectedMarkerData.floor.id }">
+        <div v-for="(floor, index) in widgetData.floors" class="floor-wrapper" v-bind:class="{ 'active': selectedMarkerData.floor && floor.id === selectedMarkerData.floor.id && imageLoaded }">
           <div class="floor-container" :id="'floor-' + floor.id">
-            <img v-if="floor.image" class="floor-image" data-elem="bg" :src="floor.image.url"/>
+            <img v-if="floor.image" class="floor-image" :src="floor.image.url"/>
           </div>
         </div>
       </div>

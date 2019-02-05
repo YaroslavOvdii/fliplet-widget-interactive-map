@@ -1,9 +1,9 @@
 <div class="is-loading" data-interactive-floorplan-id="{{ id }}">
   <div v-if="containsData" class="floorplan-component-wrapper">
     <div class="floor-wrapper-holder">
-      <div class="floor-wrapper" v-for="(floor, index) in floors" v-bind:class="{ 'active': selectedFloorData && floor.id === selectedFloorData.id }">
+      <div class="floor-wrapper" v-for="(floor, index) in floors" v-bind:class="{ 'active': selectedFloorData && floor.id === selectedFloorData.id && imageLoaded }">
         <div class="floor-container" :id="'floor-' + floor.id">
-          <img v-if="floor.image" class="floor-image" :data-src="floor.image.url" data-elem="bg" src="#"/>
+          <img v-if="floor.image" class="floor-image" :src="floor.image.url"/>
         </div>
       </div>
     </div>
