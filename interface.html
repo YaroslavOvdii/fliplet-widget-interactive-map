@@ -1,24 +1,23 @@
 <div id="flooplan-app" class="is-loading">
   <main v-if="!showAddMarkersUI">
     <header>
-      <p>Configure your floor plan</p>
-      <a id="help_tip" href="#">Need help?</a>
+      <p>Configure your interactive map</p>
     </header>
     <div class="loading-message">
       <div class="spinner-holder animated">
         <div class="spinner-overlay">Loading...</div>
-        <p>Loading the floor plan... Please wait!</p>
+        <p>Loading... Please wait!</p>
       </div>
     </div>
     <section class="app-content">
       <form class="form-horizontal">
         <div class="form-group clearfix floors-form-group">
           <div class="col-sm-12 control-label">
-            <label>Add your floor plans</label>
+            <label>Add your maps</label>
           </div>
           <div class="col-sm-12">
             <div class="floor-panels-holder">
-              <div class="add-floor-panel" @click.prevent="onAddFloor"><i class="fa fa-plus-circle"></i> Add a new floorplan</div>
+              <div class="add-floor-panel" @click.prevent="onAddFloor"><i class="fa fa-plus-circle"></i> Add a new map</div>
               <div class="panel-group" id="floor-accordion" v-sortable="{ handle: '.panel-heading', group: { name: 'floorPanels', pull: false }, scrollSensitivity: 116, scrollSpeed: 10, onUpdate: onSortFloors }">
                 
                 <div v-for="(floor, idx) in floors" v-bind:key="floor.id" class="panel panel-default floor-panel" :data-id="floor.id">
@@ -80,11 +79,11 @@
         </div>
         <div class="form-group clearfix add-markers-form-group">
           <div class="col-sm-4 control-label">
-            <label>Add markers to your floor plan(s)</label>
+            <label>Add markers to your map(s)</label>
           </div>
           <div class="col-sm-8">
             <div class="btn btn-default" @click.prevent="openAddMarkers">Mark floor(s)</div>
-            <p v-if="hasError" class="text-danger">You need to add at least one floor and one marker style before continuing.</p>
+            <p v-if="hasError" class="text-danger">You need to add at least one map and one marker style before continuing.</p>
           </div>
         </div>
       </form>

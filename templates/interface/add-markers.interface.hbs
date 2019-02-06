@@ -3,12 +3,12 @@
     <div v-if="isLoading" class="floors-loading-holder">
       <div class="spinner-holder animated">
         <div class="spinner-overlay">Loading...</div>
-        <p>Loading the floor plan... Please wait!</p>
+        <p>Loading... Please wait!</p>
       </div>
     </div>
     <div v-else class="floors-container">
       <div v-show="!mappedMarkerData.length" class="no-markers">
-        Your floor plans will appear here once you create a new marker.
+        Your maps will appear here once you create a new marker.
       </div>
       <div v-show="mappedMarkerData.length" class="floor-wrapper-holder">
         <div v-for="(floor, index) in widgetData.floors" class="floor-wrapper" v-bind:class="{ 'active': selectedMarkerData.floor && floor.id === selectedMarkerData.floor.id && imageLoaded }">
@@ -55,7 +55,7 @@
         </div>
         <div class="form-group clearfix">
           <div class="col-sm-12 control-label">
-            <label>Floor name field</label>
+            <label>Map name field</label>
           </div>
           <div class="col-sm-12">
             <multiselect v-model="markerFloorColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
@@ -99,12 +99,12 @@
           <div v-if="isLoading" class="col-sm-12 markers-ui-loading">
             <div class="spinner-holder animated">
               <div class="spinner-overlay">Loading...</div>
-              <p>Loading the floor plan... Please wait!</p>
+              <p>Loading... Please wait!</p>
             </div>
           </div>
           <div v-else class="col-sm-12 markers-ui">
             <div v-if="!mappedMarkerData.length" class="no-markers">
-              Use the button below to add a new marker to your floor plan.
+              Use the button below to add a new marker to your map.
             </div>
             <div v-else v-for="(markerInfo, index) in mappedMarkerData" class="marker-holder" v-bind:class="{ 'active': activeMarker === index }" @click.prevent="setActiveMarker(index)">
               <div class="marker-wrapper">
