@@ -257,7 +257,7 @@ Fliplet().then(function () {
             }
           })
         },
-        connectToDataSource(options) {
+        fetchData(options) {
           return Fliplet.DataSources.connect(this.markersDataSourceId, options)
             .then((connection) => {
               return connection.find()
@@ -288,14 +288,14 @@ Fliplet().then(function () {
             container: $(selector)
           }).then(() => {
             if (this.getData) {
-              this.connectToDataSource = this.getData
+              this.fetchData = this.getData
 
               if (this.hasOwnProperty('cache')) {
                 cache.offline = this.cache
               }
             }
 
-            return this.connectToDataSource(cache)
+            return this.fetchData(cache)
           }).then((data) => {
             this.markersData = data 
             this.mappedMarkerData = this.mapMarkerData()
