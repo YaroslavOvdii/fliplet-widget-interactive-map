@@ -317,8 +317,6 @@ Fliplet().then(function () {
             } else {
               this.$nextTick(this.setupFlPanZoom)
             }
-
-            return
           })
         }
       },
