@@ -1,0 +1,23 @@
+<div>
+  <div class="form-group clearfix">
+    <div class="col-sm-4 control-label">
+      <label>Map name</label>
+    </div>
+    <div class="col-sm-8">
+      <input type="text" class="form-control" v-model.trim="name" @keyup="onInputData"/>
+    </div>
+  </div>
+
+  <div class="form-group clearfix">
+    <div class="col-sm-4 control-label">
+      <label>Map image</label>
+    </div>
+    <div class="col-sm-8">
+      <div class="btn btn-default" @click.prevent="openFloorPicker">
+        <span v-if="image">Replace image</span>
+        <span v-else>Select an image</span>
+      </div>
+      <div v-if="image" class="selected-folder">Selected image: <span>\{{image.name}}</span></div>
+    </div>
+  </div>
+</div>

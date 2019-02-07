@@ -1,0 +1,150 @@
+<div class="add-markers-component clearfix">
+  <div v-show="savedData" class="col-xs-8 floors-wrapper">
+    <div v-if="isLoading" class="floors-loading-holder">
+      <div class="spinner-holder animated">
+        <div class="spinner-overlay">Loading...</div>
+        <p>Loading... Please wait!</p>
+      </div>
+    </div>
+    <div v-else class="floors-container">
+      <div v-show="!mappedMarkerData.length" class="no-markers">
+        Your maps will appear here once you create a new marker.
+      </div>
+      <div v-show="mappedMarkerData.length" class="floor-wrapper-holder">
+        <div v-for="(floor, index) in widgetData.floors" class="floor-wrapper" v-bind:class="{ 'active': selectedMarkerData.floor && floor.id === selectedMarkerData.floor.id && imageLoaded }">
+          <div class="floor-container" :id="'floor-' + floor.id">
+            <img v-if="floor.image" class="floor-image" :src="floor.image.url"/>
+          </div>
+        </div>
+      </div>
+      <div v-if="selectedMarkerData.floor && selectedMarkerData.floor.name" class="floors-button">
+        <i class="fa fa-map-marker"></i>
+        <span class="floor-button-text"><p>\{{selectedMarkerData.floor.name}}</p></span>
+      </div>
+      <div v-if="selectedMarkerData.floor && selectedMarkerData.floor.name" class="floor-hint-holder">
+        <div class="floor-hint">Click the image to set the marker position</div>
+      </div>
+    </div>
+  </div>
+  <div class="settings-holder" v-bind:class="{ 'col-xs-12 less-bottom-padding': !savedData, 'col-xs-4 with-border': savedData }">
+    <div class="marker-settings-wrapper">
+      <div class="form-group clearfix">
+        <div class="col-sm-12 control-label">
+          <label>Markers data source</label>
+        </div>
+        <div v-if="!manualSelectDataSource" class="col-sm-12">
+          We have created a data source for you called <strong>\{{markersDataSource.name}}</strong>.<br>
+          <span>
+            <a href="#" @click.prevent="editDataSource">Edit data</a> | 
+            <a href="#" @click.prevent="chooseExistingData" v-if="!savedData">Switch to another data source</a>
+            <a href="#" @click.prevent="changeSettings" v-else>Change data settings</a>
+          </span>
+        </div>
+        <div v-if="manualSelectDataSource" class="col-sm-12">
+          <multiselect v-model="markersDataSource" :options="dataSources" :custom-label="nameWithId" placeholder="-- Select a data source" label="name" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
+        </div>
+      </div>
+      <div v-if="!savedData">
+        <div class="form-group clearfix">
+          <div class="col-sm-12 control-label">
+            <label>Marker name field</label>
+          </div>
+          <div class="col-sm-12">
+            <multiselect v-model="markerNameColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
+          </div>
+        </div>
+        <div class="form-group clearfix">
+          <div class="col-sm-12 control-label">
+            <label>Map name field</label>
+          </div>
+          <div class="col-sm-12">
+            <multiselect v-model="markerFloorColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
+          </div>
+        </div>
+        <div class="form-group clearfix">
+          <div class="col-sm-12 control-label">
+            <label>Marker type field</label>
+          </div>
+          <div class="col-sm-12">
+            <multiselect v-model="markerTypeColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
+          </div>
+        </div>
+        <div class="form-group clearfix">
+          <div class="col-sm-12 control-label">
+            <label>Marker X position field</label>
+          </div>
+          <div class="col-sm-12">
+            <multiselect v-model="markerXPositionColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
+          </div>
+        </div>
+        <div class="form-group clearfix">
+          <div class="col-sm-12 control-label">
+            <label>Marker Y position field</label>
+          </div>
+          <div class="col-sm-12">
+            <multiselect v-model="markerYPositionColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
+          </div>
+        </div>
+        <div class="form-group clearfix">
+          <div class="col-sm-12">
+            <div class="btn btn-default" @click.prevent="useSettings">Use these settings</div>
+          </div>
+        </div>
+      </div>
+      <div v-else class="markers-ui-wrapper">
+        <div class="form-group clearfix markers-ui-holder">
+          <div class="col-sm-12 control-label">
+            <label>Configure the markers</label>
+          </div>
+          <div v-if="isLoading" class="col-sm-12 markers-ui-loading">
+            <div class="spinner-holder animated">
+              <div class="spinner-overlay">Loading...</div>
+              <p>Loading... Please wait!</p>
+            </div>
+          </div>
+          <div v-else class="col-sm-12 markers-ui">
+            <div v-if="!mappedMarkerData.length" class="no-markers">
+              Use the button below to add a new marker to your map.
+            </div>
+            <div v-else v-for="(markerInfo, index) in mappedMarkerData" class="marker-holder" v-bind:class="{ 'active': activeMarker === index }" @click.prevent="setActiveMarker(index)">
+              <div class="marker-wrapper">
+                <div v-if="markerInfo.data.updateName" class="marker-name-edit-holder">
+                  <input v-model="markerInfo.data.name" :ref="'changename-' + index" class="form-control" @keyup.enter="confirmName(index)" @keyup.esc="cancelNameUpdate(index)"/> <i class="fa fa-check-circle" @click.prevent="confirmName(index)"></i> <i class="fa fa-ban" @click.prevent="cancelNameUpdate(index)"></i>
+                </div>
+                <div v-else class="marker-name-holder">
+                  <span>\{{markerInfo.data.name}}</span> <i class="fa fa-pencil" @click.prevent="toUpdateName(index, markerInfo.data.name)"></i>
+                </div>
+                <div class="marker-floor-holder">
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      \{{markerInfo.data.floor}} <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                      <li v-for="floor in widgetData.floors"><a href="#" @click.prevent="updateFloor(floor.name, index)">\{{floor.name}}</a></li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="marker-icon-holder">
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i :class="markerInfo.data.icon + ' fa-fw'" :style="'color: ' + markerInfo.data.color"></i> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                      <li v-for="marker in widgetData.markers"><a href="#" @click.prevent="updateMarker(marker, index)">\{{marker.name}} <i :class="marker.icon + ' fa-fw'" :style="'color: ' + marker.color"></i></a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="marker-delete-holder" @click.stop="deleteMarker(index)">
+                <i class="fa fa-trash"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="settings-buttons-wrapper" v-if="savedData">
+      <div class="btn btn-secondary" @click.prevent="addNewMarker">Add new marker</div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,53 @@
+{
+  "name": "Interactive map",
+  "package": "com.fliplet.interactive-map",
+  "version": "1.0.0",
+  "icon": "img/icon.png",
+  "tags": ["type:component", "category:general"],
+  "provider_only": false,
+  "html_tag": "div",
+  "interface": {
+    "dependencies": [
+      "fliplet-core",
+      "fliplet-studio-ui",
+      "fliplet-datasources",
+      "fliplet-ui-panzoom",
+      "bootstrap",
+      "handlebars",
+      "vue.js"
+    ],
+    "assets": [
+      "vendor/bootstrap-colorpicker.min.js",
+      "vendor/bootstrap-colorpicker.css",
+
+      "js/interface.templates.js",
+      "dist/core.js",
+
+      "dist/floor-panel.js",
+      "dist/marker-panel.js",
+      "dist/add-markers.js",
+
+      "dist/interface.js",
+      "css/interface.css",
+      "dist/vue-multiselect.min.css"
+    ]
+  },
+  "build": {
+    "dependencies": [
+      "fliplet-core",
+      "fliplet-datasources",
+      "fliplet-ui-panzoom",
+      "bootstrap",
+      "handlebars",
+      "font-awesome",
+      "vue.js"
+    ],
+    "assets": [
+      "dist/build.js",
+      "css/build.css"
+    ]
+  },
+  "references": [
+    "markersDataSourceId:dataSource"
+  ]
+}
