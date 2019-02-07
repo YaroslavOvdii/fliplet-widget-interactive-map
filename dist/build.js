@@ -402,7 +402,7 @@ Fliplet().then(function () {
             }
           });
         },
-        connectToDataSource: function connectToDataSource(options) {
+        fetchData: function fetchData(options) {
           return Fliplet.DataSources.connect(this.markersDataSourceId, options).then(function (connection) {
             return connection.find();
           }).catch(function (error) {
@@ -432,14 +432,14 @@ Fliplet().then(function () {
             container: $(selector)
           }).then(function () {
             if (_this10.getData) {
-              _this10.connectToDataSource = _this10.getData;
+              _this10.fetchData = _this10.getData;
 
               if (_this10.hasOwnProperty('cache')) {
                 cache.offline = _this10.cache;
               }
             }
 
-            return _this10.connectToDataSource(cache);
+            return _this10.fetchData(cache);
           }).then(function (data) {
             _this10.markersData = data;
             _this10.mappedMarkerData = _this10.mapMarkerData();
@@ -459,8 +459,6 @@ Fliplet().then(function () {
             } else {
               _this10.$nextTick(_this10.setupFlPanZoom);
             }
-
-            return;
           });
         }
       },

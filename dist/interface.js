@@ -149,16 +149,6 @@ var app = new Vue({
     };
   },
   methods: {
-    makeid: function makeid(length) {
-      var text = '';
-      var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-      for (var i = 0; i < length; i++) {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-      }
-
-      return text;
-    },
     loadDataSources: function loadDataSources() {
       return Fliplet.DataSources.get({
         roles: 'publisher,editor',
@@ -185,7 +175,7 @@ var app = new Vue({
     },
     onAddFloor: function onAddFloor() {
       var newItem = {
-        id: this.makeid(8),
+        id: Fliplet.guid(),
         isFromNew: true,
         name: "Floor ".concat(this.floors.length + 1),
         type: 'floor-panel'
@@ -211,7 +201,7 @@ var app = new Vue({
     },
     onAddMarker: function onAddMarker() {
       var newItem = {
-        id: this.makeid(8),
+        id: Fliplet.guid(),
         isFromNew: true,
         name: "Marker ".concat(this.markers.length + 1),
         icon: 'fa fa-circle',

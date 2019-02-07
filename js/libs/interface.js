@@ -33,15 +33,6 @@ const app = new Vue({
     }
   },
   methods: {
-    makeid(length) {
-      let text = ''
-      const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-
-      for (let i = 0; i < length; i++)
-        text += possible.charAt(Math.floor(Math.random() * possible.length))
-
-      return text
-    },
     loadDataSources() {
       return Fliplet.DataSources.get({
         roles: 'publisher,editor',
@@ -68,7 +59,7 @@ const app = new Vue({
     },
     onAddFloor() {
       const newItem = {
-        id: this.makeid(8),
+        id: Fliplet.guid(),
         isFromNew: true,
         name: `Floor ${this.floors.length + 1}`,
         type: 'floor-panel'
@@ -93,7 +84,7 @@ const app = new Vue({
     },
     onAddMarker() {
       const newItem = {
-        id: this.makeid(8),
+        id: Fliplet.guid(),
         isFromNew: true,
         name: `Marker ${this.markers.length + 1}`,
         icon: 'fa fa-circle',
