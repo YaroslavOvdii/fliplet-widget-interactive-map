@@ -1,4 +1,4 @@
-# Fliplet Interactive Floorplan
+# Fliplet Interactive Map
 
 **Please note: this widget requires you to run the gulp watcher during development to compile the source files as you save.**
 
@@ -17,8 +17,8 @@ $ npm install fliplet-cli -g
 Clone and run for development:
 
 ```
-$ git clone https://github.com/Fliplet/fliplet-widget-interactive-floorplan.git
-$ cd fliplet-widget-interactive-floorplan
+$ git clone https://github.com/Fliplet/fliplet-widget-interactive-map.git
+$ cd fliplet-widget-interactive-map
 
 $ fliplet run
 ```
