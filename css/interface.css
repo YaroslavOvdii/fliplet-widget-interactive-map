@@ -160,10 +160,6 @@ header .title-holder p {
   padding: 10px 40px 10px 6px;
 }
 
-.map-markers-holder .panel-heading:hover {
-  cursor: pointer;
-}
-
 .map-markers-holder .panel-heading h4 {
   padding: 10px 40px 10px 10px;
 }
