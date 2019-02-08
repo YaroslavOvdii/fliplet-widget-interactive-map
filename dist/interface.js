@@ -189,8 +189,8 @@ var app = new Vue({
       var _this2 = this;
 
       Fliplet.Modal.confirm({
-        title: 'Delete floorplan',
-        message: '<p>Are you sure you want to delete this floor?</p>'
+        title: 'Delete map',
+        message: '<p>Are you sure you want to delete this map?</p>'
       }).then(function (result) {
         if (!result) {
           return;
@@ -214,8 +214,8 @@ var app = new Vue({
       var _this3 = this;
 
       Fliplet.Modal.confirm({
-        title: 'Delete floorplan',
-        message: '<p>Are you sure you want to delete this floor?</p>'
+        title: 'Delete marker style',
+        message: '<p>Are you sure you want to delete this marker style?</p>'
       }).then(function (result) {
         if (!result) {
           return;
@@ -229,7 +229,7 @@ var app = new Vue({
 
       this.floors.forEach(function (panel, index) {
         if (panelData.name == panel.name && panelData.id !== panel.id) {
-          panelData.error = 'Floors must have different names';
+          panelData.error = 'Maps must have different names';
         }
 
         if (panelData.id === panel.id) {

@@ -72,8 +72,8 @@ const app = new Vue({
     },
     deleteFloor(index) {
       Fliplet.Modal.confirm({
-        title: 'Delete floorplan',
-        message: '<p>Are you sure you want to delete this floor?</p>'
+        title: 'Delete map',
+        message: '<p>Are you sure you want to delete this map?</p>'
       }).then((result) => {
         if (!result) {
           return
@@ -96,8 +96,8 @@ const app = new Vue({
     },
     deleteMarker(index) {
       Fliplet.Modal.confirm({
-        title: 'Delete floorplan',
-        message: '<p>Are you sure you want to delete this floor?</p>'
+        title: 'Delete marker style',
+        message: '<p>Are you sure you want to delete this marker style?</p>'
       }).then((result) => {
         if (!result) {
           return
@@ -109,7 +109,7 @@ const app = new Vue({
     onPanelSettingChanged(panelData) {
       this.floors.forEach((panel, index) => {
         if (panelData.name == panel.name && panelData.id !== panel.id) {
-          panelData.error = 'Floors must have different names'
+          panelData.error = 'Maps must have different names'
         }
 
         if (panelData.id === panel.id) {
