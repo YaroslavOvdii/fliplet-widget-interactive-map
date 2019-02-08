@@ -22,7 +22,7 @@
     <div class="floorplan-search-icon" v-bind:class="{ 'active': mappedMarkerData && mappedMarkerData.length }" @click.prevent="toggleSearchOverlay">
       <i class="fa fa-search"></i>
     </div>
-    <div class="floors-button" v-bind:class="{ 'active': selectedFloorData && selectedFloorData.name }" v-if="selectedFloorData && selectedFloorData.name" @click.prevent="toggleFloorOverlay">
+    <div class="floors-button" v-bind:class="{ 'active': selectedFloorData && selectedFloorData.name, 'hidden': floors.length <= 1 }" v-if="selectedFloorData && selectedFloorData.name" @click.prevent="toggleFloorOverlay">
       <i class="fa fa-map-marker"></i>
       <div class="floors-button-text"><p>\{{ selectedFloorData.name }}</p></div>
       <i class="fa fa-bars"></i>
