@@ -255,6 +255,12 @@ Fliplet.Floorplan.component('add-markers', {
       this.imageLoaded = false
       this.selectedMarkerData.marker = this.mappedMarkerData[this.activeMarker]
       this.selectedMarkerData.floor = _.find(this.widgetData.floors, { name: floorName })
+      // If the map doesn't exist anymore set the first one in the list
+      if (!this.selectedMarkerData.floor) {
+        this.selectedMarkerData.floor = this.widgetData.floors[0]
+        this.mappedMarkerData[this.activeMarker].data.floor = this.selectedMarkerData.floor.name
+        this.saveDebounced()
+      }
 
       if (this.flPanZoomInstance) {
         this.detachEventHandlers()
