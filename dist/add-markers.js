@@ -362,7 +362,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       }
 
       if (this.flPanZoomInstance) {
-        this.detachEventHandlers();
+        this.detachEventHandler();
         this.flPanZoomInstance = null;
       }
 
@@ -457,7 +457,7 @@ Fliplet.InteractiveMap.component('add-markers', {
     attachEventHandler: function attachEventHandler() {
       this.pzHandler.on('tap', this.onTapHandler);
     },
-    detachEventHandlers: function detachEventHandlers() {
+    detachEventHandler: function detachEventHandler() {
       this.pzHandler.off('tap', this.onTapHandler);
     },
     onTapHandler: function onTapHandler(e) {
