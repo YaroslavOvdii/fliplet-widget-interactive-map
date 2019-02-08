@@ -87,8 +87,20 @@ Fliplet.Floorplan.component('marker-panel', {
     const $colorpickerElement = $('#list-item-color-' + $vm.id).parents('[colorpicker-component]')
 
     $colorpickerElement.colorpicker({
-      container: false,
-      align: 'left'
+      container: true,
+      customClass: 'colorpicker-2x',
+      sliders: {
+        saturation: {
+          maxLeft: 235,
+          maxTop: 235
+        },
+        hue: {
+          maxTop: 235
+        },
+        alpha: {
+          maxTop: 235
+        }
+      }
     })
 
     $colorpickerElement.on('changeColor', (e) => {
