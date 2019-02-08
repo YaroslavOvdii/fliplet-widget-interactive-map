@@ -54,9 +54,9 @@
           </div>
           <p class="interactive-map-overlay-title">SEARCH</p>
         </div>
-        <div class="interactive-map-overlay-search-holder">
+        <div class="interactive-map-overlay-search-holder" v-bind:class="{ 'searching': searchValue && searchValue.length }">
           <input v-model="searchValue" type="search" name="marker-name-search" class="form-control" placeholder="Type to search">
-          <span class="clear-search">Clear</span>
+          <span class="clear-search" @click.prevent="clearSearch">Clear</span>
         </div>
       </div>
       <div class="interactive-map-overlay-scroll-container">

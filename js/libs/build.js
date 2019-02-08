@@ -62,6 +62,9 @@ Fliplet().then(function () {
             this.noSearchResults = true
           }
         },
+        clearSearch() {
+          this.searchValue = ''
+        },
         mapMarkerData() {
           const newMarkerData = this.markersData.map((marker) => {
             const markerData = _.find(this.markerStyles, { name: marker.data[this.markerTypeColumn] })

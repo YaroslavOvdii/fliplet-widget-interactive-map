@@ -167,6 +167,9 @@ Fliplet().then(function () {
             this.noSearchResults = true;
           }
         },
+        clearSearch: function clearSearch() {
+          this.searchValue = '';
+        },
         mapMarkerData: function mapMarkerData() {
           var _this2 = this;
 
