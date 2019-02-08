@@ -76,8 +76,10 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   position: absolute;
   top: -100px;
   left: 5px;
-  width: auto;
-  height: 40px;
+  right: auto;
+  bottom: auto;
+  max-width: calc(100% - 10px);
+  min-height: 40px;
   display: flex;
   align-items: center;
   padding: 0 10px;
@@ -104,6 +106,10 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.floorplan-label-text {
+  padding: 10px 5px;
 }
 
 .floorplan-label-text p {
