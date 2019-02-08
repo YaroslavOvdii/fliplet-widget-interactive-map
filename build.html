@@ -1,4 +1,4 @@
-<div class="is-loading" data-interactive-map-id="{{ id }}">
+<div class="is-loading" data-interactive-map-id="{{ id }}" data-interactive-map-uuid="{{ uuid }}">
   <div v-if="containsData" class="interactive-map-component-wrapper" v-bind:class="{ 'with-search': mappedMarkerData && mappedMarkerData.length }">
     <div class="map-wrapper-holder">
       <div class="map-wrapper" v-for="(map, index) in maps" v-bind:class="{ 'active': selectedMapData && map.id === selectedMapData.id && imageLoaded }">
@@ -73,7 +73,7 @@
       </div>
     </div>
   </div>
-  <div v-else class="interactive-map-app-placeholder">
+  <div v-else class="widget-not-configured">
     <h3>Interactive map</h3>
     <p>Click here to edit the settings.</p>
   </div>
