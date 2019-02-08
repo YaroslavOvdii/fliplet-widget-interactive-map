@@ -253,7 +253,7 @@ Fliplet.InteractiveMap.component('add-markers', {
         animDuration: 0.1
       })
 
-      this.flPanZoomInstance.on('mapImageLoaded', (e) => {
+      this.flPanZoomInstance.on('mapImageLoaded', () => {
         this.imageLoaded = true
       })
 
