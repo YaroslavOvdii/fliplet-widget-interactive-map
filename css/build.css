@@ -246,7 +246,6 @@ body.fl-with-bottom-menu .interactive-map-component-wrapper {
 
 .marker.active .active-state {
   display: block;
-  -webkit-animation: pulse 1.2s ease-out infinite none;
   animation: pulse 1.2s ease-out infinite none;
 }
 
@@ -393,21 +392,21 @@ body.fl-with-bottom-menu .interactive-map-component-wrapper {
   visibility: hidden;
   position: absolute;
   top: 1px;
-  right: 1px;
+  right: 21px;
   height: 32px;
   line-height: 32px;
   border-radius: 32px;
   padding: 0px 10px;
   text-align: center;
   font-size: 0.8em;
-  background: rgba($bodyTextColor, 0.5);
-  color: $bodyBackground;
+  background: rgba(51, 51, 51, 0.5);
+  color: #333333;
   cursor: pointer;
   transition: opacity 0.1s ease-in-out;
 }
 
 .interactive-map-overlay-search-holder span:active {
-  box-shadow: inset 0px 2px 2px 0px rgba($bodyTextColor, 0.2);
+  box-shadow: inset 0px 2px 2px 0px rgba(51, 51, 51, 0.2);
 }
 
 .interactive-map-overlay-search-holder.searching span {
