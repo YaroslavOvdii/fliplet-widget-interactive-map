@@ -170,28 +170,6 @@ Fliplet.InteractiveMap.component('add-markers', {
     nameWithId({ name, id }) {
       return `${name} — [${id}]`
     },
-    createNewData() {
-      const name = `${this.appName} - Markers`
-
-      Fliplet.Modal.prompt({
-        title: 'Please type a name for your data source:',
-        value: name
-      }).then((name) => {
-        if (name === null || name === '') {
-          return Promise.reject()
-        }
-
-        return name
-      }).then((name) => {
-        return Fliplet.DataSources.create({
-          name: name,
-          organizationId: organizationId
-        })
-      }).then((ds) => {
-        this.dataSources.push(ds)
-        this.selectedDataSource = ds.id
-      })
-    },
     chooseExistingData() {
       Fliplet.Modal.confirm({
         title: 'Changing data source',
