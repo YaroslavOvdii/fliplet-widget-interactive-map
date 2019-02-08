@@ -21,7 +21,7 @@
               <div class="panel-group" id="map-accordion" v-sortable="{ handle: '.panel-heading', group: { name: 'mapPanels', pull: false }, scrollSensitivity: 116, scrollSpeed: 10, onUpdate: onSortMaps }">
                 
                 <div v-for="(map, idx) in maps" v-bind:key="map.id" class="panel panel-default map-panel" :data-id="map.id">
-                  <div class="panel-heading">
+                  <div class="panel-heading grabbable">
                     <h4 class="panel-title" v-bind:class="{ 'collapsed': !map.isFromNew }" data-toggle="collapse" data-parent="#map-accordion" :data-target="'#collapse-' + map.id">
                       <div class="screen-reorder-handle">
                         <i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i>
@@ -56,7 +56,7 @@
               <div class="panel-group" id="markers-accordion">
                 
                 <div v-for="(marker, idx) in markers" v-bind:key="marker.id" class="panel panel-default marker-panel" :data-id="marker.id">
-                  <div class="panel-heading">
+                  <div class="panel-heading grabbable">
                     <h4 class="panel-title" v-bind:class="{ 'collapsed': !marker.isFromNew }" data-toggle="collapse" data-parent="#markers-accordion" :data-target="'#collapse-' + marker.id">
                       <span class="panel-title-text">\{{marker.name}}</span>
                       <span class="fa panel-chevron fa-chevron-up"></span>
