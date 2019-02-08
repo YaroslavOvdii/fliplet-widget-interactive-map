@@ -121,6 +121,11 @@ Fliplet().then(function () {
           $('.marker').removeClass('active')
           // Get markers
           const markers = this.flPanZoomInstance.markers.getAll()
+
+          if (!markers.length) {
+            return
+          }
+
           // Store first marker
           const marker = markers[0]
 
