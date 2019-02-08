@@ -194,14 +194,10 @@ Fliplet().then(function () {
         setupFlPanZoom: function setupFlPanZoom() {
           var _this3 = this;
 
-          if (!this.mappedMarkerData.length) {
-            return;
-          }
-
           this.imageLoaded = false;
           this.selectedFloorData = this.floors[this.activeFloor];
-          this.selectedMarkerData = this.mappedMarkerData[this.activeMarker].data;
-          this.selectedMarkerToggle = true;
+          this.selectedMarkerData = this.mappedMarkerData[this.activeMarker] ? this.mappedMarkerData[this.activeMarker].data : undefined;
+          this.selectedMarkerToggle = !!this.selectedMarkerData;
 
           if (this.flPanZoomInstance) {
             this.flPanZoomInstance = null;
@@ -217,8 +213,11 @@ Fliplet().then(function () {
             _this3.imageLoaded = true;
           });
           this.pzHandler = new Hammer(this.pzElement.get(0));
-          this.addMarkers(true);
-          this.selectPinchMarker();
+
+          if (this.mappedMarkerData.length) {
+            this.addMarkers(true);
+            this.selectPinchMarker();
+          }
         },
         selectPinchMarker: function selectPinchMarker() {
           var _this4 = this;
