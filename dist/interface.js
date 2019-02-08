@@ -177,7 +177,7 @@ var app = new Vue({
       var newItem = {
         id: Fliplet.guid(),
         isFromNew: true,
-        name: "Floor ".concat(this.floors.length + 1),
+        name: "Map ".concat(this.floors.length + 1),
         type: 'floor-panel'
       };
       this.floors.push(newItem);

@@ -61,7 +61,7 @@ const app = new Vue({
       const newItem = {
         id: Fliplet.guid(),
         isFromNew: true,
-        name: `Floor ${this.floors.length + 1}`,
+        name: `Map ${this.floors.length + 1}`,
         type: 'floor-panel'
       }
 
