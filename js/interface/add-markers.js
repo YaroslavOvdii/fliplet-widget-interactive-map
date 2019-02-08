@@ -333,7 +333,7 @@ Fliplet.Floorplan.component('add-markers', {
       }
 
       this.mappedMarkerData.forEach((marker, index) => {
-        if (marker.data.name === coordinates.marker.name) {
+        if (marker.id === coordinates.marker.id) {
           this.mappedMarkerData[index].data.positionx = coordinates.x
           this.mappedMarkerData[index].data.positiony = coordinates.y
         }
@@ -353,12 +353,12 @@ Fliplet.Floorplan.component('add-markers', {
         // Find a marker
         let markerId = undefined
         const markerIndex = _.findIndex(markers, (marker) => {
-          return marker.vars.name === this.selectedMarkerData.marker.data.name
+          return marker.vars.id === this.selectedMarkerData.marker.id
         })
         const markerFound = markers[markerIndex]
 
         if (markerFound) {
-          markerId = markerFound.getElement().attr('id')
+          markerId = markerFound.vars.id
         }
 
         const clientRect = this.pzElement.get(0).getBoundingClientRect()
@@ -378,11 +378,9 @@ Fliplet.Floorplan.component('add-markers', {
     },
     onMarkerHandler(e) {
       const markers = this.flPanZoomInstance.markers.getAll()
-      var markerId = $(e.target).attr('id')
-      const name = $(e.target).attr('data-name')
+      const markerId = $(e.target).attr('id')
       
-        
-      if (markerId && name === this.selectedMarkerData.marker.data.name) {
+      if (markerId && markerId === this.selectedMarkerData.marker.id) {
         this.flPanZoomInstance.markers.remove(markerId, true)
       }
     },

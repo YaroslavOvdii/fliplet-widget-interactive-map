@@ -471,7 +471,7 @@ Fliplet.Floorplan.component('add-markers', {
       }
 
       this.mappedMarkerData.forEach(function (marker, index) {
-        if (marker.data.name === coordinates.marker.name) {
+        if (marker.id === coordinates.marker.id) {
           _this7.mappedMarkerData[index].data.positionx = coordinates.x;
           _this7.mappedMarkerData[index].data.positiony = coordinates.y;
         }
@@ -494,13 +494,13 @@ Fliplet.Floorplan.component('add-markers', {
         var markerId = undefined;
 
         var markerIndex = _.findIndex(markers, function (marker) {
-          return marker.vars.name === _this8.selectedMarkerData.marker.data.name;
+          return marker.vars.id === _this8.selectedMarkerData.marker.id;
         });
 
         var markerFound = markers[markerIndex];
 
         if (markerFound) {
-          markerId = markerFound.getElement().attr('id');
+          markerId = markerFound.vars.id;
         }
 
         var clientRect = this.pzElement.get(0).getBoundingClientRect();
@@ -520,9 +520,8 @@ Fliplet.Floorplan.component('add-markers', {
     onMarkerHandler: function onMarkerHandler(e) {
       var markers = this.flPanZoomInstance.markers.getAll();
       var markerId = $(e.target).attr('id');
-      var name = $(e.target).attr('data-name');
 
-      if (markerId && name === this.selectedMarkerData.marker.data.name) {
+      if (markerId && markerId === this.selectedMarkerData.marker.id) {
         this.flPanZoomInstance.markers.remove(markerId, true);
       }
     },
