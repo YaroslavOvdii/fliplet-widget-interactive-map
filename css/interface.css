@@ -382,16 +382,16 @@ header .title-holder p {
   bottom: auto;
 }
 
-.fl-zoomIn,
-.fl-zoomOut {
+.fl-zoom-in,
+.fl-zoom-out {
   right: 15px;
 }
 
-.fl-zoomIn {
+.fl-zoom-in {
   bottom: 60px;
 }
 
-.fl-zoomOut {
+.fl-zoom-out {
   bottom: 15px;
 }
 
