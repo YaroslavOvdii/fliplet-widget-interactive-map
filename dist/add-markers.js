@@ -104,7 +104,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-Fliplet.Floorplan.component('add-markers', {
+Fliplet.InteractiveMap.component('add-markers', {
   componentName: 'Add Markers',
   props: {
     id: {
@@ -123,7 +123,7 @@ Fliplet.Floorplan.component('add-markers', {
       type: String,
       default: ''
     },
-    markerFloorColumn: {
+    markerMapColumn: {
       type: String,
       default: ''
     },
@@ -153,7 +153,7 @@ Fliplet.Floorplan.component('add-markers', {
   },
   data: function data() {
     return {
-      selector: '#flooplan-app',
+      selector: '#interactive-map-app',
       isLoading: true,
       manualSelectDataSource: false,
       manualSetSettings: false,
@@ -171,7 +171,7 @@ Fliplet.Floorplan.component('add-markers', {
       imageLoaded: false,
       activeMarker: 0,
       selectedMarkerData: {
-        floor: undefined,
+        map: undefined,
         marker: undefined
       },
       selectedPinchMarker: undefined,
@@ -183,8 +183,8 @@ Fliplet.Floorplan.component('add-markers', {
     markerFieldColumns: function markerFieldColumns() {
       return this.markersDataSource ? this.markersDataSource.columns : [];
     },
-    selectedFloor: function selectedFloor() {
-      return this.widgetData.floors[this.selectedFloorIndex];
+    selectedMap: function selectedMap() {
+      return this.widgetData.maps[this.selectedMapIndex];
     }
   },
   watch: {
@@ -192,7 +192,7 @@ Fliplet.Floorplan.component('add-markers', {
       if (!ds || !oldDs || ds.id !== oldDs.id) {
         // Resets select fields
         this.markerNameColumn = '';
-        this.markerFloorColumn = '';
+        this.markerMapColumn = '';
         this.markerTypeColumn = '';
         this.markerXPositionColumn = '';
         this.markerYPositionColumn = '';
@@ -212,7 +212,7 @@ Fliplet.Floorplan.component('add-markers', {
           id: marker.id,
           data: {
             name: marker.data[_this.markerNameColumn],
-            floor: marker.data[_this.markerFloorColumn],
+            map: marker.data[_this.markerMapColumn],
             type: marker.data[_this.markerTypeColumn],
             icon: markerData ? markerData.icon : '',
             color: markerData ? markerData.color : '#333333',
@@ -232,8 +232,8 @@ Fliplet.Floorplan.component('add-markers', {
         this.setupFlPanZoom();
       }
     },
-    updateFloor: function updateFloor(floorName, index) {
-      this.mappedMarkerData[index].data.floor = floorName;
+    updateMap: function updateMap(mapName, index) {
+      this.mappedMarkerData[index].data.map = mapName;
       this.saveDebounced();
       this.setupFlPanZoom();
     },
@@ -269,7 +269,7 @@ Fliplet.Floorplan.component('add-markers', {
     },
     deleteMarker: function deleteMarker(index) {
       var markers = this.flPanZoomInstance.markers.getAll();
-      var markerId = $('.floor-wrapper-holder').find('.marker[data-name="' + this.mappedMarkerData[index].data.name + '"]').attr('id');
+      var markerId = $('.map-wrapper-holder').find('.marker[data-name="' + this.mappedMarkerData[index].data.name + '"]').attr('id');
 
       if (markerId) {
         this.flPanZoomInstance.markers.remove(markerId, {
@@ -372,16 +372,16 @@ Fliplet.Floorplan.component('add-markers', {
         return;
       }
 
-      var floorName = this.mappedMarkerData[this.activeMarker].data.floor;
+      var mapName = this.mappedMarkerData[this.activeMarker].data.map;
       this.imageLoaded = false;
       this.selectedMarkerData.marker = this.mappedMarkerData[this.activeMarker];
-      this.selectedMarkerData.floor = _.find(this.widgetData.floors, {
-        name: floorName
+      this.selectedMarkerData.map = _.find(this.widgetData.maps, {
+        name: mapName
       }); // If the map doesn't exist anymore set the first one in the list
 
-      if (!this.selectedMarkerData.floor) {
-        this.selectedMarkerData.floor = this.widgetData.floors[0];
-        this.mappedMarkerData[this.activeMarker].data.floor = this.selectedMarkerData.floor.name;
+      if (!this.selectedMarkerData.map) {
+        this.selectedMarkerData.map = this.widgetData.maps[0];
+        this.mappedMarkerData[this.activeMarker].data.map = this.selectedMarkerData.map.name;
         this.saveDebounced();
       }
 
@@ -390,13 +390,13 @@ Fliplet.Floorplan.component('add-markers', {
         this.flPanZoomInstance = null;
       }
 
-      this.pzElement = $('#floor-' + this.selectedMarkerData.floor.id);
+      this.pzElement = $('#map-' + this.selectedMarkerData.map.id);
       this.flPanZoomInstance = Fliplet.UI.PanZoom.create(this.pzElement, {
         maxZoom: 4,
         zoomStep: 0.25,
         animDuration: 0.1
       });
-      this.flPanZoomInstance.on('floorImageLoaded', function (e) {
+      this.flPanZoomInstance.on('mapImageLoaded', function (e) {
         _this5.imageLoaded = true;
       });
       this.pzHandler = new Hammer(this.pzElement.get(0));
@@ -417,7 +417,7 @@ Fliplet.Floorplan.component('add-markers', {
         // Manually removes markers
         this.removeMarkers();
         this.mappedMarkerData.forEach(function (marker, index) {
-          if (marker.data.floor === _this6.selectedMarkerData.floor.name) {
+          if (marker.data.map === _this6.selectedMarkerData.map.name) {
             var markersLength = _this6.flPanZoomInstance.markers.getAll().length;
 
             markerElem = $("<div id='" + marker.id + "' class='marker' data-name='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute;'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state' style='background-color: " + marker.data.color + ";'></div></div>");
@@ -571,7 +571,7 @@ Fliplet.Floorplan.component('add-markers', {
           data: {}
         };
         newObj.data[_this11.markerNameColumn] = marker.data.name;
-        newObj.data[_this11.markerFloorColumn] = marker.data.floor;
+        newObj.data[_this11.markerMapColumn] = marker.data.map;
         newObj.data[_this11.markerTypeColumn] = marker.data.type;
         newObj.data[_this11.markerXPositionColumn] = marker.data.positionx;
         newObj.data[_this11.markerYPositionColumn] = marker.data.positiony;
@@ -589,7 +589,7 @@ Fliplet.Floorplan.component('add-markers', {
       var newObj = {};
       var markerLength = this.mappedMarkerData.length;
       newObj[this.markerNameColumn] = "New marker ".concat(markerLength + 1);
-      newObj[this.markerFloorColumn] = this.widgetData.floors.length ? this.widgetData.floors[0].name : '';
+      newObj[this.markerMapColumn] = this.widgetData.maps.length ? this.widgetData.maps[0].name : '';
       newObj[this.markerTypeColumn] = this.widgetData.markers.length ? this.widgetData.markers[0].name : '';
       newObj[this.markerXPositionColumn] = '100';
       newObj[this.markerYPositionColumn] = '100';
@@ -607,9 +607,9 @@ Fliplet.Floorplan.component('add-markers', {
       });
     },
     saveData: function saveData() {
-      var markersData = _.pick(this, ['markersDataSourceId', 'markerNameColumn', 'markerFloorColumn', 'markerTypeColumn', 'markerXPositionColumn', 'markerYPositionColumn']);
+      var markersData = _.pick(this, ['markersDataSourceId', 'markerNameColumn', 'markerMapColumn', 'markerTypeColumn', 'markerXPositionColumn', 'markerYPositionColumn']);
 
-      Fliplet.Floorplan.emit('add-markers-settings-changed', markersData);
+      Fliplet.InteractiveMap.emit('add-markers-settings-changed', markersData);
     }
   },
   created: function () {
@@ -642,7 +642,7 @@ Fliplet.Floorplan.component('add-markers', {
                   });
                 }
               });
-              Fliplet.Floorplan.on('add-markers-save', this.saveData);
+              Fliplet.InteractiveMap.on('add-markers-save', this.saveData);
 
             case 7:
             case "end":
@@ -663,7 +663,7 @@ Fliplet.Floorplan.component('add-markers', {
     setTimeout(this.setupFlPanZoom, 1000);
   },
   destroyed: function destroyed() {
-    Fliplet.Floorplan.off('add-markers-save', this.saveData);
+    Fliplet.InteractiveMap.off('add-markers-save', this.saveData);
   }
 });
 

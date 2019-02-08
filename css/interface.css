@@ -1,6 +1,6 @@
 html,
 body,
-#flooplan-app {
+#interactive-map-app {
   height: 100% !important;
   overflow: hidden;
 }
@@ -14,7 +14,7 @@ main {
   height: 100%;
 }
 
-#flooplan-app header {
+#interactive-map-app header {
   margin-bottom: 0;
 }
 
@@ -72,14 +72,14 @@ header .title-holder p {
 }
 
 /* ACCORDION */
-.floor-panels-holder,
-.floor-markers-holder {
+.map-panels-holder,
+.map-markers-holder {
   position: relative;
   padding-bottom: 40px;
 }
 
-.add-floor-panel,
-.add-floor-marker {
+.add-map-panel,
+.add-map-marker {
   position: absolute;
   bottom: 0;
   right: 0;
@@ -95,28 +95,28 @@ header .title-holder p {
   z-index: 1;
 }
 
-.add-floor-panel:hover,
-.add-floor-marker:hover {
+.add-map-panel:hover,
+.add-map-marker:hover {
   background-color: #f4f1f2;
 }
 
-.add-floor-panel:active,
-.add-floor-marker:active {
+.add-map-panel:active,
+.add-map-marker:active {
   background-color: #f4f1f2;
   -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
 
-.floor-panels-holder .panel-group,
-.floor-markers-holder .panel-group {
+.map-panels-holder .panel-group,
+.map-markers-holder .panel-group {
   display: block;
   -webkit-user-select: none;
   padding: 0 0 8px;
   margin: 0;
 }
 
-.floor-panels-holder.empty .panel-group,
-.floor-markers-holder.empty .panel-group {
+.map-panels-holder.empty .panel-group,
+.map-markers-holder.empty .panel-group {
   display: none;
 }
 
@@ -152,11 +152,11 @@ header .title-holder p {
   padding: 10px 40px 10px 6px;
 }
 
-.floor-markers-holder .panel-heading:hover {
+.map-markers-holder .panel-heading:hover {
   cursor: pointer;
 }
 
-.floor-markers-holder .panel-heading h4 {
+.map-markers-holder .panel-heading h4 {
   padding: 10px 40px 10px 10px;
 }
 
@@ -237,7 +237,7 @@ header .title-holder p {
   border: 1px solid rgb(0, 171, 210);
 }
 
-.floor-panel .panel-body label,
+.map-panel .panel-body label,
 .marker-panel .panel-body label {
   font-weight: normal;
 }
@@ -305,13 +305,13 @@ header .title-holder p {
 }
 
 .add-markers-component,
-.floors-wrapper,
+.maps-wrapper,
 .settings-holder,
-.floors-container {
+.maps-container {
   height: 100%;
 }
 
-.floors-wrapper {
+.maps-wrapper {
   padding: 0;
 }
 
@@ -343,13 +343,13 @@ header .title-holder p {
   margin-bottom: 10px;
 }
 
-/* FLoors */
-.floor-wrapper-holder {
+/* Maps */
+.map-wrapper-holder {
   width: 100%;
   height: 100%;
 }
 
-.floor-wrapper {
+.map-wrapper {
   position: absolute;
   top: 0;
   right: 0;
@@ -361,18 +361,18 @@ header .title-holder p {
   transition: opacity 0.25s ease-out;
 }
 
-.floor-wrapper.active {
+.map-wrapper.active {
   overflow: hidden;
   opacity: 1;
   visibility: visible;
 }
 
-.floor-container {
+.map-container {
   position: relative;
   transform-origin: 0px 0px 0px;
 }
 
-.floor-image {
+.map-image {
   max-width: none;
   width: 100%;
   position: absolute;
@@ -395,7 +395,7 @@ header .title-holder p {
   bottom: 15px;
 }
 
-.floors-button {
+.maps-button {
   position: absolute;
   bottom: 15px;
   left: 15px;
@@ -410,19 +410,19 @@ header .title-holder p {
   border-radius: 200px;
 }
 
-.floor-button-text p {
+.map-button-text p {
   font-size: 16px;
   color: #fff;
   margin: 0;
   line-height: 1;
 }
 
-.floors-button .fa-map-marker {
+.maps-button .fa-map-marker {
   margin-top: -2px;
   margin-right: 8px;
 }
 
-.floor-hint-holder {
+.map-hint-holder {
   position: absolute;
   top: 0;
   left: 0;
@@ -436,7 +436,7 @@ header .title-holder p {
   pointer-events: none;
 }
 
-.floor-hint-holder .floor-hint {
+.map-hint-holder .map-hint {
   padding: 6px 12px;
   display: flex;
   align-items: center;
@@ -509,7 +509,7 @@ header .title-holder p {
 }
 
 .markers-ui-loading,
-.floors-loading-holder {
+.maps-loading-holder {
   padding: 40px 0 0;
 }
 
@@ -579,7 +579,7 @@ header .title-holder p {
   padding: 6px 8px;
 }
 
-.marker-floor-holder .btn {
+.marker-map-holder .btn {
   position: relative;
   min-width: 100px;
   background: transparent;
@@ -593,7 +593,7 @@ header .title-holder p {
   border: none;
 }
 
-.marker-floor-holder .btn .caret,
+.marker-map-holder .btn .caret,
 .marker-icon-holder .btn .caret {
   position: absolute;
   right: 4px;
@@ -602,25 +602,25 @@ header .title-holder p {
   opacity: 0.5;
 }
 
-.marker-floor-holder .btn:hover,
+.marker-map-holder .btn:hover,
 .marker-icon-holder .btn:hover,
-.marker-floor-holder .btn:active:focus,
+.marker-map-holder .btn:active:focus,
 .marker-icon-holder .btn:active:focus {
   background: transparent;
   border: none;
 }
 
-.marker-floor-holder .btn:active,
+.marker-map-holder .btn:active,
 .marker-icon-holder .btn:active {
   box-shadow: none;
 }
 
-.marker-floor-holder .open > .dropdown-toggle.btn,
-.marker-floor-holder .open > .dropdown-toggle.btn:hover,
-.marker-floor-holder .open > .dropdown-toggle.btn:focus,
-.marker-floor-holder .open > .dropdown-toggle.btn:active,
-.marker-floor-holder .open > .dropdown-toggle.btn:active:hover,
-.marker-floor-holder .open > .dropdown-toggle.btn:active:focus,
+.marker-map-holder .open > .dropdown-toggle.btn,
+.marker-map-holder .open > .dropdown-toggle.btn:hover,
+.marker-map-holder .open > .dropdown-toggle.btn:focus,
+.marker-map-holder .open > .dropdown-toggle.btn:active,
+.marker-map-holder .open > .dropdown-toggle.btn:active:hover,
+.marker-map-holder .open > .dropdown-toggle.btn:active:focus,
 .marker-icon-holder .open > .dropdown-toggle.btn,
 .marker-icon-holder .open > .dropdown-toggle.btn:hover,
 .marker-icon-holder .open > .dropdown-toggle.btn:focus,
@@ -632,7 +632,7 @@ header .title-holder p {
   border: none;
 }
 
-.marker-floor-holder .dropdown-menu,
+.marker-map-holder .dropdown-menu,
 .marker-icon-holder .dropdown-menu {
   top: 85%;
   border-radius: 0;

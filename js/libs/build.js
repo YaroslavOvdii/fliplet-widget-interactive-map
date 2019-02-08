@@ -1,17 +1,17 @@
 Fliplet().then(function () {
-  Fliplet.Widget.instance('interactive-floorplan', function(data) {
-    var selector = '[data-interactive-floorplan-id="' + data.id + '"]';
+  Fliplet.Widget.instance('interactive-map', function(data) {
+    var selector = '[data-interactive-map-id="' + data.id + '"]';
 
-    const $floorplan = new Vue({
+    const $interactiveMap = new Vue({
       el: $(selector)[0],
       data() {
         return {
-          containsData: data.floors && data.floors.length && data.markers && data.markers.length,
-          floors: data.floors && data.floors.length ? data.floors : [],
+          containsData: data.maps && data.maps.length && data.markers && data.markers.length,
+          maps: data.maps && data.maps.length ? data.maps : [],
           markerStyles: data.markers && data.markers.length ? data.markers : [],
           markersDataSourceId: data.markersDataSourceId || undefined,
           markerNameColumn: data.markerNameColumn || undefined,
-          markerFloorColumn: data.markerFloorColumn || undefined,
+          markerMapColumn: data.markerMapColumn || undefined,
           markerTypeColumn: data.markerTypeColumn || undefined,
           markerXPositionColumn: data.markerXPositionColumn || undefined,
           markerYPositionColumn: data.markerYPositionColumn || undefined,
@@ -22,10 +22,10 @@ Fliplet().then(function () {
           pzElement: undefined,
           pzHandler: undefined,
           markerElemHandler: undefined,
-          activeFloor: 0,
+          activeMap: 0,
           activeMarker: 0,
           imageLoaded: false,
-          selectedFloorData: undefined,
+          selectedMapData: undefined,
           selectedMarkerData: undefined,
           selectedMarkerToggle: false,
           selectedPinchMarker: undefined,
@@ -53,7 +53,7 @@ Fliplet().then(function () {
           }
 
           this.searchMarkerData = _.filter(this.mappedMarkerData, (marker) => {
-            return _.some(['name', 'floor'], (key) => {
+            return _.some(['name', 'map'], (key) => {
               return marker.data[key] && marker.data[key].toString().toLowerCase().indexOf(this.searchValue.toLowerCase()) > -1
             })
           })
@@ -69,7 +69,7 @@ Fliplet().then(function () {
               id: marker.id,
               data: {
                 name: marker.data[this.markerNameColumn],
-                floor: marker.data[this.markerFloorColumn],
+                map: marker.data[this.markerMapColumn],
                 type: marker.data[this.markerTypeColumn],
                 icon: markerData ? markerData.icon : '',
                 color: markerData ? markerData.color : '#333333',
@@ -84,7 +84,7 @@ Fliplet().then(function () {
         },
         setupFlPanZoom() {
           this.imageLoaded = false
-          this.selectedFloorData = this.floors[this.activeFloor]
+          this.selectedMapData = this.maps[this.activeMap]
           this.selectedMarkerData = this.mappedMarkerData[this.activeMarker]
             ? this.mappedMarkerData[this.activeMarker].data
             : undefined
@@ -94,7 +94,7 @@ Fliplet().then(function () {
             this.flPanZoomInstance = null
           }
 
-          this.pzElement = $('#floor-' + this.selectedFloorData.id)
+          this.pzElement = $('#map-' + this.selectedMapData.id)
 
           this.flPanZoomInstance = Fliplet.UI.PanZoom.create(this.pzElement, {
             maxZoom: 4,
@@ -102,7 +102,7 @@ Fliplet().then(function () {
             animDuration: 0.1
           })
 
-          this.flPanZoomInstance.on('floorImageLoaded', (e) => {
+          this.flPanZoomInstance.on('mapImageLoaded', (e) => {
             this.imageLoaded = true
           })
 
@@ -138,7 +138,7 @@ Fliplet().then(function () {
           this.flPanZoomInstance.markers.removeAll()
 
           this.mappedMarkerData.forEach((marker, index) => {
-            if (marker.data.floor === this.selectedFloorData.name) {
+            if (marker.data.map === this.selectedMapData.name) {
               const markerElem = $("<div id='" + marker.id + "' class='marker' data-tooltip='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; width: " + marker.data.size + "; height: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state' style='background-color: " + marker.data.color + ";'></div></div>")
 
               this.markerElemHandler = new Hammer(markerElem.get(0))
@@ -156,16 +156,16 @@ Fliplet().then(function () {
           this.selectedMarkerData = this.mappedMarkerData[this.activeMarker].data
           this.selectedMarkerToggle = true
         },
-        setActiveFloor(floorIndex, fromSearch) {
-          if (this.activeFloor !== floorIndex) {
-            this.activeFloor = floorIndex
+        setActiveMap(mapIndex, fromSearch) {
+          if (this.activeMap !== mapIndex) {
+            this.activeMap = mapIndex
           }
 
           if (!fromSearch) {
             this.setupFlPanZoom()
           }
 
-          this.toggleFloorOverlay(false)
+          this.toggleMapOverlay(false)
         },
         setActiveMarker(markerIndex) {
           this.activeMarker = markerIndex
@@ -173,10 +173,10 @@ Fliplet().then(function () {
           this.toggleSearchOverlay(false)
         },
         selectedMarker(markerData) {
-          const floorIndex = _.findIndex(this.floors, (o) => { return o.name == markerData.data.floor })
+          const mapIndex = _.findIndex(this.maps, (o) => { return o.name == markerData.data.map })
           const markerIndex = _.findIndex(this.mappedMarkerData, (o) => { return o.data.name == markerData.data.name })
 
-          this.setActiveFloor(floorIndex, true)
+          this.setActiveMap(mapIndex, true)
           this.setActiveMarker(markerIndex)
         },
         selectMarkerOnStart() {
@@ -195,20 +195,20 @@ Fliplet().then(function () {
             markerIndex = _.findIndex(this.mappedMarkerData, (o) => { return o.data.name == this.startOnMarker.name })
           }
 
-          const floorName = this.mappedMarkerData[markerIndex].data.floor
-          const floorIndex = _.findIndex(this.floors, (o) => { return o.name == floorName })
+          const mapName = this.mappedMarkerData[markerIndex].data.map
+          const mapIndex = _.findIndex(this.maps, (o) => { return o.name == mapName })
 
-          this.setActiveFloor(floorIndex, true)
+          this.setActiveMap(mapIndex, true)
           this.setActiveMarker(markerIndex)
         },
-        selectFloorOnStart() {
-          if (!_.hasIn(this.startOnFloor, 'name')) {
+        selectMapOnStart() {
+          if (!_.hasIn(this.startOnMap, 'name')) {
             this.$nextTick(this.setupFlPanZoom)
             return
           }
 
-          const floorIndex = _.findIndex(this.floors, (o) => { return o.name == this.startOnFloor.name })
-          this.setActiveFloor(floorIndex)
+          const mapIndex = _.findIndex(this.maps, (o) => { return o.name == this.startOnMap.name })
+          this.setActiveMap(mapIndex)
         },
         removeSelectedMarker() {
           this.selectedMarkerToggle = false
@@ -220,16 +220,16 @@ Fliplet().then(function () {
             this.selectedMarkerData = undefined
           }, 250)
         },
-        closeFloorsOverlay() {
-          this.toggleFloorOverlay(false)
+        closeMapsOverlay() {
+          this.toggleMapOverlay(false)
         },
-        toggleFloorOverlay(forceOpen) {
+        toggleMapOverlay(forceOpen) {
           if (typeof forceOpen === 'undefined') {
-            $(selector).find('.floorplan-floors-overlay').toggleClass('overlay-open')
+            $(selector).find('.interactive-maps-overlay').toggleClass('overlay-open')
             return
           }
           
-          $(selector).find('.floorplan-floors-overlay')[forceOpen ? 'addClass' : 'removeClass']('overlay-open')
+          $(selector).find('.interactive-maps-overlay')[forceOpen ? 'addClass' : 'removeClass']('overlay-open')
         },
         closeSearchOverlay() {
           this.toggleSearchOverlay(false)
@@ -238,14 +238,14 @@ Fliplet().then(function () {
           this.searchValue = ''
 
           if (typeof forceOpen === 'undefined') {
-            $(selector).find('.floorplan-search-overlay').toggleClass('overlay-open')
+            $(selector).find('.interactive-maps-search-overlay').toggleClass('overlay-open')
             return
           }
           
-          $(selector).find('.floorplan-search-overlay')[forceOpen ? 'addClass' : 'removeClass']('overlay-open')
+          $(selector).find('.interactive-maps-search-overlay')[forceOpen ? 'addClass' : 'removeClass']('overlay-open')
         },
         onLabelClick() {
-          Fliplet.Hooks.run('flFloorplanOnLabelClick', {
+          Fliplet.Hooks.run('flInteractiveMapOnLabelClick', {
             selectedMarker: this.selectedMarkerData,
             config: this,
             id: data.id,
@@ -281,7 +281,7 @@ Fliplet().then(function () {
         init() {
           const cache = { offline: true }
 
-          return Fliplet.Hooks.run('flFloorplanBeforeGetData', {
+          return Fliplet.Hooks.run('flInteractiveMapBeforeGetData', {
             config: this,
             id: data.id,
             uuid: data.uuid,
@@ -300,7 +300,7 @@ Fliplet().then(function () {
             this.markersData = data 
             this.mappedMarkerData = this.mapMarkerData()
 
-            return Fliplet.Hooks.run('flFloorplanBeforeRenderMap', {
+            return Fliplet.Hooks.run('flInteractiveMapBeforeRenderMap', {
               config: this,
               id: data.id,
               uuid: data.uuid,
@@ -312,8 +312,8 @@ Fliplet().then(function () {
             // Check if startOnMarker is set
             if (this.startOnMarker) {
               this.selectMarkerOnStart()
-            } else if (this.startOnFloor) {
-              this.selectFloorOnStart()
+            } else if (this.startOnMap) {
+              this.selectMapOnStart()
             } else {
               this.$nextTick(this.setupFlPanZoom)
             }

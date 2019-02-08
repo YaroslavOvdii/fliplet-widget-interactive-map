@@ -1,4 +1,4 @@
-Fliplet.Floorplan = (function() {
+Fliplet.InteractiveMap = (function() {
   const components = {}
   const eventHub = new Vue();
   const templates = Fliplet.Widget.Templates

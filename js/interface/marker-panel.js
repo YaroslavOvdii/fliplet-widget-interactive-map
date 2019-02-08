@@ -1,4 +1,4 @@
-Fliplet.Floorplan.component('marker-panel', {
+Fliplet.InteractiveMap.component('marker-panel', {
   componentName: 'Marker Panel',
   props: {
     id: {
@@ -33,7 +33,7 @@ Fliplet.Floorplan.component('marker-panel', {
   methods: {
     onInputData() {
       const componentData = _.pick(this, ['id', 'name', 'icon', 'color', 'size', 'type', 'isFromNew'])
-      Fliplet.Floorplan.emit('marker-panel-settings-changed', componentData)
+      Fliplet.InteractiveMap.emit('marker-panel-settings-changed', componentData)
     },
     openIconPicker() {
       this.icon = this.icon || ''
@@ -77,10 +77,10 @@ Fliplet.Floorplan.component('marker-panel', {
     }
   },
   created() {
-    Fliplet.Floorplan.on('markers-save', this.onInputData)
+    Fliplet.InteractiveMap.on('markers-save', this.onInputData)
   },
   destroyed() {
-    Fliplet.Floorplan.off('markers-save', this.onInputData)
+    Fliplet.InteractiveMap.off('markers-save', this.onInputData)
   },
   mounted() {
     const $vm = this

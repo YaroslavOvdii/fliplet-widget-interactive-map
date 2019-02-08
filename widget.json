@@ -23,7 +23,7 @@
       "js/interface.templates.js",
       "dist/core.js",
 
-      "dist/floor-panel.js",
+      "dist/map-panel.js",
       "dist/marker-panel.js",
       "dist/add-markers.js",
 

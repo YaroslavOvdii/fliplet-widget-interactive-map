@@ -1,4 +1,4 @@
-const flFloorplanColumns = [
+const flInteractiveMapColumns = [
   'Name',
   'Floor name',
   'Marker style',
@@ -6,4 +6,4 @@ const flFloorplanColumns = [
   'Position Y'
 ];
 
-export default flFloorplanColumns;
+export default flInteractiveMapColumns;

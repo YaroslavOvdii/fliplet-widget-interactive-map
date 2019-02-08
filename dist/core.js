@@ -93,7 +93,7 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-Fliplet.Floorplan = function () {
+Fliplet.InteractiveMap = function () {
   var components = {};
   var eventHub = new Vue();
   var templates = Fliplet.Widget.Templates;

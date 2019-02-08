@@ -2,44 +2,44 @@ body {
   padding-bottom: 0 !important;
 }
 
-[data-interactive-floorplan-id] {
+[data-interactive-map-id] {
   opacity: 1;
   transition: opacity 0.25s ease-out;
 }
 
-[data-interactive-floorplan-id].is-loading {
+[data-interactive-map-id].is-loading {
   opacity: 0;
   pointer-events: none;
 }
 
-.flooplan-app-placeholder {
+.interactive-map-app-placeholder {
   padding: 20px;
   text-align: center;
   background: rgba(51,51,51,0.1);
   border: 4px solid rgba(51,51,51,0.15);
 }
 
-.floorplan-component-wrapper {
+.interactive-map-component-wrapper {
   position: relative;
   height: 100vh;
 }
 
-body.fl-with-top-menu .floorplan-component-wrapper {
+body.fl-with-top-menu .interactive-map-component-wrapper {
   height: calc(100vh - 44px);
   height: calc(100vh - (44px + env(safe-area-inset-bottom) + env(safe-area-inset-top)));
 }
 
-body.fl-with-bottom-menu .floorplan-component-wrapper {
+body.fl-with-bottom-menu .interactive-map-component-wrapper {
   height: calc(100vh - 65px);
   height: calc(100vh - (65px + env(safe-area-inset-bottom) + env(safe-area-inset-top)));
 }
 
-.floor-wrapper-holder {
+.map-wrapper-holder {
   width: 100%;
   height: 100%;
 }
 
-.floor-wrapper {
+.map-wrapper {
   position: absolute;
   top: 0;
   right: 0;
@@ -51,18 +51,18 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   transition: opacity 0.25s ease-out;
 }
 
-.floor-wrapper.active {
+.map-wrapper.active {
   overflow: hidden;
   opacity: 1;
   visibility: visible;
 }
 
-.floor-container {
+.map-container {
   position: relative;
   transform-origin: 0px 0px 0px;
 }
 
-.floor-container img {
+.map-container img {
   max-width: none;
   width: 100%;
   position: absolute;
@@ -72,7 +72,7 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   bottom: auto;
 }
 
-.floorplan-label-wrapper {
+.interactive-map-label-wrapper {
   position: absolute;
   top: -100px;
   left: 5px;
@@ -89,18 +89,18 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   transition: top 0.25s ease-out;
 }
 
-.floorplan-label-wrapper.active {
+.interactive-map-label-wrapper.active {
   top: 5px;
 }
 
-.floorplan-label {
+.interactive-map-label {
   display: flex;
   align-items: center;
   overflow: hidden;
   height: 100%;
 }
 
-.floorplan-label-icon {
+.interactive-map-label-icon {
   width: 30px;
   height: 100%;
   display: flex;
@@ -108,18 +108,18 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   align-items: center;
 }
 
-.floorplan-label-text {
+.interactive-map-label-text {
   padding: 10px 5px;
 }
 
-.floorplan-label-text p {
+.interactive-map-label-text p {
   font-size: 16px;
   color: #ffffff;
   margin: 0;
   line-height: 1;
 }
 
-.floorplan-label-cancel {
+.interactive-map-label-cancel {
   font-size: 16px;
   opacity: 0.7;
   width: 30px;
@@ -130,11 +130,11 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   cursor: pointer;
 }
 
-.floorplan-label-cancel .fa {
+.interactive-map-label-cancel .fa {
   margin-top: -3px;
 }
 
-.floorplan-search-icon {
+.interactive-map-search-icon {
   position: absolute;
   bottom: 5px;
   right: 5px;
@@ -153,15 +153,15 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   transition: opacity 0.25s ease-out;
 }
 
-.floorplan-search-icon.active {
+.interactive-map-search-icon.active {
   opacity: 1;
 }
 
-.floorplan-search-icon .fa {
+.interactive-map-search-icon .fa {
   margin-top: -2px;
 }
 
-.floors-button {
+.maps-button {
   position: absolute;
   bottom: 5px;
   left: 5px;
@@ -180,32 +180,32 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   transition: opacity 0.25s ease-out;
 }
 
-.floors-button.active {
+.maps-button.active {
   opacity: 1;
 }
 
-.floors-button .fa-map-marker {
+.maps-button .fa-map-marker {
   margin-top: -2px;
   margin-right: 8px;
 }
 
-.floors-button-text p {
+.maps-button-text p {
   font-size: 16px;
   color: #ffffff;
   margin: 0;
   line-height: 1;
 }
 
-.floors-button .fa-bars {
+.maps-button .fa-bars {
   font-size: 0.8em;
   margin-left: 5px;
   opacity: 0.7;}
 
-.floorplan-component-wrapper.with-search .fl-zoomIn {
+.interactive-map-component-wrapper.with-search .fl-zoomIn {
   bottom: 95px;
 }
 
-.floorplan-component-wrapper.with-search .fl-zoomOut {
+.interactive-map-component-wrapper.with-search .fl-zoomOut {
   bottom: 50px;
 }
 
@@ -254,8 +254,8 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   }
 }
 
-.floorplan-search-overlay,
-.floorplan-floors-overlay {
+.interactive-map-search-overlay,
+.interactive-maps-overlay {
   position: fixed;
   background-color: #333333;
   color: #ffffff;
@@ -269,12 +269,12 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   transition: all 0.1s;
 }
 
-.floorplan-search-overlay.overlay-open,
-.floorplan-floors-overlay.overlay-open {
+.interactive-map-search-overlay.overlay-open,
+.interactive-maps-overlay.overlay-open {
   transform: translate3d(0, 0, 0);
 }
 
-.floorplan-overlay-topbar {
+.interactive-map-overlay-topbar {
   position: absolute;
   top: 0;
   top: env(safe-area-inset-top);
@@ -286,7 +286,7 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   z-index: 1;
 }
 
-.floorplan-floors-overlay .floorplan-overlay-topbar {
+.interactive-maps-overlay .interactive-map-overlay-topbar {
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -294,15 +294,15 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   height: 55px;
 }
 
-.floorplan-search-overlay .floorplan-overlay-topbar {
+.interactive-map-search-overlay .interactive-map-overlay-topbar {
   padding: 0;
 }
 
-.floorplan-overlay-title {
+.interactive-map-overlay-title {
   margin: 0;
 }
 
-.floorplan-overlay-close {
+.interactive-map-overlay-close {
   font-size: 34px;
   position: absolute;
   top: 0;
@@ -315,7 +315,7 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   cursor: pointer;
 }
 
-.floorplan-overlay-scroll-container {
+.interactive-map-overlay-scroll-container {
   position: relative;
   top: 55px;
   top: calc(55px + env(safe-area-inset-top));
@@ -325,21 +325,21 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   overflow: auto;
 }
 
-.floorplan-search-overlay .floorplan-overlay-scroll-container {
+.interactive-map-search-overlay .interactive-map-overlay-scroll-container {
   top: 89px;
   top: calc(89px + env(safe-area-inset-top));
   height: calc(100% - 89px);
   height: calc(100% - (89px + env(safe-area-inset-top)));
 }
 
-.floorplan-overlay-list {
+.interactive-map-overlay-list {
   margin: 0;
   padding: 20px 20px 20px 0;
   padding-bottom: calc(20px + env(safe-area-inset-bottom));
 }
 
 .marker-list-item,
-.floor-list-item {
+.map-list-item {
   display: flex;
   width: 100%;
   align-items: center;
@@ -350,17 +350,17 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   border-left: solid 5px transparent;
 }
 
-.floor-list-item.active {
+.map-list-item.active {
   border-left-color: #ffffff;
 }
 
-.floor-list-text,
+.map-list-text,
 .marker-list-text {
   margin: 0;
   font-size: 16px;
 }
 
-.floorplan-overlay-topbar .search-header {
+.interactive-map-overlay-topbar .search-header {
   position: relative;
   display: flex;
   align-items: center;
@@ -369,18 +369,18 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   padding: 0px 20px 0 55px;
 }
 
-.floorplan-overlay-search-holder {
+.interactive-map-overlay-search-holder {
   position: relative;
   padding: 0 20px;
 }
 
-.floorplan-overlay-search-holder .form-control {
+.interactive-map-overlay-search-holder .form-control {
   border-radius: 40px;
   box-shadow: none;
   padding-right: 55px;
 }
 
-.floorplan-overlay-search-holder span {
+.interactive-map-overlay-search-holder span {
   opacity: 0;
   visibility: hidden;
   position: absolute;
@@ -398,16 +398,16 @@ body.fl-with-bottom-menu .floorplan-component-wrapper {
   transition: opacity 0.1s ease-in-out;
 }
 
-.floorplan-overlay-search-holder span:active {
+.interactive-map-overlay-search-holder span:active {
   box-shadow: inset 0px 2px 2px 0px rgba($bodyTextColor, 0.2);
 }
 
-.floorplan-overlay-search-holder.searching span {
+.interactive-map-overlay-search-holder.searching span {
   opacity: 1;
   visibility: visible;
 }
 
-.floorplan-overlay-not-found {
+.interactive-map-overlay-not-found {
   margin: 0;
   padding: 0 20px 20px;
   text-align: center;
