@@ -1,6 +1,6 @@
 html,
 body,
-#flooplan-app {
+#interactive-map-app {
   height: 100% !important;
   overflow: hidden;
 }
@@ -14,7 +14,7 @@ main {
   height: 100%;
 }
 
-#flooplan-app header {
+#interactive-map-app header {
   margin-bottom: 0;
 }
 
@@ -67,20 +67,19 @@ header .title-holder p {
   height: calc(100% - 27px);
   overflow-y: auto;
   overflow-x: hidden;
-  padding-top: 20px;
-  padding-bottom: 60px;
+  padding: 20px 15px 60px;
+  margin: 0 -15px;
 }
 
 /* ACCORDION */
-.floor-panels-holder,
-.floor-markers-holder {
+.map-panels-holder,
+.map-markers-holder {
   position: relative;
   padding-bottom: 40px;
-  overflow: hidden;
 }
 
-.add-floor-panel,
-.add-floor-marker {
+.add-map-panel,
+.add-map-marker {
   position: absolute;
   bottom: 0;
   right: 0;
@@ -96,36 +95,33 @@ header .title-holder p {
   z-index: 1;
 }
 
-.add-floor-panel:hover,
-.add-floor-marker:hover {
+.add-map-panel:hover,
+.add-map-marker:hover {
   background-color: #f4f1f2;
 }
 
-.add-floor-panel:active,
-.add-floor-marker:active {
+.add-map-panel:active,
+.add-map-marker:active {
   background-color: #f4f1f2;
-  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
 
-.floor-panels-holder .panel-group,
-.floor-markers-holder .panel-group {
+.map-panels-holder .panel-group,
+.map-markers-holder .panel-group {
   display: block;
   -webkit-user-select: none;
   padding: 0 0 8px;
-  overflow-y: auto;
-  overflow-x: hidden;
   margin: 0;
 }
 
-.floor-panels-holder.empty .panel-group,
-.floor-markers-holder.empty .panel-group {
+.map-panels-holder.empty .panel-group,
+.map-markers-holder.empty .panel-group {
   display: none;
 }
 
 .panel {
   opacity: 1;
-  -webkit-transition: opacity 100ms linear;
+  transition: opacity 100ms linear;
 }
 
 .panel.focus {
@@ -138,7 +134,7 @@ header .title-holder p {
 
 .panel.focus .glyphicon-remove {
   opacity: 0 !important;
-  -webkit-transition: opacity 50ms linear;
+  transition: opacity 50ms linear;
 }
 
 .panel-heading {
@@ -146,20 +142,29 @@ header .title-holder p {
   padding: 0;
 }
 
-.panel-heading:hover {
-  cursor: -webkit-grab;
-  cursor: -moz-grab;
+.grabbable {
+    cursor: move; /* fallback if grab cursor is unsupported */
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}
+
+ /* (Optional) Apply a "closed-hand" cursor during drag operation. */
+.grabbable:active {
+    cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
 }
 
 .panel-heading h4 {
   padding: 10px 40px 10px 6px;
 }
 
-.floor-markers-holder .panel-heading:hover {
+.map-markers-holder .panel-heading {
   cursor: pointer;
 }
 
-.floor-markers-holder .panel-heading h4 {
+.map-markers-holder .panel-heading h4 {
   padding: 10px 40px 10px 10px;
 }
 
@@ -183,12 +188,10 @@ header .title-holder p {
   height: 38px;
   line-height: 38px;
   text-align: center;
-  -webkit-transition: -webkit-transform 0.25s ease;
   transition: transform 0.25s ease;
 }
 
 .collapsed .panel-chevron {
-  -webkit-transform: rotate(180deg);
   transform: rotate(180deg);
 }
 
@@ -229,7 +232,7 @@ header .title-holder p {
 
 .panel-collapse.in {
   opacity: 1;
-  -webkit-transition: opacity 0.1s linear;
+  transition: opacity 0.1s linear;
 }
 
 .panel-default.sortable-ghost {
@@ -240,7 +243,7 @@ header .title-holder p {
   border: 1px solid rgb(0, 171, 210);
 }
 
-.floor-panel .panel-body label,
+.map-panel .panel-body label,
 .marker-panel .panel-body label {
   font-weight: normal;
 }
@@ -308,13 +311,13 @@ header .title-holder p {
 }
 
 .add-markers-component,
-.floors-wrapper,
+.maps-wrapper,
 .settings-holder,
-.floors-container {
+.maps-container {
   height: 100%;
 }
 
-.floors-wrapper {
+.maps-wrapper {
   padding: 0;
 }
 
@@ -346,13 +349,13 @@ header .title-holder p {
   margin-bottom: 10px;
 }
 
-/* FLoors */
-.floor-wrapper-holder {
+/* Maps */
+.map-wrapper-holder {
   width: 100%;
   height: 100%;
 }
 
-.floor-wrapper {
+.map-wrapper {
   position: absolute;
   top: 0;
   right: 0;
@@ -364,18 +367,18 @@ header .title-holder p {
   transition: opacity 0.25s ease-out;
 }
 
-.floor-wrapper.active {
+.map-wrapper.active {
   overflow: hidden;
   opacity: 1;
   visibility: visible;
 }
 
-.floor-container {
+.map-container {
   position: relative;
   transform-origin: 0px 0px 0px;
 }
 
-.floor-image {
+.map-image {
   max-width: none;
   width: 100%;
   position: absolute;
@@ -385,20 +388,20 @@ header .title-holder p {
   bottom: auto;
 }
 
-.fl-zoomIn,
-.fl-zoomOut {
+.fl-zoom-in,
+.fl-zoom-out {
   right: 15px;
 }
 
-.fl-zoomIn {
+.fl-zoom-in {
   bottom: 60px;
 }
 
-.fl-zoomOut {
+.fl-zoom-out {
   bottom: 15px;
 }
 
-.floors-button {
+.maps-button {
   position: absolute;
   bottom: 15px;
   left: 15px;
@@ -413,19 +416,19 @@ header .title-holder p {
   border-radius: 200px;
 }
 
-.floor-button-text p {
+.map-button-text p {
   font-size: 16px;
   color: #fff;
   margin: 0;
   line-height: 1;
 }
 
-.floors-button .fa-map-marker {
+.maps-button .fa-map-marker {
   margin-top: -2px;
   margin-right: 8px;
 }
 
-.floor-hint-holder {
+.map-hint-holder {
   position: absolute;
   top: 0;
   left: 0;
@@ -439,7 +442,7 @@ header .title-holder p {
   pointer-events: none;
 }
 
-.floor-hint-holder .floor-hint {
+.map-hint-holder .map-hint {
   padding: 6px 12px;
   display: flex;
   align-items: center;
@@ -480,7 +483,6 @@ header .title-holder p {
 
 .marker.active .active-state {
   display: block;
-  -webkit-animation: pulse 1.2s ease-out infinite none;
   animation: pulse 1.2s ease-out infinite none;
 }
 
@@ -512,7 +514,7 @@ header .title-holder p {
 }
 
 .markers-ui-loading,
-.floors-loading-holder {
+.maps-loading-holder {
   padding: 40px 0 0;
 }
 
@@ -582,7 +584,7 @@ header .title-holder p {
   padding: 6px 8px;
 }
 
-.marker-floor-holder .btn {
+.marker-map-holder .btn {
   position: relative;
   min-width: 100px;
   background: transparent;
@@ -596,7 +598,7 @@ header .title-holder p {
   border: none;
 }
 
-.marker-floor-holder .btn .caret,
+.marker-map-holder .btn .caret,
 .marker-icon-holder .btn .caret {
   position: absolute;
   right: 4px;
@@ -605,25 +607,25 @@ header .title-holder p {
   opacity: 0.5;
 }
 
-.marker-floor-holder .btn:hover,
+.marker-map-holder .btn:hover,
 .marker-icon-holder .btn:hover,
-.marker-floor-holder .btn:active:focus,
+.marker-map-holder .btn:active:focus,
 .marker-icon-holder .btn:active:focus {
   background: transparent;
   border: none;
 }
 
-.marker-floor-holder .btn:active,
+.marker-map-holder .btn:active,
 .marker-icon-holder .btn:active {
   box-shadow: none;
 }
 
-.marker-floor-holder .open > .dropdown-toggle.btn,
-.marker-floor-holder .open > .dropdown-toggle.btn:hover,
-.marker-floor-holder .open > .dropdown-toggle.btn:focus,
-.marker-floor-holder .open > .dropdown-toggle.btn:active,
-.marker-floor-holder .open > .dropdown-toggle.btn:active:hover,
-.marker-floor-holder .open > .dropdown-toggle.btn:active:focus,
+.marker-map-holder .open > .dropdown-toggle.btn,
+.marker-map-holder .open > .dropdown-toggle.btn:hover,
+.marker-map-holder .open > .dropdown-toggle.btn:focus,
+.marker-map-holder .open > .dropdown-toggle.btn:active,
+.marker-map-holder .open > .dropdown-toggle.btn:active:hover,
+.marker-map-holder .open > .dropdown-toggle.btn:active:focus,
 .marker-icon-holder .open > .dropdown-toggle.btn,
 .marker-icon-holder .open > .dropdown-toggle.btn:hover,
 .marker-icon-holder .open > .dropdown-toggle.btn:focus,
@@ -635,7 +637,7 @@ header .title-holder p {
   border: none;
 }
 
-.marker-floor-holder .dropdown-menu,
+.marker-map-holder .dropdown-menu,
 .marker-icon-holder .dropdown-menu {
   top: 85%;
   border-radius: 0;
@@ -673,4 +675,49 @@ header .title-holder p {
   width: 100%;
   padding: 15px;
   border-top: 1px solid #e3e9eb;
+}
+
+/* ACCORDIONS */
+.panel.panel-default {
+  overflow: visible;
+}
+
+.panel-default>.panel-heading+.panel-collapse>.panel-body {
+  padding: 15px 10px;
+}
+
+/* COLOR PICKER */
+.colorpicker-2x .colorpicker-saturation {
+  width: 235px;
+  height: 235px;
+}
+
+.colorpicker-2x .colorpicker-hue,
+.colorpicker-2x .colorpicker-alpha {
+  width: 29px;
+  height: 235px;
+}
+
+.colorpicker-2x .colorpicker-preview,
+.colorpicker-2x .colorpicker-preview div {
+  height: 30px;
+  font-size: 16px;
+  line-height: 160%;
+}
+
+.colorpicker-saturation .colorpicker-guide,
+.colorpicker-saturation .colorpicker-guide i {
+  height: 10px;
+  width: 10px;
+  border-radius: 10px;
+}
+
+.colorpicker-right:before {
+  left: 15px;
+  right: auto;
+}
+
+.colorpicker-right:after {
+  left: 16px;
+  right: auto;
 }

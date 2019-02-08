@@ -93,7 +93,7 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-Fliplet.Floorplan.component('marker-panel', {
+Fliplet.InteractiveMap.component('marker-panel', {
   componentName: 'Marker Panel',
   props: {
     id: {
@@ -129,7 +129,7 @@ Fliplet.Floorplan.component('marker-panel', {
     onInputData: function onInputData() {
       var componentData = _.pick(this, ['id', 'name', 'icon', 'color', 'size', 'type', 'isFromNew']);
 
-      Fliplet.Floorplan.emit('marker-panel-settings-changed', componentData);
+      Fliplet.InteractiveMap.emit('marker-panel-settings-changed', componentData);
     },
     openIconPicker: function openIconPicker() {
       var _this = this;
@@ -172,10 +172,10 @@ Fliplet.Floorplan.component('marker-panel', {
     }
   },
   created: function created() {
-    Fliplet.Floorplan.on('markers-save', this.onInputData);
+    Fliplet.InteractiveMap.on('markers-save', this.onInputData);
   },
   destroyed: function destroyed() {
-    Fliplet.Floorplan.off('markers-save', this.onInputData);
+    Fliplet.InteractiveMap.off('markers-save', this.onInputData);
   },
   mounted: function mounted() {
     var _this2 = this;
@@ -183,8 +183,20 @@ Fliplet.Floorplan.component('marker-panel', {
     var $vm = this;
     var $colorpickerElement = $('#list-item-color-' + $vm.id).parents('[colorpicker-component]');
     $colorpickerElement.colorpicker({
-      container: false,
-      align: 'left'
+      container: true,
+      customClass: 'colorpicker-2x',
+      sliders: {
+        saturation: {
+          maxLeft: 235,
+          maxTop: 235
+        },
+        hue: {
+          maxTop: 235
+        },
+        alpha: {
+          maxTop: 235
+        }
+      }
     });
     $colorpickerElement.on('changeColor', function (e) {
       $vm.color = e.value;

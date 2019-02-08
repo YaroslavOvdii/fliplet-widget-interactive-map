@@ -102,18 +102,18 @@ __webpack_require__.r(__webpack_exports__);
 
 
 Fliplet().then(function () {
-  Fliplet.Widget.instance('interactive-floorplan', function (_data) {
-    var selector = '[data-interactive-floorplan-id="' + _data.id + '"]';
-    var $floorplan = new Vue({
+  Fliplet.Widget.instance('interactive-map', function (_data) {
+    var selector = '[data-interactive-map-id="' + _data.id + '"]';
+    var $interactiveMap = new Vue({
       el: $(selector)[0],
       data: function data() {
         return {
-          containsData: _data.floors && _data.floors.length && _data.markers && _data.markers.length,
-          floors: _data.floors && _data.floors.length ? _data.floors : [],
+          containsData: _data.maps && _data.maps.length && _data.markers && _data.markers.length,
+          maps: _data.maps && _data.maps.length ? _data.maps : [],
           markerStyles: _data.markers && _data.markers.length ? _data.markers : [],
           markersDataSourceId: _data.markersDataSourceId || undefined,
           markerNameColumn: _data.markerNameColumn || undefined,
-          markerFloorColumn: _data.markerFloorColumn || undefined,
+          markerMapColumn: _data.markerMapColumn || undefined,
           markerTypeColumn: _data.markerTypeColumn || undefined,
           markerXPositionColumn: _data.markerXPositionColumn || undefined,
           markerYPositionColumn: _data.markerYPositionColumn || undefined,
@@ -124,10 +124,10 @@ Fliplet().then(function () {
           pzElement: undefined,
           pzHandler: undefined,
           markerElemHandler: undefined,
-          activeFloor: 0,
+          activeMap: 0,
           activeMarker: 0,
           imageLoaded: false,
-          selectedFloorData: undefined,
+          selectedMapData: undefined,
           selectedMarkerData: undefined,
           selectedMarkerToggle: false,
           selectedPinchMarker: undefined,
@@ -158,7 +158,7 @@ Fliplet().then(function () {
           }
 
           this.searchMarkerData = _.filter(this.mappedMarkerData, function (marker) {
-            return _.some(['name', 'floor'], function (key) {
+            return _.some(['name', 'map'], function (key) {
               return marker.data[key] && marker.data[key].toString().toLowerCase().indexOf(_this.searchValue.toLowerCase()) > -1;
             });
           });
@@ -166,6 +166,9 @@ Fliplet().then(function () {
           if (!this.searchMarkerData.length) {
             this.noSearchResults = true;
           }
+        },
+        clearSearch: function clearSearch() {
+          this.searchValue = '';
         },
         mapMarkerData: function mapMarkerData() {
           var _this2 = this;
@@ -179,7 +182,7 @@ Fliplet().then(function () {
               id: marker.id,
               data: {
                 name: marker.data[_this2.markerNameColumn],
-                floor: marker.data[_this2.markerFloorColumn],
+                map: marker.data[_this2.markerMapColumn],
                 type: marker.data[_this2.markerTypeColumn],
                 icon: markerData ? markerData.icon : '',
                 color: markerData ? markerData.color : '#333333',
@@ -194,31 +197,30 @@ Fliplet().then(function () {
         setupFlPanZoom: function setupFlPanZoom() {
           var _this3 = this;
 
-          if (!this.mappedMarkerData.length) {
-            return;
-          }
-
           this.imageLoaded = false;
-          this.selectedFloorData = this.floors[this.activeFloor];
-          this.selectedMarkerData = this.mappedMarkerData[this.activeMarker].data;
-          this.selectedMarkerToggle = true;
+          this.selectedMapData = this.maps[this.activeMap];
+          this.selectedMarkerData = this.mappedMarkerData[this.activeMarker] ? this.mappedMarkerData[this.activeMarker].data : undefined;
+          this.selectedMarkerToggle = !!this.selectedMarkerData;
 
           if (this.flPanZoomInstance) {
             this.flPanZoomInstance = null;
           }
 
-          this.pzElement = $('#floor-' + this.selectedFloorData.id);
+          this.pzElement = $('#map-' + this.selectedMapData.id);
           this.flPanZoomInstance = Fliplet.UI.PanZoom.create(this.pzElement, {
             maxZoom: 4,
             zoomStep: 0.25,
             animDuration: 0.1
           });
-          this.flPanZoomInstance.on('floorImageLoaded', function (e) {
+          this.flPanZoomInstance.on('mapImageLoaded', function () {
             _this3.imageLoaded = true;
           });
           this.pzHandler = new Hammer(this.pzElement.get(0));
-          this.addMarkers(true);
-          this.selectPinchMarker();
+
+          if (this.mappedMarkerData.length) {
+            this.addMarkers(true);
+            this.selectPinchMarker();
+          }
         },
         selectPinchMarker: function selectPinchMarker() {
           var _this4 = this;
@@ -249,7 +251,7 @@ Fliplet().then(function () {
 
           this.flPanZoomInstance.markers.removeAll();
           this.mappedMarkerData.forEach(function (marker, index) {
-            if (marker.data.floor === _this5.selectedFloorData.name) {
+            if (marker.data.map === _this5.selectedMapData.name) {
               var markerElem = $("<div id='" + marker.id + "' class='marker' data-tooltip='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; width: " + marker.data.size + "; height: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state' style='background-color: " + marker.data.color + ";'></div></div>");
               _this5.markerElemHandler = new Hammer(markerElem.get(0));
 
@@ -279,16 +281,16 @@ Fliplet().then(function () {
           this.selectedMarkerData = this.mappedMarkerData[this.activeMarker].data;
           this.selectedMarkerToggle = true;
         },
-        setActiveFloor: function setActiveFloor(floorIndex, fromSearch) {
-          if (this.activeFloor !== floorIndex) {
-            this.activeFloor = floorIndex;
+        setActiveMap: function setActiveMap(mapIndex, fromSearch) {
+          if (this.activeMap !== mapIndex) {
+            this.activeMap = mapIndex;
           }
 
           if (!fromSearch) {
             this.setupFlPanZoom();
           }
 
-          this.toggleFloorOverlay(false);
+          this.toggleMapOverlay(false);
         },
         setActiveMarker: function setActiveMarker(markerIndex) {
           this.activeMarker = markerIndex;
@@ -296,15 +298,15 @@ Fliplet().then(function () {
           this.toggleSearchOverlay(false);
         },
         selectedMarker: function selectedMarker(markerData) {
-          var floorIndex = _.findIndex(this.floors, function (o) {
-            return o.name == markerData.data.floor;
+          var mapIndex = _.findIndex(this.maps, function (o) {
+            return o.name == markerData.data.map;
           });
 
           var markerIndex = _.findIndex(this.mappedMarkerData, function (o) {
             return o.data.name == markerData.data.name;
           });
 
-          this.setActiveFloor(floorIndex, true);
+          this.setActiveMap(mapIndex, true);
           this.setActiveMarker(markerIndex);
         },
         selectMarkerOnStart: function selectMarkerOnStart() {
@@ -329,28 +331,28 @@ Fliplet().then(function () {
             });
           }
 
-          var floorName = this.mappedMarkerData[markerIndex].data.floor;
+          var mapName = this.mappedMarkerData[markerIndex].data.map;
 
-          var floorIndex = _.findIndex(this.floors, function (o) {
-            return o.name == floorName;
+          var mapIndex = _.findIndex(this.maps, function (o) {
+            return o.name == mapName;
           });
 
-          this.setActiveFloor(floorIndex, true);
+          this.setActiveMap(mapIndex, true);
           this.setActiveMarker(markerIndex);
         },
-        selectFloorOnStart: function selectFloorOnStart() {
+        selectMapOnStart: function selectMapOnStart() {
           var _this7 = this;
 
-          if (!_.hasIn(this.startOnFloor, 'name')) {
+          if (!_.hasIn(this.startOnMap, 'name')) {
             this.$nextTick(this.setupFlPanZoom);
             return;
           }
 
-          var floorIndex = _.findIndex(this.floors, function (o) {
-            return o.name == _this7.startOnFloor.name;
+          var mapIndex = _.findIndex(this.maps, function (o) {
+            return o.name == _this7.startOnMap.name;
           });
 
-          this.setActiveFloor(floorIndex);
+          this.setActiveMap(mapIndex);
         },
         removeSelectedMarker: function removeSelectedMarker() {
           var _this8 = this;
@@ -363,16 +365,16 @@ Fliplet().then(function () {
             _this8.selectedMarkerData = undefined;
           }, 250);
         },
-        closeFloorsOverlay: function closeFloorsOverlay() {
-          this.toggleFloorOverlay(false);
+        closeMapsOverlay: function closeMapsOverlay() {
+          this.toggleMapOverlay(false);
         },
-        toggleFloorOverlay: function toggleFloorOverlay(forceOpen) {
+        toggleMapOverlay: function toggleMapOverlay(forceOpen) {
           if (typeof forceOpen === 'undefined') {
-            $(selector).find('.floorplan-floors-overlay').toggleClass('overlay-open');
+            $(selector).find('.interactive-maps-overlay').toggleClass('overlay-open');
             return;
           }
 
-          $(selector).find('.floorplan-floors-overlay')[forceOpen ? 'addClass' : 'removeClass']('overlay-open');
+          $(selector).find('.interactive-maps-overlay')[forceOpen ? 'addClass' : 'removeClass']('overlay-open');
         },
         closeSearchOverlay: function closeSearchOverlay() {
           this.toggleSearchOverlay(false);
@@ -381,16 +383,16 @@ Fliplet().then(function () {
           this.searchValue = '';
 
           if (typeof forceOpen === 'undefined') {
-            $(selector).find('.floorplan-search-overlay').toggleClass('overlay-open');
+            $(selector).find('.interactive-maps-search-overlay').toggleClass('overlay-open');
             return;
           }
 
-          $(selector).find('.floorplan-search-overlay')[forceOpen ? 'addClass' : 'removeClass']('overlay-open');
+          $(selector).find('.interactive-maps-search-overlay')[forceOpen ? 'addClass' : 'removeClass']('overlay-open');
         },
         onLabelClick: function onLabelClick() {
           var _this9 = this;
 
-          Fliplet.Hooks.run('flFloorplanOnLabelClick', {
+          Fliplet.Hooks.run('flInteractiveMapOnLabelClick', {
             selectedMarker: this.selectedMarkerData,
             config: this,
             id: _data.id,
@@ -425,7 +427,7 @@ Fliplet().then(function () {
           var cache = {
             offline: true
           };
-          return Fliplet.Hooks.run('flFloorplanBeforeGetData', {
+          return Fliplet.Hooks.run('flInteractiveMapBeforeGetData', {
             config: this,
             id: _data.id,
             uuid: _data.uuid,
@@ -443,7 +445,7 @@ Fliplet().then(function () {
           }).then(function (data) {
             _this10.markersData = data;
             _this10.mappedMarkerData = _this10.mapMarkerData();
-            return Fliplet.Hooks.run('flFloorplanBeforeRenderMap', {
+            return Fliplet.Hooks.run('flInteractiveMapBeforeRenderMap', {
               config: _this10,
               id: data.id,
               uuid: data.uuid,
@@ -454,8 +456,8 @@ Fliplet().then(function () {
 
             if (_this10.startOnMarker) {
               _this10.selectMarkerOnStart();
-            } else if (_this10.startOnFloor) {
-              _this10.selectFloorOnStart();
+            } else if (_this10.startOnMap) {
+              _this10.selectMapOnStart();
             } else {
               _this10.$nextTick(_this10.setupFlPanZoom);
             }

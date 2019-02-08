@@ -1,5 +1,5 @@
-Fliplet.Floorplan.component('floor-panel', {
-  componentName: 'Floor Panel',
+Fliplet.InteractiveMap.component('map-panel', {
+  componentName: 'Map Panel',
   props: {
     id: {
       type: String,
@@ -15,7 +15,7 @@ Fliplet.Floorplan.component('floor-panel', {
     },
     type: {
       type: String,
-      default: 'floor-panel'
+      default: 'map-panel'
     },
     isFromNew: {
       type: Boolean,
@@ -25,9 +25,9 @@ Fliplet.Floorplan.component('floor-panel', {
   methods: {
     onInputData() {
       const componentData = _.pick(this, ['id', 'name', 'image', 'type', 'isFromNew'])
-      Fliplet.Floorplan.emit('floor-panel-settings-changed', componentData)
+      Fliplet.InteractiveMap.emit('map-panel-settings-changed', componentData)
     },
-    openFloorPicker() {
+    openMapPicker() {
       const filePickerData = {
         selectFiles: this.image ? [this.image] : [],
         selectMultiple: false,
@@ -61,9 +61,9 @@ Fliplet.Floorplan.component('floor-panel', {
     }
   },
   created() {
-    Fliplet.Floorplan.on('floors-save', this.onInputData)
+    Fliplet.InteractiveMap.on('maps-save', this.onInputData)
   },
   destroyed() {
-    Fliplet.Floorplan.off('floors-save', this.onInputData)
+    Fliplet.InteractiveMap.off('maps-save', this.onInputData)
   }
 });

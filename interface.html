@@ -1,4 +1,4 @@
-<div id="flooplan-app" class="is-loading">
+<div id="interactive-map-app" class="is-loading">
   <main v-if="!showAddMarkersUI">
     <header>
       <p>Configure your interactive map</p>
@@ -11,31 +11,31 @@
     </div>
     <section class="app-content">
       <form class="form-horizontal">
-        <div class="form-group clearfix floors-form-group">
+        <div class="form-group clearfix maps-form-group">
           <div class="col-sm-12 control-label">
             <label>Add your maps</label>
           </div>
           <div class="col-sm-12">
-            <div class="floor-panels-holder">
-              <div class="add-floor-panel" @click.prevent="onAddFloor"><i class="fa fa-plus-circle"></i> Add a new map</div>
-              <div class="panel-group" id="floor-accordion" v-sortable="{ handle: '.panel-heading', group: { name: 'floorPanels', pull: false }, scrollSensitivity: 116, scrollSpeed: 10, onUpdate: onSortFloors }">
+            <div class="map-panels-holder">
+              <div class="add-map-panel" @click.prevent="onAddMap"><i class="fa fa-plus-circle"></i> Add a new map</div>
+              <div class="panel-group" id="map-accordion" v-sortable="{ handle: '.panel-heading', group: { name: 'mapPanels', pull: false }, scrollSensitivity: 116, scrollSpeed: 10, onUpdate: onSortMaps }">
                 
-                <div v-for="(floor, idx) in floors" v-bind:key="floor.id" class="panel panel-default floor-panel" :data-id="floor.id">
-                  <div class="panel-heading">
-                    <h4 class="panel-title" v-bind:class="{ 'collapsed': !floor.isFromNew }" data-toggle="collapse" data-parent="#floor-accordion" :data-target="'#collapse-' + floor.id">
+                <div v-for="(map, idx) in maps" v-bind:key="map.id" class="panel panel-default map-panel" :data-id="map.id">
+                  <div class="panel-heading grabbable">
+                    <h4 class="panel-title" v-bind:class="{ 'collapsed': !map.isFromNew }" data-toggle="collapse" data-parent="#map-accordion" :data-target="'#collapse-' + map.id">
                       <div class="screen-reorder-handle">
                         <i class="fa fa-ellipsis-v"></i><i class="fa fa-ellipsis-v"></i>
                       </div>
-                      <span class="panel-title-text">\{{floor.name}}</span>
+                      <span class="panel-title-text">\{{map.name}}</span>
                       <span class="fa panel-chevron fa-chevron-up"></span>
                     </h4>
-                    <a href="#" @click.prevent="deleteFloor(idx)"><span class="icon-delete fa fa-trash"></span></a>
+                    <a href="#" @click.prevent="deleteMap(idx)"><span class="icon-delete fa fa-trash"></span></a>
                   </div>
-                  <div :id="'collapse-' + floor.id" class="panel-collapse collapse" v-bind:class="{ in: floor.isFromNew }">
+                  <div :id="'collapse-' + map.id" class="panel-collapse collapse" v-bind:class="{ in: map.isFromNew }">
                     <div class="panel-body">
-                      <div class="error-holder" v-if="floor.error">\{{floor.error}}</div>
+                      <div class="error-holder" v-if="map.error">\{{map.error}}</div>
 
-                      <component :is="floor.type" v-bind="floor"></component>
+                      <component :is="map.type" v-bind="map"></component>
 
                     </div>
                   </div>
@@ -51,8 +51,8 @@
             <label>Create marker styles</label>
           </div>
           <div class="col-sm-12">
-            <div class="floor-markers-holder">
-              <div class="add-floor-marker" @click.prevent="onAddMarker"><i class="fa fa-plus-circle"></i> Add a new marker style</div>
+            <div class="map-markers-holder">
+              <div class="add-map-marker" @click.prevent="onAddMarker"><i class="fa fa-plus-circle"></i> Add a new marker style</div>
               <div class="panel-group" id="markers-accordion">
                 
                 <div v-for="(marker, idx) in markers" v-bind:key="marker.id" class="panel panel-default marker-panel" :data-id="marker.id">
@@ -82,7 +82,7 @@
             <label>Add markers to your map(s)</label>
           </div>
           <div class="col-sm-8">
-            <div class="btn btn-default" @click.prevent="openAddMarkers">Mark floor(s)</div>
+            <div class="btn btn-default" @click.prevent="openAddMarkers">Mark map(s)</div>
             <p v-if="hasError" class="text-danger">You need to add at least one map and one marker style before continuing.</p>
           </div>
         </div>
@@ -102,7 +102,7 @@
         dataSources: dataSources,
         markersDataSourceId: settings.markersDataSourceId,
         markerNameColumn: settings.markerNameColumn,
-        markerFloorColumn: settings.markerFloorColumn,
+        markerMapColumn: settings.markerMapColumn,
         markerTypeColumn: settings.markerTypeColumn,
         markerXPositionColumn: settings.markerXPositionColumn,
         markerYPositionColumn: settings.markerYPositionColumn,

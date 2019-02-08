@@ -95,8 +95,8 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-var flFloorplanColumns = ['Name', 'Floor name', 'Marker style', 'Position X', 'Position Y'];
-/* harmony default export */ __webpack_exports__["default"] = (flFloorplanColumns);
+var flInteractiveMapColumns = ['Name', 'Floor name', 'Marker style', 'Position X', 'Position Y'];
+/* harmony default export */ __webpack_exports__["default"] = (flInteractiveMapColumns);
 
 /***/ }),
 
@@ -129,7 +129,7 @@ Vue.directive('sortable', {
     }
   }
 });
-var selector = '#flooplan-app';
+var selector = '#interactive-map-app';
 var app = new Vue({
   el: selector,
   data: function data() {
@@ -140,9 +140,8 @@ var app = new Vue({
       autoDataSource: widgetData.autoDataSource || false,
       dataSources: [],
       filePickerProvider: null,
-      floorPanelsIsEmpty: true,
       settings: widgetData,
-      floors: widgetData.floors || [],
+      maps: widgetData.maps || [],
       markers: widgetData.markers || [],
       hasError: false,
       showAddMarkersUI: false
@@ -168,35 +167,35 @@ var app = new Vue({
       }).then(function (ds) {
         _this.settings.markersDataSourceId = ds.id;
         _this.settings.markerNameColumn = 'Name';
-        _this.settings.markerFloorColumn = 'Floor name';
+        _this.settings.markerMapColumn = 'Map name';
         _this.settings.markerTypeColumn = 'Marker style', _this.settings.markerXPositionColumn = 'Position X', _this.settings.markerYPositionColumn = 'Position Y';
         _this.settings.autoDataSource = true;
       });
     },
-    onAddFloor: function onAddFloor() {
+    onAddMap: function onAddMap() {
       var newItem = {
         id: Fliplet.guid(),
         isFromNew: true,
-        name: "Floor ".concat(this.floors.length + 1),
-        type: 'floor-panel'
+        name: "Map ".concat(this.maps.length + 1),
+        type: 'map-panel'
       };
-      this.floors.push(newItem);
+      this.maps.push(newItem);
     },
-    onSortFloors: function onSortFloors(event) {
-      this.floors.splice(event.newIndex, 0, this.floors.splice(event.oldIndex, 1)[0]);
+    onSortMaps: function onSortMaps(event) {
+      this.maps.splice(event.newIndex, 0, this.maps.splice(event.oldIndex, 1)[0]);
     },
-    deleteFloor: function deleteFloor(index) {
+    deleteMap: function deleteMap(index) {
       var _this2 = this;
 
       Fliplet.Modal.confirm({
-        title: 'Delete floorplan',
-        message: '<p>Are you sure you want to delete this floor?</p>'
+        title: 'Delete map',
+        message: '<p>Are you sure you want to delete this map?</p>'
       }).then(function (result) {
         if (!result) {
           return;
         }
 
-        _this2.floors.splice(index, 1);
+        _this2.maps.splice(index, 1);
       });
     },
     onAddMarker: function onAddMarker() {
@@ -214,8 +213,8 @@ var app = new Vue({
       var _this3 = this;
 
       Fliplet.Modal.confirm({
-        title: 'Delete floorplan',
-        message: '<p>Are you sure you want to delete this floor?</p>'
+        title: 'Delete marker style',
+        message: '<p>Are you sure you want to delete this marker style?</p>'
       }).then(function (result) {
         if (!result) {
           return;
@@ -227,15 +226,15 @@ var app = new Vue({
     onPanelSettingChanged: function onPanelSettingChanged(panelData) {
       var _this4 = this;
 
-      this.floors.forEach(function (panel, index) {
+      this.maps.forEach(function (panel, index) {
         if (panelData.name == panel.name && panelData.id !== panel.id) {
-          panelData.error = 'Floors must have different names';
+          panelData.error = 'Maps must have different names';
         }
 
         if (panelData.id === panel.id) {
           // To overcome the array change caveat
           // https://vuejs.org/v2/guide/list.html#Caveats
-          Vue.set(_this4.floors, index, panelData);
+          Vue.set(_this4.maps, index, panelData);
         }
       });
     },
@@ -258,7 +257,7 @@ var app = new Vue({
       this.settings = _.assignIn(this.settings, addMarkersData);
     },
     openAddMarkers: function openAddMarkers() {
-      if (!this.floors.length || !this.markers.length) {
+      if (!this.maps.length || !this.markers.length) {
         this.hasError = true;
         return;
       }
@@ -273,20 +272,20 @@ var app = new Vue({
       Fliplet.Studio.emit('widget-mode', 'normal');
     },
     prepareToSaveData: function prepareToSaveData(stopComplete) {
-      if (!this.floors.length || !this.markers.length) {
+      if (!this.maps.length || !this.markers.length) {
         this.hasError = true;
         return;
       } // Mark 'isFromNew' as false
 
 
-      this.floors.forEach(function (floor) {
-        floor.isFromNew = false;
+      this.maps.forEach(function (map) {
+        map.isFromNew = false;
       });
       this.markers.forEach(function (marker) {
         marker.isFromNew = false;
       });
       var newSettings = {
-        floors: this.floors,
+        maps: this.maps,
         markers: this.markers
       };
       this.settings = _.assignIn(this.settings, newSettings);
@@ -311,9 +310,9 @@ var app = new Vue({
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
-              Fliplet.Floorplan.on('floor-panel-settings-changed', this.onPanelSettingChanged);
-              Fliplet.Floorplan.on('marker-panel-settings-changed', this.onMarkerPanelSettingChanged);
-              Fliplet.Floorplan.on('add-markers-settings-changed', this.onAddMarkersSettingChanged); // Create data source on first time
+              Fliplet.InteractiveMap.on('map-panel-settings-changed', this.onPanelSettingChanged);
+              Fliplet.InteractiveMap.on('marker-panel-settings-changed', this.onMarkerPanelSettingChanged);
+              Fliplet.InteractiveMap.on('add-markers-settings-changed', this.onAddMarkersSettingChanged); // Create data source on first time
 
               if (this.autoDataSource) {
                 _context.next = 6;
@@ -347,9 +346,9 @@ var app = new Vue({
                   return;
                 }
 
-                Fliplet.Floorplan.emit('floors-save');
-                Fliplet.Floorplan.emit('markers-save');
-                Fliplet.Floorplan.emit('add-markers-save');
+                Fliplet.InteractiveMap.emit('maps-save');
+                Fliplet.InteractiveMap.emit('markers-save');
+                Fliplet.InteractiveMap.emit('add-markers-save');
 
                 _this6.prepareToSaveData();
               });
@@ -369,9 +368,9 @@ var app = new Vue({
     return created;
   }(),
   destroyed: function destroyed() {
-    Fliplet.Floorplan.off('floor-panel-settings-changed', this.onPanelSettingChanged);
-    Fliplet.Floorplan.off('marker-panel-settings-changed', this.onMarkerPanelSettingChanged);
-    Fliplet.Floorplan.off('add-markers-settings-changed', this.onAddMarkersSettingChanged);
+    Fliplet.InteractiveMap.off('map-panel-settings-changed', this.onPanelSettingChanged);
+    Fliplet.InteractiveMap.off('marker-panel-settings-changed', this.onMarkerPanelSettingChanged);
+    Fliplet.InteractiveMap.off('add-markers-settings-changed', this.onAddMarkersSettingChanged);
   }
 });
 

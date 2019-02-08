@@ -86,15 +86,15 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./js/interface/floor-panel.js":
-/*!*************************************!*\
-  !*** ./js/interface/floor-panel.js ***!
-  \*************************************/
+/***/ "./js/interface/map-panel.js":
+/*!***********************************!*\
+  !*** ./js/interface/map-panel.js ***!
+  \***********************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-Fliplet.Floorplan.component('floor-panel', {
-  componentName: 'Floor Panel',
+Fliplet.InteractiveMap.component('map-panel', {
+  componentName: 'Map Panel',
   props: {
     id: {
       type: String,
@@ -110,7 +110,7 @@ Fliplet.Floorplan.component('floor-panel', {
     },
     type: {
       type: String,
-      default: 'floor-panel'
+      default: 'map-panel'
     },
     isFromNew: {
       type: Boolean,
@@ -121,9 +121,9 @@ Fliplet.Floorplan.component('floor-panel', {
     onInputData: function onInputData() {
       var componentData = _.pick(this, ['id', 'name', 'image', 'type', 'isFromNew']);
 
-      Fliplet.Floorplan.emit('floor-panel-settings-changed', componentData);
+      Fliplet.InteractiveMap.emit('map-panel-settings-changed', componentData);
     },
-    openFloorPicker: function openFloorPicker() {
+    openMapPicker: function openMapPicker() {
       var _this = this;
 
       var filePickerData = {
@@ -159,26 +159,26 @@ Fliplet.Floorplan.component('floor-panel', {
     }
   },
   created: function created() {
-    Fliplet.Floorplan.on('floors-save', this.onInputData);
+    Fliplet.InteractiveMap.on('maps-save', this.onInputData);
   },
   destroyed: function destroyed() {
-    Fliplet.Floorplan.off('floors-save', this.onInputData);
+    Fliplet.InteractiveMap.off('maps-save', this.onInputData);
   }
 });
 
 /***/ }),
 
 /***/ 4:
-/*!*******************************************!*\
-  !*** multi ./js/interface/floor-panel.js ***!
-  \*******************************************/
+/*!*****************************************!*\
+  !*** multi ./js/interface/map-panel.js ***!
+  \*****************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/hcarneiro/Repos/Fliplet/fliplet-widget-interactive-floorplan/js/interface/floor-panel.js */"./js/interface/floor-panel.js");
+module.exports = __webpack_require__(/*! /Users/hcarneiro/Repos/Fliplet/fliplet-widget-interactive-floorplan/js/interface/map-panel.js */"./js/interface/map-panel.js");
 
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=floor-panel.js.map
+//# sourceMappingURL=map-panel.js.map

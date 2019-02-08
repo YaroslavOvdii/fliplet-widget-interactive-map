@@ -2,7 +2,7 @@ const widgetId = parseInt(Fliplet.Widget.getDefaultId(), 10)
 const widgetData = Fliplet.Widget.getData(widgetId) || {}
 
 import * as Sortable from 'sortablejs/Sortable.js'
-import flFloorplanColumns from '../config/default-table'
+import flInteractiveMapColumns from '../config/default-table'
 
 Vue.directive('sortable', {
   inserted(el, binding) {
@@ -12,7 +12,7 @@ Vue.directive('sortable', {
   }
 });
 
-const selector = '#flooplan-app'
+const selector = '#interactive-map-app'
 
 const app = new Vue({
   el: selector,
@@ -20,13 +20,12 @@ const app = new Vue({
     return {
       appName: Fliplet.Env.get('appName'),
       organizationId: Fliplet.Env.get('organizationId'),
-      defaultColumns: flFloorplanColumns,
+      defaultColumns: flInteractiveMapColumns,
       autoDataSource: widgetData.autoDataSource || false,
       dataSources: [],
       filePickerProvider: null,
-      floorPanelsIsEmpty: true,
       settings: widgetData,
-      floors: widgetData.floors || [],
+      maps: widgetData.maps || [],
       markers: widgetData.markers || [],
       hasError: false,
       showAddMarkersUI: false
@@ -50,36 +49,36 @@ const app = new Vue({
       }).then((ds) => {
         this.settings.markersDataSourceId = ds.id
         this.settings.markerNameColumn = 'Name'
-        this.settings.markerFloorColumn = 'Floor name'
+        this.settings.markerMapColumn = 'Map name'
         this.settings.markerTypeColumn = 'Marker style',
         this.settings.markerXPositionColumn = 'Position X',
         this.settings.markerYPositionColumn = 'Position Y'
         this.settings.autoDataSource = true
       })
     },
-    onAddFloor() {
+    onAddMap() {
       const newItem = {
         id: Fliplet.guid(),
         isFromNew: true,
-        name: `Floor ${this.floors.length + 1}`,
-        type: 'floor-panel'
+        name: `Map ${this.maps.length + 1}`,
+        type: 'map-panel'
       }
 
-      this.floors.push(newItem)
+      this.maps.push(newItem)
     },
-    onSortFloors(event) {
-      this.floors.splice(event.newIndex, 0, this.floors.splice(event.oldIndex, 1)[0])
+    onSortMaps(event) {
+      this.maps.splice(event.newIndex, 0, this.maps.splice(event.oldIndex, 1)[0])
     },
-    deleteFloor(index) {
+    deleteMap(index) {
       Fliplet.Modal.confirm({
-        title: 'Delete floorplan',
-        message: '<p>Are you sure you want to delete this floor?</p>'
+        title: 'Delete map',
+        message: '<p>Are you sure you want to delete this map?</p>'
       }).then((result) => {
         if (!result) {
           return
         }
 
-        this.floors.splice(index, 1)
+        this.maps.splice(index, 1)
       })
     },
     onAddMarker() {
@@ -96,8 +95,8 @@ const app = new Vue({
     },
     deleteMarker(index) {
       Fliplet.Modal.confirm({
-        title: 'Delete floorplan',
-        message: '<p>Are you sure you want to delete this floor?</p>'
+        title: 'Delete marker style',
+        message: '<p>Are you sure you want to delete this marker style?</p>'
       }).then((result) => {
         if (!result) {
           return
@@ -107,15 +106,15 @@ const app = new Vue({
       })
     },
     onPanelSettingChanged(panelData) {
-      this.floors.forEach((panel, index) => {
+      this.maps.forEach((panel, index) => {
         if (panelData.name == panel.name && panelData.id !== panel.id) {
-          panelData.error = 'Floors must have different names'
+          panelData.error = 'Maps must have different names'
         }
 
         if (panelData.id === panel.id) {
           // To overcome the array change caveat
           // https://vuejs.org/v2/guide/list.html#Caveats
-          Vue.set(this.floors, index, panelData)
+          Vue.set(this.maps, index, panelData)
         }
       })
     },
@@ -136,7 +135,7 @@ const app = new Vue({
       this.settings = _.assignIn(this.settings, addMarkersData)
     },
     openAddMarkers() {
-      if (!this.floors.length || !this.markers.length) {
+      if (!this.maps.length || !this.markers.length) {
         this.hasError = true
         return
       }
@@ -151,21 +150,21 @@ const app = new Vue({
       Fliplet.Studio.emit('widget-mode', 'normal')
     },
     prepareToSaveData(stopComplete) {
-      if (!this.floors.length || !this.markers.length) {
+      if (!this.maps.length || !this.markers.length) {
         this.hasError = true
         return
       }
 
       // Mark 'isFromNew' as false
-      this.floors.forEach((floor) => {
-        floor.isFromNew = false
+      this.maps.forEach((map) => {
+        map.isFromNew = false
       })
       this.markers.forEach((marker) => {
         marker.isFromNew = false
       })
 
       const newSettings = {
-        floors: this.floors,
+        maps: this.maps,
         markers: this.markers
       }
 
@@ -184,9 +183,9 @@ const app = new Vue({
     }
   },
   async created() {
-    Fliplet.Floorplan.on('floor-panel-settings-changed', this.onPanelSettingChanged)
-    Fliplet.Floorplan.on('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
-    Fliplet.Floorplan.on('add-markers-settings-changed', this.onAddMarkersSettingChanged)
+    Fliplet.InteractiveMap.on('map-panel-settings-changed', this.onPanelSettingChanged)
+    Fliplet.InteractiveMap.on('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
+    Fliplet.InteractiveMap.on('add-markers-settings-changed', this.onAddMarkersSettingChanged)
 
     // Create data source on first time
     if (!this.autoDataSource) {
@@ -219,15 +218,15 @@ const app = new Vue({
         return
       }
 
-      Fliplet.Floorplan.emit('floors-save')
-      Fliplet.Floorplan.emit('markers-save')
-      Fliplet.Floorplan.emit('add-markers-save')
+      Fliplet.InteractiveMap.emit('maps-save')
+      Fliplet.InteractiveMap.emit('markers-save')
+      Fliplet.InteractiveMap.emit('add-markers-save')
       this.prepareToSaveData()
     })
   },
   destroyed() {
-    Fliplet.Floorplan.off('floor-panel-settings-changed', this.onPanelSettingChanged)
-    Fliplet.Floorplan.off('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
-    Fliplet.Floorplan.off('add-markers-settings-changed', this.onAddMarkersSettingChanged)
+    Fliplet.InteractiveMap.off('map-panel-settings-changed', this.onPanelSettingChanged)
+    Fliplet.InteractiveMap.off('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
+    Fliplet.InteractiveMap.off('add-markers-settings-changed', this.onAddMarkersSettingChanged)
   }
 });

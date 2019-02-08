@@ -1,28 +1,28 @@
 <div class="add-markers-component clearfix">
-  <div v-show="savedData" class="col-xs-8 floors-wrapper">
-    <div v-if="isLoading" class="floors-loading-holder">
+  <div v-show="savedData" class="col-xs-8 maps-wrapper">
+    <div v-if="isLoading" class="maps-loading-holder">
       <div class="spinner-holder animated">
         <div class="spinner-overlay">Loading...</div>
         <p>Loading... Please wait!</p>
       </div>
     </div>
-    <div v-else class="floors-container">
+    <div v-else class="maps-container">
       <div v-show="!mappedMarkerData.length" class="no-markers">
         Your maps will appear here once you create a new marker.
       </div>
-      <div v-show="mappedMarkerData.length" class="floor-wrapper-holder">
-        <div v-for="(floor, index) in widgetData.floors" class="floor-wrapper" v-bind:class="{ 'active': selectedMarkerData.floor && floor.id === selectedMarkerData.floor.id && imageLoaded }">
-          <div class="floor-container" :id="'floor-' + floor.id">
-            <img v-if="floor.image" class="floor-image" :src="floor.image.url"/>
+      <div v-show="mappedMarkerData.length" class="map-wrapper-holder">
+        <div v-for="(map, index) in widgetData.maps" class="map-wrapper" v-bind:class="{ 'active': selectedMarkerData.map && map.id === selectedMarkerData.map.id && imageLoaded }">
+          <div class="map-container" :id="'map-' + map.id">
+            <img v-if="map.image" class="map-image" :src="map.image.url"/>
           </div>
         </div>
       </div>
-      <div v-if="selectedMarkerData.floor && selectedMarkerData.floor.name" class="floors-button">
+      <div v-if="selectedMarkerData.map && selectedMarkerData.map.name && mappedMarkerData.length" class="maps-button">
         <i class="fa fa-map-marker"></i>
-        <span class="floor-button-text"><p>\{{selectedMarkerData.floor.name}}</p></span>
+        <span class="map-button-text"><p>\{{selectedMarkerData.map.name}}</p></span>
       </div>
-      <div v-if="selectedMarkerData.floor && selectedMarkerData.floor.name" class="floor-hint-holder">
-        <div class="floor-hint">Click the image to set the marker position</div>
+      <div v-if="selectedMarkerData.map && selectedMarkerData.map.name && mappedMarkerData.length" class="map-hint-holder">
+        <div class="map-hint">Click the image to set the marker position</div>
       </div>
     </div>
   </div>
@@ -58,7 +58,7 @@
             <label>Map name field</label>
           </div>
           <div class="col-sm-12">
-            <multiselect v-model="markerFloorColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
+            <multiselect v-model="markerMapColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
           </div>
         </div>
         <div class="form-group clearfix">
@@ -114,13 +114,13 @@
                 <div v-else class="marker-name-holder">
                   <span>\{{markerInfo.data.name}}</span> <i class="fa fa-pencil" @click.prevent="toUpdateName(index, markerInfo.data.name)"></i>
                 </div>
-                <div class="marker-floor-holder">
+                <div class="marker-map-holder">
                   <div class="btn-group">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      \{{markerInfo.data.floor}} <span class="caret"></span>
+                      \{{markerInfo.data.map}} <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right">
-                      <li v-for="floor in widgetData.floors"><a href="#" @click.prevent="updateFloor(floor.name, index)">\{{floor.name}}</a></li>
+                      <li v-for="map in widgetData.maps"><a href="#" @click.prevent="updateMap(map.name, index)">\{{map.name}}</a></li>
                     </ul>
                   </div>
                 </div>
