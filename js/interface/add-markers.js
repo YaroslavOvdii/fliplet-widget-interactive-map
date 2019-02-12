@@ -100,14 +100,14 @@ Fliplet.InteractiveMap.component('add-markers', {
         return {
           id: marker.id,
           data: {
-            name: marker.data[this.markerNameColumn],
-            map: marker.data[this.markerMapColumn],
-            type: marker.data[this.markerTypeColumn],
-            icon: markerData ? markerData.icon : '',
-            color: markerData ? markerData.color : '#333333',
-            size: markerData ? markerData.size : '24px',
-            positionx: marker.data[this.markerXPositionColumn],
-            positiony: marker.data[this.markerYPositionColumn],
+            name: marker.data[this.markerNameColumn] || 'Data source marker',
+            map: marker.data[this.markerMapColumn] || this.widgetData.maps[0].name,
+            type: marker.data[this.markerTypeColumn] || this.widgetData.markers[0].name,
+            icon: markerData ? markerData.icon : this.widgetData.markers[0].icon,
+            color: markerData ? markerData.color : this.widgetData.markers[0].color,
+            size: markerData ? markerData.size : this.widgetData.markers[0].size,
+            positionx: marker.data[this.markerXPositionColumn] || '100',
+            positiony: marker.data[this.markerYPositionColumn] || '100',
             updateName: false,
             copyOfName: ''
           }

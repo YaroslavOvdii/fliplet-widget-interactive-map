@@ -211,14 +211,14 @@ Fliplet.InteractiveMap.component('add-markers', {
         return {
           id: marker.id,
           data: {
-            name: marker.data[_this.markerNameColumn],
-            map: marker.data[_this.markerMapColumn],
-            type: marker.data[_this.markerTypeColumn],
-            icon: markerData ? markerData.icon : '',
-            color: markerData ? markerData.color : '#333333',
-            size: markerData ? markerData.size : '24px',
-            positionx: marker.data[_this.markerXPositionColumn],
-            positiony: marker.data[_this.markerYPositionColumn],
+            name: marker.data[_this.markerNameColumn] || 'Data source marker',
+            map: marker.data[_this.markerMapColumn] || _this.widgetData.maps[0].name,
+            type: marker.data[_this.markerTypeColumn] || _this.widgetData.markers[0].name,
+            icon: markerData ? markerData.icon : _this.widgetData.markers[0].icon,
+            color: markerData ? markerData.color : _this.widgetData.markers[0].color,
+            size: markerData ? markerData.size : _this.widgetData.markers[0].size,
+            positionx: marker.data[_this.markerXPositionColumn] || '100',
+            positiony: marker.data[_this.markerYPositionColumn] || '100',
             updateName: false,
             copyOfName: ''
           }
