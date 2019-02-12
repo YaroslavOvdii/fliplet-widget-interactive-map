@@ -274,8 +274,7 @@ body.fl-with-bottom-menu .interactive-map-component-wrapper {
   left: 50%;
   top: 50%;
   border-radius: 50%;
-  width: 1em;
-  height: 1em;
+  font-size: 1em;
   pointer-events: none;
   transform: translate3d(-50%, -50%, 0);
 }
