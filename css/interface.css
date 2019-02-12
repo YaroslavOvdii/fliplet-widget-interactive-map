@@ -616,10 +616,6 @@ header .title-holder p {
 
 .marker-map-holder .btn .caret,
 .marker-icon-holder .btn .caret {
-  position: absolute;
-  right: 4px;
-  top: 50%;
-  margin-top: -2px;
   opacity: 0.5;
 }
 
