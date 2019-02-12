@@ -117,7 +117,13 @@
                 <div class="marker-map-holder">
                   <div class="btn-group">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      \{{markerInfo.data.map}} <span class="caret"></span>
+                      <template v-if="markerInfo.data && markerInfo.data.map">
+                        \{{markerInfo.data.map}}
+                      </template>
+                      <template v-else>
+                        &nbsp;
+                      </template>
+                      <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right">
                       <li v-for="map in widgetData.maps"><a href="#" @click.prevent="updateMap(map.name, index)">\{{map.name}}</a></li>
@@ -127,7 +133,13 @@
                 <div class="marker-icon-holder">
                   <div class="btn-group">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <i :class="markerInfo.data.icon + ' fa-fw'" :style="'color: ' + markerInfo.data.color"></i> <span class="caret"></span>
+                      <template v-if="markerInfo.data && markerInfo.data.icon && markerInfo.data.color">
+                        <i :class="markerInfo.data.icon + ' fa-fw'" :style="'color: ' + markerInfo.data.color"></i>
+                      </template>
+                      <template v-else>
+                        &nbsp;
+                      </template>
+                      <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right">
                       <li v-for="marker in widgetData.markers"><a href="#" @click.prevent="updateMarker(marker, index)">\{{marker.name}} <i :class="marker.icon + ' fa-fw'" :style="'color: ' + marker.color"></i></a></li>
