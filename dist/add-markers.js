@@ -370,7 +370,8 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.flPanZoomInstance = Fliplet.UI.PanZoom.create(this.pzElement, {
         maxZoom: 4,
         zoomStep: 0.25,
-        animDuration: 0.1
+        animDuration: 0.1,
+        environment: 'interface'
       });
       this.flPanZoomInstance.on('mapImageLoaded', function () {
         _this4.imageLoaded = true;
