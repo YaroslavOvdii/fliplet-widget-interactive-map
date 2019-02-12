@@ -181,6 +181,7 @@ var app = new Vue({
         type: 'map-panel'
       };
       this.maps.push(newItem);
+      this.checkErrorStates();
     },
     onSortMaps: function onSortMaps(event) {
       this.maps.splice(event.newIndex, 0, this.maps.splice(event.oldIndex, 1)[0]);
@@ -209,6 +210,7 @@ var app = new Vue({
         type: 'marker-panel'
       };
       this.markers.push(newItem);
+      this.checkErrorStates();
     },
     deleteMarker: function deleteMarker(index) {
       var _this3 = this;
@@ -223,6 +225,15 @@ var app = new Vue({
 
         _this3.markers.splice(index, 1);
       });
+    },
+    checkErrorStates: function checkErrorStates() {
+      if (this.maps.length) {
+        this.hasErrorOnSave = false;
+
+        if (this.markers.length) {
+          this.hasError = false;
+        }
+      }
     },
     onPanelSettingChanged: function onPanelSettingChanged(panelData) {
       var _this4 = this;
@@ -264,6 +275,7 @@ var app = new Vue({
       }
 
       this.hasError = false;
+      this.hasErrorOnSave = false;
       this.prepareToSaveData(true);
       this.showAddMarkersUI = true;
       Fliplet.Studio.emit('widget-mode', this.settings.savedData ? 'full-screen' : 'normal');
@@ -281,8 +293,10 @@ var app = new Vue({
       if (stopComplete && (!this.maps.length || !this.markers.length)) {
         this.hasError = true;
         return;
-      } // Mark 'isFromNew' as false
+      }
 
+      this.hasError = false;
+      this.hasErrorOnSave = false; // Mark 'isFromNew' as false
 
       this.maps.forEach(function (map) {
         map.isFromNew = false;

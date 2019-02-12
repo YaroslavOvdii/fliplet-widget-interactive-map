@@ -66,6 +66,7 @@ const app = new Vue({
       }
 
       this.maps.push(newItem)
+      this.checkErrorStates()
     },
     onSortMaps(event) {
       this.maps.splice(event.newIndex, 0, this.maps.splice(event.oldIndex, 1)[0])
@@ -93,6 +94,7 @@ const app = new Vue({
       }
 
       this.markers.push(newItem)
+      this.checkErrorStates()
     },
     deleteMarker(index) {
       Fliplet.Modal.confirm({
@@ -105,6 +107,15 @@ const app = new Vue({
 
         this.markers.splice(index, 1)
       })
+    },
+    checkErrorStates() {
+      if (this.maps.length) {
+        this.hasErrorOnSave = false
+
+        if (this.markers.length) {
+          this.hasError = false
+        }
+      }
     },
     onPanelSettingChanged(panelData) {
       this.maps.forEach((panel, index) => {
@@ -142,6 +153,7 @@ const app = new Vue({
       }
       
       this.hasError = false
+      this.hasErrorOnSave = false
       this.prepareToSaveData(true)
       this.showAddMarkersUI = true
       Fliplet.Studio.emit('widget-mode', this.settings.savedData ? 'full-screen' : 'normal')
@@ -160,6 +172,9 @@ const app = new Vue({
         this.hasError = true
         return
       }
+
+      this.hasError = false
+      this.hasErrorOnSave = false
 
       // Mark 'isFromNew' as false
       this.maps.forEach((map) => {
