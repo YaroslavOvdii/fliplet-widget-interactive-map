@@ -182,7 +182,7 @@ Fliplet().then(function () {
         },
         selectedMarker(markerData) {
           const mapIndex = _.findIndex(this.maps, (o) => { return o.name == markerData.data.map })
-          const markerIndex = _.findIndex(this.mappedMarkerData, (o) => { return o.data.name == markerData.data.name })
+          const markerIndex = _.findIndex(this.mappedMarkerData, (o) => { return o.id == markerData.id })
 
           this.setActiveMap(mapIndex, true)
           this.setActiveMarker(markerIndex)

@@ -308,7 +308,7 @@ Fliplet().then(function () {
           });
 
           var markerIndex = _.findIndex(this.mappedMarkerData, function (o) {
-            return o.data.name == markerData.data.name;
+            return o.id == markerData.id;
           });
 
           this.setActiveMap(mapIndex, true);
