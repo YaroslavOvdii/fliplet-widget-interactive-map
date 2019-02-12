@@ -35,7 +35,7 @@
         <div v-if="!manualSelectDataSource" class="col-sm-12">
           We have created a data source for you called <strong>\{{markersDataSource.name}}</strong>.<br>
           <span>
-            <a href="#" @click.prevent="editDataSource">Edit data</a> | 
+            <a href="#" @click.prevent="editDataSource">Bulk upload data</a> | 
             <a href="#" @click.prevent="chooseExistingData" v-if="!savedData">Switch to another data source</a>
             <a href="#" @click.prevent="changeSettings" v-else>Change data settings</a>
           </span>
