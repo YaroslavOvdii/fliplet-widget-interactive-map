@@ -190,7 +190,7 @@ var app = new Vue({
 
       Fliplet.Modal.confirm({
         title: 'Delete map',
-        message: '<p>Are you sure you want to delete this map?</p>'
+        message: '<p>Any marker assigned to this map won\'t be visible until you assign it to a different map.</p><p>Are you sure you want to delete this map?</p>'
       }).then(function (result) {
         if (!result) {
           return;
@@ -215,7 +215,7 @@ var app = new Vue({
 
       Fliplet.Modal.confirm({
         title: 'Delete marker style',
-        message: '<p>Are you sure you want to delete this marker style?</p>'
+        message: '<p>You will have to manually update any marker that has this style applied.</p><p>Are you sure you want to delete this marker style?</p>'
       }).then(function (result) {
         if (!result) {
           return;
