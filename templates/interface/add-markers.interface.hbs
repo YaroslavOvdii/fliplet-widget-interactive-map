@@ -8,7 +8,7 @@
     </div>
     <div v-else class="maps-container">
       <div v-show="!mappedMarkerData.length" class="no-markers">
-        Your maps will appear here once you create a new marker.
+        Your map will appear here once you create a new marker and assign a map to it.
       </div>
       <div v-show="mappedMarkerData.length" class="map-wrapper-holder">
         <div v-for="(map, index) in widgetData.maps" class="map-wrapper" v-bind:class="{ 'active': selectedMarkerData.map && map.id === selectedMarkerData.map.id && imageLoaded }">
