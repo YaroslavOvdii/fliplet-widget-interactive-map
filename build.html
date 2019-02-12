@@ -23,7 +23,7 @@
       <i class="fa fa-search"></i>
     </div>
     <div class="maps-button" v-bind:class="{ 'active': selectedMapData && selectedMapData.name, 'hidden': maps.length <= 1 }" v-if="selectedMapData && selectedMapData.name" @click.prevent="toggleMapOverlay">
-      <i class="fa fa-map-marker"></i>
+      <i class="fa fa-map-o"></i>
       <div class="maps-button-text"><p>\{{ selectedMapData.name }}</p></div>
       <i class="fa fa-bars"></i>
     </div>
