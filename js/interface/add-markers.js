@@ -418,9 +418,15 @@ Fliplet.InteractiveMap.component('add-markers', {
     addNewMarker() {
       const newObj = {}
       const markerLength = this.mappedMarkerData.length
+      let mapName
+      if (this.selectedMarkerData && this.selectedMarkerData.map) {
+        mapName = this.selectedMarkerData.map.name
+      } else if (this.widgetData.maps && this.widgetData.maps.length) {
+        mapName = this.widgetData.maps[0].name
+      }
 
       newObj[this.markerNameColumn] = `New marker ${markerLength + 1}`
-      newObj[this.markerMapColumn] = this.widgetData.maps.length ? this.widgetData.maps[0].name : ''
+      newObj[this.markerMapColumn] = mapName
       newObj[this.markerTypeColumn] = this.widgetData.markers.length ? this.widgetData.markers[0].name : ''
       newObj[this.markerXPositionColumn] = '100'
       newObj[this.markerYPositionColumn] = '100'
