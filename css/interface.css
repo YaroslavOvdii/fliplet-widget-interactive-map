@@ -558,11 +558,12 @@ header .title-holder p {
   display: flex;
   align-items: center;
   height: 44px;
+  max-width: 180px;
 }
 
 .marker-name-holder span {
   display: block;
-  max-width: 170px;
+  max-width: 180px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
