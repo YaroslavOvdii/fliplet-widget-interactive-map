@@ -472,8 +472,9 @@ header .title-holder p {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
   overflow: visible;
 }
 
@@ -487,8 +488,8 @@ header .title-holder p {
   left: 50%;
   top: 50%;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: 1em;
+  height: 1em;
   pointer-events: none;
   transform: translate3d(-50%, -50%, 0);
 }
@@ -557,7 +558,6 @@ header .title-holder p {
   display: flex;
   align-items: center;
   height: 44px;
-  width: 138px;
 }
 
 .marker-name-holder span {

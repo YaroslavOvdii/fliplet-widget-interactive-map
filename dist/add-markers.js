@@ -397,7 +397,7 @@ Fliplet.InteractiveMap.component('add-markers', {
           if (marker.data.map === _this5.selectedMarkerData.map.name) {
             var markersLength = _this5.flPanZoomInstance.markers.getAll().length;
 
-            markerElem = $("<div id='" + marker.id + "' class='marker' data-name='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute;'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state' style='background-color: " + marker.data.color + ";'></div></div>");
+            markerElem = $("<div id='" + marker.id + "' class='marker' data-name='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; width: " + marker.data.size + "; height: " + marker.data.size + "; font-size: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state' style='background-color: " + marker.data.color + ";'></div></div>");
             _this5.markerElemHandler = new Hammer(markerElem.get(0));
 
             _this5.flPanZoomInstance.markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, {
@@ -426,7 +426,7 @@ Fliplet.InteractiveMap.component('add-markers', {
         $('#' + options.id).addClass('active');
       } else {
         var markersLength = this.tappedMarkerId || this.flPanZoomInstance.markers.getAll().length;
-        markerElem = $("<div id='" + this.selectedMarkerData.marker.id + "' class='marker' data-name='" + this.selectedMarkerData.marker.data.name + "' style='left: -15px; top: -15px; position: absolute;'><i class='" + this.selectedMarkerData.marker.data.icon + "' style='color: " + this.selectedMarkerData.marker.data.color + "; font-size: " + this.selectedMarkerData.marker.data.size + ";'></i><div class='active-state' style='background-color: " + this.selectedMarkerData.marker.data.color + ";'></div></div>");
+        markerElem = $("<div id='" + this.selectedMarkerData.marker.id + "' class='marker' data-name='" + this.selectedMarkerData.marker.data.name + "' style='left: -15px; top: -15px; position: absolute; width: " + this.selectedMarkerData.marker.data.size + "; height: " + this.selectedMarkerData.marker.data.size + "; font-size: " + this.selectedMarkerData.marker.data.size + ";'><i class='" + this.selectedMarkerData.marker.data.icon + "' style='color: " + this.selectedMarkerData.marker.data.color + "; font-size: " + this.selectedMarkerData.marker.data.size + ";'></i><div class='active-state' style='background-color: " + this.selectedMarkerData.marker.data.color + ";'></div></div>");
         this.markerElemHandler = new Hammer(markerElem.get(0));
         this.flPanZoomInstance.markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, {
           x: options.x,
