@@ -108,7 +108,7 @@ Fliplet().then(function () {
       el: $(selector)[0],
       data: function data() {
         return {
-          containsData: _data.maps && _data.maps.length && _data.markers && _data.markers.length,
+          containsData: _data.maps && _data.maps.length,
           maps: _data.maps && _data.maps.length ? _data.maps : [],
           markerStyles: _data.markers && _data.markers.length ? _data.markers : [],
           markersDataSourceId: _data.markersDataSourceId || undefined,

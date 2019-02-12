@@ -144,6 +144,7 @@ var app = new Vue({
       maps: widgetData.maps || [],
       markers: widgetData.markers || [],
       hasError: false,
+      hasErrorOnSave: false,
       showAddMarkersUI: false
     };
   },
@@ -272,7 +273,12 @@ var app = new Vue({
       Fliplet.Studio.emit('widget-mode', 'normal');
     },
     prepareToSaveData: function prepareToSaveData(stopComplete) {
-      if (!this.maps.length || !this.markers.length) {
+      if (!stopComplete && !this.maps.length) {
+        this.hasErrorOnSave = true;
+        return;
+      }
+
+      if (stopComplete && (!this.maps.length || !this.markers.length)) {
         this.hasError = true;
         return;
       } // Mark 'isFromNew' as false

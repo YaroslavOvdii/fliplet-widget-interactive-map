@@ -6,7 +6,7 @@ Fliplet().then(function () {
       el: $(selector)[0],
       data() {
         return {
-          containsData: data.maps && data.maps.length && data.markers && data.markers.length,
+          containsData: data.maps && data.maps.length,
           maps: data.maps && data.maps.length ? data.maps : [],
           markerStyles: data.markers && data.markers.length ? data.markers : [],
           markersDataSourceId: data.markersDataSourceId || undefined,
