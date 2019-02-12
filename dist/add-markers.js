@@ -614,6 +614,8 @@ Fliplet.InteractiveMap.component('add-markers', {
                     _this12.markersData = data;
                     _this12.mappedMarkerData = _this12.mapMarkerData();
 
+                    _this12.saveDebounced();
+
                     _this12.setupFlPanZoom();
                   });
                 }
