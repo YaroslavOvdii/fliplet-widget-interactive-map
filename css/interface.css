@@ -329,6 +329,10 @@ header .title-holder p {
   height: 100%;
 }
 
+.maps-container.empty-state {
+  padding: 40% 60px 0;
+}
+
 .maps-wrapper {
   padding: 0;
 }
@@ -526,6 +530,10 @@ header .title-holder p {
   overflow: auto;
 }
 
+.markers-ui.empty-state {
+  padding: 40px 40px 0;
+}
+
 .markers-ui-loading,
 .maps-loading-holder {
   padding: 40px 0 0;
@@ -656,6 +664,7 @@ header .title-holder p {
 
 .marker-delete-holder {
   width: 56px;
+  min-width: 56px;
   height: 44px;
   padding: 0 15px;
   display: flex;
@@ -672,9 +681,10 @@ header .title-holder p {
 }
 
 .no-markers {
-  padding: 50px 60px;
-  opacity: 0.4;
+  padding: 30px 40px;
   text-align: center;
+  background-color: rgba(51,51,51,0.05);
+  border-radius: 20px;
 }
 
 .settings-buttons-wrapper {

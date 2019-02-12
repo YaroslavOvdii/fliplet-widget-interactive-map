@@ -6,7 +6,7 @@
         <p>Loading... Please wait!</p>
       </div>
     </div>
-    <div v-else class="maps-container">
+    <div v-else class="maps-container" v-bind:class="{ 'empty-state': !mappedMarkerData.length }">
       <div v-show="!mappedMarkerData.length" class="no-markers">
         Your map will appear here once you create a new marker and assign a map to it.
       </div>
@@ -102,7 +102,7 @@
               <p>Loading... Please wait!</p>
             </div>
           </div>
-          <div v-else class="col-sm-12 markers-ui">
+          <div v-else class="col-sm-12 markers-ui" v-bind:class="{ 'empty-state': !mappedMarkerData.length }">
             <div v-if="!mappedMarkerData.length" class="no-markers">
               Use the button below to add a new marker to your map.
             </div>
