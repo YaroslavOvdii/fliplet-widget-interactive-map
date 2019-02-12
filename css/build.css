@@ -277,6 +277,7 @@ body.fl-with-bottom-menu .interactive-map-component-wrapper {
   font-size: 1em;
   pointer-events: none;
   transform: translate3d(-50%, -50%, 0);
+  transform-origin: 50% 50%;
 }
 
 .marker.active .active-state {
