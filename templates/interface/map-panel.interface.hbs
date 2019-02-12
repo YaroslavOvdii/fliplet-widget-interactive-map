@@ -18,9 +18,7 @@
           <span v-if="image">Replace image</span>
           <span v-else>Select an image</span>
         </div>
-        <div v-if="image" class="selected-image-holder">
-          <img :src="image.url"/>
-        </div>
+        <div v-if="image" class="selected-image-holder" :style="'background-image: url(' + image.url + ')'"></div>
       </div>
       <div v-if="image" class="selected-image-name">\{{image.name}}</div>
     </div>
