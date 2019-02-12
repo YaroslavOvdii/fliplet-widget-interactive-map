@@ -281,7 +281,9 @@ body.fl-with-bottom-menu .interactive-map-component-wrapper {
 }
 
 .marker.active .active-state {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   animation: pulse 1.2s ease-out infinite none;
 }
 
