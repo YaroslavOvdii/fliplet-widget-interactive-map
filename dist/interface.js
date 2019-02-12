@@ -160,7 +160,7 @@ var app = new Vue({
     createDataSource: function createDataSource() {
       var _this = this;
 
-      var name = "".concat(this.appName, " - Markers");
+      var name = "".concat(this.appName, " - Map Markers");
       return Fliplet.DataSources.create({
         name: name,
         organizationId: this.organizationId,

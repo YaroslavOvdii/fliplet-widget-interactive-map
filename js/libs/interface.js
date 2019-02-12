@@ -42,7 +42,7 @@ const app = new Vue({
       })
     },
     createDataSource() {
-      const name = `${this.appName} - Markers`
+      const name = `${this.appName} - Map Markers`
       return Fliplet.DataSources.create({
         name: name,
         organizationId: this.organizationId,
