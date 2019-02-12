@@ -302,6 +302,7 @@ var app = new Vue({
       Fliplet.Widget.save(this.settings).then(function () {
         if (!stopComplete) {
           Fliplet.Widget.complete();
+          Fliplet.Studio.emit('reload-widget-instance', widgetId);
         }
       });
     }
