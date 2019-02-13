@@ -248,11 +248,23 @@ header .title-holder p {
   font-weight: normal;
 }
 
-.selected-folder {
-  margin-top: 5px;
+.selected-image-container {
+  display: flex;
+  align-items: center;
 }
 
-.selected-folder span {
+.selected-image-holder {
+  margin-left: 10px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(51,51,51,0.2);
+  background-size: cover;
+  background-position: center center;
+  border-radius: 4px;
+}
+
+.selected-image-name {
+  margin-top: 5px;
   font-weight: bold;
 }
 
@@ -315,6 +327,10 @@ header .title-holder p {
 .settings-holder,
 .maps-container {
   height: 100%;
+}
+
+.maps-container.empty-state {
+  padding: 40% 60px 0;
 }
 
 .maps-wrapper {
@@ -423,7 +439,7 @@ header .title-holder p {
   line-height: 1;
 }
 
-.maps-button .fa-map-marker {
+.maps-button .fa-map-o {
   margin-top: -2px;
   margin-right: 8px;
 }
@@ -462,6 +478,7 @@ header .title-holder p {
   justify-content: center;
   width: 30px;
   height: 30px;
+  font-size: 24px;
   overflow: visible;
 }
 
@@ -475,14 +492,16 @@ header .title-holder p {
   left: 50%;
   top: 50%;
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  font-size: 1em;
   pointer-events: none;
   transform: translate3d(-50%, -50%, 0);
+  transform-origin: 50% 50%;
 }
 
 .marker.active .active-state {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   animation: pulse 1.2s ease-out infinite none;
 }
 
@@ -511,6 +530,10 @@ header .title-holder p {
   padding: 0;
   height: calc(100% - 25px);
   overflow: auto;
+}
+
+.markers-ui.empty-state {
+  padding: 40px 40px 0;
 }
 
 .markers-ui-loading,
@@ -545,12 +568,12 @@ header .title-holder p {
   display: flex;
   align-items: center;
   height: 44px;
-  width: 138px;
+  max-width: 180px;
 }
 
 .marker-name-holder span {
   display: block;
-  max-width: 170px;
+  max-width: 180px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -600,10 +623,6 @@ header .title-holder p {
 
 .marker-map-holder .btn .caret,
 .marker-icon-holder .btn .caret {
-  position: absolute;
-  right: 4px;
-  top: 50%;
-  margin-top: -2px;
   opacity: 0.5;
 }
 
@@ -647,6 +666,7 @@ header .title-holder p {
 
 .marker-delete-holder {
   width: 56px;
+  min-width: 56px;
   height: 44px;
   padding: 0 15px;
   display: flex;
@@ -663,9 +683,10 @@ header .title-holder p {
 }
 
 .no-markers {
-  padding: 50px 60px;
-  opacity: 0.4;
+  padding: 30px 40px;
   text-align: center;
+  background-color: rgba(51,51,51,0.05);
+  border-radius: 20px;
 }
 
 .settings-buttons-wrapper {
@@ -687,6 +708,10 @@ header .title-holder p {
 }
 
 /* COLOR PICKER */
+.colorpicker.colorpicker-with-alpha {
+  min-width: 311px;
+}
+
 .colorpicker-2x .colorpicker-saturation {
   width: 235px;
   height: 235px;

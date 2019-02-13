@@ -6,9 +6,9 @@
         <p>Loading... Please wait!</p>
       </div>
     </div>
-    <div v-else class="maps-container">
+    <div v-else class="maps-container" v-bind:class="{ 'empty-state': !mappedMarkerData.length }">
       <div v-show="!mappedMarkerData.length" class="no-markers">
-        Your maps will appear here once you create a new marker.
+        Your map will appear here once you create a new marker and assign a map to it.
       </div>
       <div v-show="mappedMarkerData.length" class="map-wrapper-holder">
         <div v-for="(map, index) in widgetData.maps" class="map-wrapper" v-bind:class="{ 'active': selectedMarkerData.map && map.id === selectedMarkerData.map.id && imageLoaded }">
@@ -18,7 +18,7 @@
         </div>
       </div>
       <div v-if="selectedMarkerData.map && selectedMarkerData.map.name && mappedMarkerData.length" class="maps-button">
-        <i class="fa fa-map-marker"></i>
+        <i class="fa fa-map-o"></i>
         <span class="map-button-text"><p>\{{selectedMarkerData.map.name}}</p></span>
       </div>
       <div v-if="selectedMarkerData.map && selectedMarkerData.map.name && mappedMarkerData.length" class="map-hint-holder">
@@ -29,80 +29,91 @@
   <div class="settings-holder" v-bind:class="{ 'col-xs-12 less-bottom-padding': !savedData, 'col-xs-4 with-border': savedData }">
     <div class="marker-settings-wrapper">
       <div class="form-group clearfix">
-        <div class="col-sm-12 control-label">
+        <div class="col-xs-12 control-label">
           <label>Markers data source</label>
         </div>
-        <div v-if="!manualSelectDataSource" class="col-sm-12">
+        <div v-if="!manualSelectDataSource" class="col-xs-12">
           We have created a data source for you called <strong>\{{markersDataSource.name}}</strong>.<br>
           <span>
-            <a href="#" @click.prevent="editDataSource">Edit data</a> | 
+            <a href="#" @click.prevent="editDataSource">Bulk upload data</a> | 
             <a href="#" @click.prevent="chooseExistingData" v-if="!savedData">Switch to another data source</a>
             <a href="#" @click.prevent="changeSettings" v-else>Change data settings</a>
           </span>
         </div>
-        <div v-if="manualSelectDataSource" class="col-sm-12">
-          <multiselect v-model="markersDataSource" :options="dataSources" :custom-label="nameWithId" placeholder="-- Select a data source" label="name" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
+        <div v-if="manualSelectDataSource" class="col-xs-12">
+          <template v-if="!savedData">
+            <multiselect v-model="markersDataSource" :options="dataSources" :custom-label="nameWithId" placeholder="-- Select a data source" label="name" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
+          </template>
+          <template v-else>
+            You are using the data source called <strong>\{{markersDataSource.name}}</strong>.<br>
+            <span>
+              <a href="#" @click.prevent="editDataSource">Bulk upload data</a> | 
+              <a href="#" @click.prevent="chooseExistingData" v-if="!savedData">Switch to another data source</a>
+              <a href="#" @click.prevent="changeSettings" v-else>Change data settings</a>
+            </span>
+          </template>
         </div>
       </div>
       <div v-if="!savedData">
         <div class="form-group clearfix">
-          <div class="col-sm-12 control-label">
+          <div class="col-xs-12 control-label">
             <label>Marker name field</label>
           </div>
-          <div class="col-sm-12">
+          <div class="col-xs-12">
             <multiselect v-model="markerNameColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
           </div>
         </div>
         <div class="form-group clearfix">
-          <div class="col-sm-12 control-label">
+          <div class="col-xs-12 control-label">
             <label>Map name field</label>
           </div>
-          <div class="col-sm-12">
+          <div class="col-xs-12">
             <multiselect v-model="markerMapColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
           </div>
         </div>
         <div class="form-group clearfix">
-          <div class="col-sm-12 control-label">
+          <div class="col-xs-12 control-label">
             <label>Marker type field</label>
           </div>
-          <div class="col-sm-12">
+          <div class="col-xs-12">
             <multiselect v-model="markerTypeColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
           </div>
         </div>
         <div class="form-group clearfix">
-          <div class="col-sm-12 control-label">
+          <div class="col-xs-12 control-label">
             <label>Marker X position field</label>
           </div>
-          <div class="col-sm-12">
+          <div class="col-xs-12">
             <multiselect v-model="markerXPositionColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
           </div>
         </div>
         <div class="form-group clearfix">
-          <div class="col-sm-12 control-label">
+          <div class="col-xs-12 control-label">
             <label>Marker Y position field</label>
           </div>
-          <div class="col-sm-12">
+          <div class="col-xs-12">
             <multiselect v-model="markerYPositionColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
           </div>
         </div>
         <div class="form-group clearfix">
-          <div class="col-sm-12">
+          <div class="col-xs-12">
             <div class="btn btn-default" @click.prevent="useSettings">Use these settings</div>
+            <p v-if="dsConfigError" class="text-danger">You need to fill in all the above fields.</p>
           </div>
         </div>
       </div>
       <div v-else class="markers-ui-wrapper">
         <div class="form-group clearfix markers-ui-holder">
-          <div class="col-sm-12 control-label">
+          <div class="col-xs-12 control-label">
             <label>Configure the markers</label>
           </div>
-          <div v-if="isLoading" class="col-sm-12 markers-ui-loading">
+          <div v-if="isLoading" class="col-xs-12 markers-ui-loading">
             <div class="spinner-holder animated">
               <div class="spinner-overlay">Loading...</div>
               <p>Loading... Please wait!</p>
             </div>
           </div>
-          <div v-else class="col-sm-12 markers-ui">
+          <div v-else class="col-xs-12 markers-ui" v-bind:class="{ 'empty-state': !mappedMarkerData.length }">
             <div v-if="!mappedMarkerData.length" class="no-markers">
               Use the button below to add a new marker to your map.
             </div>
@@ -117,7 +128,13 @@
                 <div class="marker-map-holder">
                   <div class="btn-group">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      \{{markerInfo.data.map}} <span class="caret"></span>
+                      <template v-if="markerInfo.data && markerInfo.data.map">
+                        \{{markerInfo.data.map}}
+                      </template>
+                      <template v-else>
+                        &nbsp;
+                      </template>
+                      <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right">
                       <li v-for="map in widgetData.maps"><a href="#" @click.prevent="updateMap(map.name, index)">\{{map.name}}</a></li>
@@ -127,7 +144,13 @@
                 <div class="marker-icon-holder">
                   <div class="btn-group">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <i :class="markerInfo.data.icon + ' fa-fw'" :style="'color: ' + markerInfo.data.color"></i> <span class="caret"></span>
+                      <template v-if="markerInfo.data && markerInfo.data.icon && markerInfo.data.color">
+                        <i :class="markerInfo.data.icon + ' fa-fw'" :style="'color: ' + markerInfo.data.color"></i>
+                      </template>
+                      <template v-else>
+                        &nbsp;
+                      </template>
+                      <span class="caret"></span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-right">
                       <li v-for="marker in widgetData.markers"><a href="#" @click.prevent="updateMarker(marker, index)">\{{marker.name}} <i :class="marker.icon + ' fa-fw'" :style="'color: ' + marker.color"></i></a></li>

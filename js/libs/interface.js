@@ -28,6 +28,7 @@ const app = new Vue({
       maps: widgetData.maps || [],
       markers: widgetData.markers || [],
       hasError: false,
+      hasErrorOnSave: false,
       showAddMarkersUI: false
     }
   },
@@ -41,7 +42,7 @@ const app = new Vue({
       })
     },
     createDataSource() {
-      const name = `${this.appName} - Markers`
+      const name = `${this.appName} - Map Markers`
       return Fliplet.DataSources.create({
         name: name,
         organizationId: this.organizationId,
@@ -65,6 +66,7 @@ const app = new Vue({
       }
 
       this.maps.push(newItem)
+      this.checkErrorStates()
     },
     onSortMaps(event) {
       this.maps.splice(event.newIndex, 0, this.maps.splice(event.oldIndex, 1)[0])
@@ -72,7 +74,7 @@ const app = new Vue({
     deleteMap(index) {
       Fliplet.Modal.confirm({
         title: 'Delete map',
-        message: '<p>Are you sure you want to delete this map?</p>'
+        message: '<p>Any marker assigned to this map won\'t be visible until you assign it to a different map.</p><p>Are you sure you want to delete this map?</p>'
       }).then((result) => {
         if (!result) {
           return
@@ -92,11 +94,12 @@ const app = new Vue({
       }
 
       this.markers.push(newItem)
+      this.checkErrorStates()
     },
     deleteMarker(index) {
       Fliplet.Modal.confirm({
         title: 'Delete marker style',
-        message: '<p>Are you sure you want to delete this marker style?</p>'
+        message: '<p>You will have to manually update any marker that has this style applied.</p><p>Are you sure you want to delete this marker style?</p>'
       }).then((result) => {
         if (!result) {
           return
@@ -104,6 +107,15 @@ const app = new Vue({
 
         this.markers.splice(index, 1)
       })
+    },
+    checkErrorStates() {
+      if (this.maps.length) {
+        this.hasErrorOnSave = false
+
+        if (this.markers.length) {
+          this.hasError = false
+        }
+      }
     },
     onPanelSettingChanged(panelData) {
       this.maps.forEach((panel, index) => {
@@ -141,6 +153,7 @@ const app = new Vue({
       }
       
       this.hasError = false
+      this.hasErrorOnSave = false
       this.prepareToSaveData(true)
       this.showAddMarkersUI = true
       Fliplet.Studio.emit('widget-mode', this.settings.savedData ? 'full-screen' : 'normal')
@@ -150,10 +163,18 @@ const app = new Vue({
       Fliplet.Studio.emit('widget-mode', 'normal')
     },
     prepareToSaveData(stopComplete) {
-      if (!this.maps.length || !this.markers.length) {
+      if (!stopComplete && !this.maps.length) {
+        this.hasErrorOnSave = true
+        return
+      }
+
+      if (stopComplete && (!this.maps.length || !this.markers.length)) {
         this.hasError = true
         return
       }
+
+      this.hasError = false
+      this.hasErrorOnSave = false
 
       // Mark 'isFromNew' as false
       this.maps.forEach((map) => {
@@ -178,6 +199,7 @@ const app = new Vue({
         .then(() => {
           if (!stopComplete) {
             Fliplet.Widget.complete()
+            Fliplet.Studio.emit('reload-widget-instance', widgetId)
           }
         })
     }

@@ -144,6 +144,7 @@ var app = new Vue({
       maps: widgetData.maps || [],
       markers: widgetData.markers || [],
       hasError: false,
+      hasErrorOnSave: false,
       showAddMarkersUI: false
     };
   },
@@ -159,7 +160,7 @@ var app = new Vue({
     createDataSource: function createDataSource() {
       var _this = this;
 
-      var name = "".concat(this.appName, " - Markers");
+      var name = "".concat(this.appName, " - Map Markers");
       return Fliplet.DataSources.create({
         name: name,
         organizationId: this.organizationId,
@@ -180,6 +181,7 @@ var app = new Vue({
         type: 'map-panel'
       };
       this.maps.push(newItem);
+      this.checkErrorStates();
     },
     onSortMaps: function onSortMaps(event) {
       this.maps.splice(event.newIndex, 0, this.maps.splice(event.oldIndex, 1)[0]);
@@ -189,7 +191,7 @@ var app = new Vue({
 
       Fliplet.Modal.confirm({
         title: 'Delete map',
-        message: '<p>Are you sure you want to delete this map?</p>'
+        message: '<p>Any marker assigned to this map won\'t be visible until you assign it to a different map.</p><p>Are you sure you want to delete this map?</p>'
       }).then(function (result) {
         if (!result) {
           return;
@@ -208,13 +210,14 @@ var app = new Vue({
         type: 'marker-panel'
       };
       this.markers.push(newItem);
+      this.checkErrorStates();
     },
     deleteMarker: function deleteMarker(index) {
       var _this3 = this;
 
       Fliplet.Modal.confirm({
         title: 'Delete marker style',
-        message: '<p>Are you sure you want to delete this marker style?</p>'
+        message: '<p>You will have to manually update any marker that has this style applied.</p><p>Are you sure you want to delete this marker style?</p>'
       }).then(function (result) {
         if (!result) {
           return;
@@ -222,6 +225,15 @@ var app = new Vue({
 
         _this3.markers.splice(index, 1);
       });
+    },
+    checkErrorStates: function checkErrorStates() {
+      if (this.maps.length) {
+        this.hasErrorOnSave = false;
+
+        if (this.markers.length) {
+          this.hasError = false;
+        }
+      }
     },
     onPanelSettingChanged: function onPanelSettingChanged(panelData) {
       var _this4 = this;
@@ -263,6 +275,7 @@ var app = new Vue({
       }
 
       this.hasError = false;
+      this.hasErrorOnSave = false;
       this.prepareToSaveData(true);
       this.showAddMarkersUI = true;
       Fliplet.Studio.emit('widget-mode', this.settings.savedData ? 'full-screen' : 'normal');
@@ -272,11 +285,18 @@ var app = new Vue({
       Fliplet.Studio.emit('widget-mode', 'normal');
     },
     prepareToSaveData: function prepareToSaveData(stopComplete) {
-      if (!this.maps.length || !this.markers.length) {
+      if (!stopComplete && !this.maps.length) {
+        this.hasErrorOnSave = true;
+        return;
+      }
+
+      if (stopComplete && (!this.maps.length || !this.markers.length)) {
         this.hasError = true;
         return;
-      } // Mark 'isFromNew' as false
+      }
 
+      this.hasError = false;
+      this.hasErrorOnSave = false; // Mark 'isFromNew' as false
 
       this.maps.forEach(function (map) {
         map.isFromNew = false;
@@ -296,6 +316,7 @@ var app = new Vue({
       Fliplet.Widget.save(this.settings).then(function () {
         if (!stopComplete) {
           Fliplet.Widget.complete();
+          Fliplet.Studio.emit('reload-widget-instance', widgetId);
         }
       });
     }
