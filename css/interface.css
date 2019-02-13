@@ -708,6 +708,10 @@ header .title-holder p {
 }
 
 /* COLOR PICKER */
+.colorpicker.colorpicker-with-alpha {
+  min-width: 311px;
+}
+
 .colorpicker-2x .colorpicker-saturation {
   width: 235px;
   height: 235px;
