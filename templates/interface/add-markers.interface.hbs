@@ -29,10 +29,10 @@
   <div class="settings-holder" v-bind:class="{ 'col-xs-12 less-bottom-padding': !savedData, 'col-xs-4 with-border': savedData }">
     <div class="marker-settings-wrapper">
       <div class="form-group clearfix">
-        <div class="col-sm-12 control-label">
+        <div class="col-xs-12 control-label">
           <label>Markers data source</label>
         </div>
-        <div v-if="!manualSelectDataSource" class="col-sm-12">
+        <div v-if="!manualSelectDataSource" class="col-xs-12">
           We have created a data source for you called <strong>\{{markersDataSource.name}}</strong>.<br>
           <span>
             <a href="#" @click.prevent="editDataSource">Bulk upload data</a> | 
@@ -40,69 +40,69 @@
             <a href="#" @click.prevent="changeSettings" v-else>Change data settings</a>
           </span>
         </div>
-        <div v-if="manualSelectDataSource" class="col-sm-12">
+        <div v-if="manualSelectDataSource" class="col-xs-12">
           <multiselect v-model="markersDataSource" :options="dataSources" :custom-label="nameWithId" placeholder="-- Select a data source" label="name" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
         </div>
       </div>
       <div v-if="!savedData">
         <div class="form-group clearfix">
-          <div class="col-sm-12 control-label">
+          <div class="col-xs-12 control-label">
             <label>Marker name field</label>
           </div>
-          <div class="col-sm-12">
+          <div class="col-xs-12">
             <multiselect v-model="markerNameColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
           </div>
         </div>
         <div class="form-group clearfix">
-          <div class="col-sm-12 control-label">
+          <div class="col-xs-12 control-label">
             <label>Map name field</label>
           </div>
-          <div class="col-sm-12">
+          <div class="col-xs-12">
             <multiselect v-model="markerMapColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
           </div>
         </div>
         <div class="form-group clearfix">
-          <div class="col-sm-12 control-label">
+          <div class="col-xs-12 control-label">
             <label>Marker type field</label>
           </div>
-          <div class="col-sm-12">
+          <div class="col-xs-12">
             <multiselect v-model="markerTypeColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
           </div>
         </div>
         <div class="form-group clearfix">
-          <div class="col-sm-12 control-label">
+          <div class="col-xs-12 control-label">
             <label>Marker X position field</label>
           </div>
-          <div class="col-sm-12">
+          <div class="col-xs-12">
             <multiselect v-model="markerXPositionColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
           </div>
         </div>
         <div class="form-group clearfix">
-          <div class="col-sm-12 control-label">
+          <div class="col-xs-12 control-label">
             <label>Marker Y position field</label>
           </div>
-          <div class="col-sm-12">
+          <div class="col-xs-12">
             <multiselect v-model="markerYPositionColumn" :options="markerFieldColumns" placeholder="-- Select a field" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
           </div>
         </div>
         <div class="form-group clearfix">
-          <div class="col-sm-12">
+          <div class="col-xs-12">
             <div class="btn btn-default" @click.prevent="useSettings">Use these settings</div>
           </div>
         </div>
       </div>
       <div v-else class="markers-ui-wrapper">
         <div class="form-group clearfix markers-ui-holder">
-          <div class="col-sm-12 control-label">
+          <div class="col-xs-12 control-label">
             <label>Configure the markers</label>
           </div>
-          <div v-if="isLoading" class="col-sm-12 markers-ui-loading">
+          <div v-if="isLoading" class="col-xs-12 markers-ui-loading">
             <div class="spinner-holder animated">
               <div class="spinner-overlay">Loading...</div>
               <p>Loading... Please wait!</p>
             </div>
           </div>
-          <div v-else class="col-sm-12 markers-ui" v-bind:class="{ 'empty-state': !mappedMarkerData.length }">
+          <div v-else class="col-xs-12 markers-ui" v-bind:class="{ 'empty-state': !mappedMarkerData.length }">
             <div v-if="!mappedMarkerData.length" class="no-markers">
               Use the button below to add a new marker to your map.
             </div>

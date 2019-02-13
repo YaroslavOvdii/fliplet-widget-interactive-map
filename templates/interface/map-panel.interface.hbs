@@ -1,18 +1,18 @@
 <div>
   <div class="form-group clearfix">
-    <div class="col-sm-4 control-label">
+    <div class="col-xs-12 control-label">
       <label>Map name</label>
     </div>
-    <div class="col-sm-8">
+    <div class="col-xs-12">
       <input type="text" class="form-control" v-model.trim="name" @keyup="onInputData"/>
     </div>
   </div>
 
   <div class="form-group clearfix">
-    <div class="col-sm-4 control-label">
+    <div class="col-xs-12 control-label">
       <label>Map image</label>
     </div>
-    <div class="col-sm-8">
+    <div class="col-xs-12">
       <div class="selected-image-container">
         <div class="btn btn-default" @click.prevent="openMapPicker">
           <span v-if="image">Replace image</span>
