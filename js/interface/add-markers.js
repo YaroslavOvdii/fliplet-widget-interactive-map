@@ -70,7 +70,8 @@ Fliplet.InteractiveMap.component('add-markers', {
       },
       selectedPinchMarker: undefined,
       tappedMarkerId: undefined,
-      saveDebounced: _.debounce(this.saveToDataSource, 1000)
+      saveDebounced: _.debounce(this.saveToDataSource, 1000),
+      dsErrors: false
     }
   },
   computed: {
@@ -186,6 +187,7 @@ Fliplet.InteractiveMap.component('add-markers', {
           return ds.id !== this.markersDataSourceId
         })
         this.markersDataSource = null
+        this.markersDataSourceId = undefined
 
         this.manualSelectDataSource = true
       }) 
@@ -217,6 +219,18 @@ Fliplet.InteractiveMap.component('add-markers', {
       })
     },
     useSettings() {
+      if (this.markerYPositionColumn === ''
+        || this.markerXPositionColumn === ''
+        || this.markerTypeColumn === ''
+        || this.markerMapColumn === ''
+        || this.markerNameColumn === ''
+        || this.markersDataSource === '')
+      {
+        this.dsErrors = true
+        return
+      }
+
+      this.markersDataSourceId = this.markersDataSource.id
       this.savedData = true
       Fliplet.Studio.emit('widget-mode', 'full-screen')
     },

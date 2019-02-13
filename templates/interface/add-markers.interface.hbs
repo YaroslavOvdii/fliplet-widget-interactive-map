@@ -41,7 +41,17 @@
           </span>
         </div>
         <div v-if="manualSelectDataSource" class="col-xs-12">
-          <multiselect v-model="markersDataSource" :options="dataSources" :custom-label="nameWithId" placeholder="-- Select a data source" label="name" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
+          <template v-if="!savedData">
+            <multiselect v-model="markersDataSource" :options="dataSources" :custom-label="nameWithId" placeholder="-- Select a data source" label="name" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
+          </template>
+          <template v-else>
+            You are using the data source called <strong>\{{markersDataSource.name}}</strong>.<br>
+            <span>
+              <a href="#" @click.prevent="editDataSource">Bulk upload data</a> | 
+              <a href="#" @click.prevent="chooseExistingData" v-if="!savedData">Switch to another data source</a>
+              <a href="#" @click.prevent="changeSettings" v-else>Change data settings</a>
+            </span>
+          </template>
         </div>
       </div>
       <div v-if="!savedData">
@@ -88,6 +98,7 @@
         <div class="form-group clearfix">
           <div class="col-xs-12">
             <div class="btn btn-default" @click.prevent="useSettings">Use these settings</div>
+            <p v-if="dsErrors" class="text-danger">You need to fill in all the above fields.</p>
           </div>
         </div>
       </div>
