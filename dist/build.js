@@ -186,8 +186,8 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
               icon: markerData ? markerData.icon : '',
               color: markerData ? markerData.color : '#333333',
               size: markerData ? markerData.size : '24px',
-              positionx: marker.data[_this2.markerXPositionColumn],
-              positiony: marker.data[_this2.markerYPositionColumn]
+              positionX: marker.data[_this2.markerXPositionColumn],
+              positionY: marker.data[_this2.markerYPositionColumn]
             }
           };
         });
@@ -260,8 +260,8 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
             _this5.markerElemHandler = new Hammer(markerElem.get(0));
 
             _this5.flPanZoomInstance.markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, {
-              x: marker.data.positionx,
-              y: marker.data.positiony,
+              x: marker.data.positionX,
+              y: marker.data.positionY,
               name: marker.data.name,
               id: marker.id
             })]);

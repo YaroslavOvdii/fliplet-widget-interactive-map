@@ -177,7 +177,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       selectedPinchMarker: undefined,
       tappedMarkerId: undefined,
       saveDebounced: _.debounce(this.saveToDataSource, 1000),
-      dsErrors: false
+      dsConfigError: false
     };
   },
   computed: {
@@ -218,8 +218,8 @@ Fliplet.InteractiveMap.component('add-markers', {
             icon: markerData ? markerData.icon : _this.widgetData.markers[0].icon,
             color: markerData ? markerData.color : _this.widgetData.markers[0].color,
             size: markerData ? markerData.size : _this.widgetData.markers[0].size,
-            positionx: marker.data[_this.markerXPositionColumn] || '100',
-            positiony: marker.data[_this.markerYPositionColumn] || '100',
+            positionX: marker.data[_this.markerXPositionColumn] || '100',
+            positionY: marker.data[_this.markerYPositionColumn] || '100',
             updateName: false,
             copyOfName: ''
           }
@@ -337,7 +337,7 @@ Fliplet.InteractiveMap.component('add-markers', {
     },
     useSettings: function useSettings() {
       if (this.markerYPositionColumn === '' || this.markerXPositionColumn === '' || this.markerTypeColumn === '' || this.markerMapColumn === '' || this.markerNameColumn === '' || this.markersDataSource === '') {
-        this.dsErrors = true;
+        this.dsConfigError = true;
         return;
       }
 
@@ -409,8 +409,8 @@ Fliplet.InteractiveMap.component('add-markers', {
             _this5.markerElemHandler = new Hammer(markerElem.get(0));
 
             _this5.flPanZoomInstance.markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, {
-              x: marker.data.positionx,
-              y: marker.data.positiony,
+              x: marker.data.positionX,
+              y: marker.data.positionY,
               name: marker.data.name,
               id: marker.id
             })]);
@@ -457,8 +457,8 @@ Fliplet.InteractiveMap.component('add-markers', {
 
       this.mappedMarkerData.forEach(function (marker, index) {
         if (marker.id === coordinates.marker.id) {
-          _this6.mappedMarkerData[index].data.positionx = coordinates.x;
-          _this6.mappedMarkerData[index].data.positiony = coordinates.y;
+          _this6.mappedMarkerData[index].data.positionX = coordinates.x;
+          _this6.mappedMarkerData[index].data.positionY = coordinates.y;
         }
       });
       this.saveDebounced();
@@ -558,8 +558,8 @@ Fliplet.InteractiveMap.component('add-markers', {
         newObj.data[_this10.markerNameColumn] = marker.data.name;
         newObj.data[_this10.markerMapColumn] = marker.data.map;
         newObj.data[_this10.markerTypeColumn] = marker.data.type;
-        newObj.data[_this10.markerXPositionColumn] = marker.data.positionx;
-        newObj.data[_this10.markerYPositionColumn] = marker.data.positiony;
+        newObj.data[_this10.markerXPositionColumn] = marker.data.positionX;
+        newObj.data[_this10.markerYPositionColumn] = marker.data.positionY;
         newData.push(newObj);
       });
       return newData;

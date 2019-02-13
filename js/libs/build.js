@@ -76,8 +76,8 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
               icon: markerData ? markerData.icon : '',
               color: markerData ? markerData.color : '#333333',
               size: markerData ? markerData.size : '24px',
-              positionx: marker.data[this.markerXPositionColumn],
-              positiony: marker.data[this.markerYPositionColumn]
+              positionX: marker.data[this.markerXPositionColumn],
+              positionY: marker.data[this.markerYPositionColumn]
             }
           }
         })
@@ -149,7 +149,7 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
             const markerElem = $("<div id='" + marker.id + "' class='marker' data-name='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + ";'></i></div></div>")
 
             this.markerElemHandler = new Hammer(markerElem.get(0))
-            this.flPanZoomInstance.markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, { x: marker.data.positionx, y: marker.data.positiony, name: marker.data.name, id: marker.id })])
+            this.flPanZoomInstance.markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, { x: marker.data.positionX, y: marker.data.positionY, name: marker.data.name, id: marker.id })])
             this.markerElemHandler.on('tap', this.onMarkerHandler)
           }
         })

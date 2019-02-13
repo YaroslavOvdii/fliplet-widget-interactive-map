@@ -199,7 +199,7 @@ const app = new Vue({
         .then(() => {
           if (!stopComplete) {
             Fliplet.Widget.complete()
-            Fliplet.Studio.emit('reload-widget-instance', widgetId);
+            Fliplet.Studio.emit('reload-widget-instance', widgetId)
           }
         })
     }

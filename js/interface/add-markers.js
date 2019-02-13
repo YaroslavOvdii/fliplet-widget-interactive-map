@@ -71,7 +71,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       selectedPinchMarker: undefined,
       tappedMarkerId: undefined,
       saveDebounced: _.debounce(this.saveToDataSource, 1000),
-      dsErrors: false
+      dsConfigError: false
     }
   },
   computed: {
@@ -107,8 +107,8 @@ Fliplet.InteractiveMap.component('add-markers', {
             icon: markerData ? markerData.icon : this.widgetData.markers[0].icon,
             color: markerData ? markerData.color : this.widgetData.markers[0].color,
             size: markerData ? markerData.size : this.widgetData.markers[0].size,
-            positionx: marker.data[this.markerXPositionColumn] || '100',
-            positiony: marker.data[this.markerYPositionColumn] || '100',
+            positionX: marker.data[this.markerXPositionColumn] || '100',
+            positionY: marker.data[this.markerYPositionColumn] || '100',
             updateName: false,
             copyOfName: ''
           }
@@ -226,7 +226,7 @@ Fliplet.InteractiveMap.component('add-markers', {
         || this.markerNameColumn === ''
         || this.markersDataSource === '')
       {
-        this.dsErrors = true
+        this.dsConfigError = true
         return
       }
 
@@ -294,7 +294,7 @@ Fliplet.InteractiveMap.component('add-markers', {
             const markersLength = this.flPanZoomInstance.markers.getAll().length
             markerElem = $("<div id='" + marker.id + "' class='marker' data-name='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + ";'></i></div></div>")
             this.markerElemHandler = new Hammer(markerElem.get(0))
-            this.flPanZoomInstance.markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, { x: marker.data.positionx, y: marker.data.positiony, name: marker.data.name, id: marker.id })])
+            this.flPanZoomInstance.markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, { x: marker.data.positionX, y: marker.data.positionY, name: marker.data.name, id: marker.id })])
             this.markerElemHandler.on('tap', this.onMarkerHandler)
           }
         })
@@ -327,8 +327,8 @@ Fliplet.InteractiveMap.component('add-markers', {
 
       this.mappedMarkerData.forEach((marker, index) => {
         if (marker.id === coordinates.marker.id) {
-          this.mappedMarkerData[index].data.positionx = coordinates.x
-          this.mappedMarkerData[index].data.positiony = coordinates.y
+          this.mappedMarkerData[index].data.positionX = coordinates.x
+          this.mappedMarkerData[index].data.positionY = coordinates.y
         }
       })
       this.saveDebounced()
@@ -418,8 +418,8 @@ Fliplet.InteractiveMap.component('add-markers', {
         newObj.data[this.markerNameColumn] = marker.data.name
         newObj.data[this.markerMapColumn] = marker.data.map
         newObj.data[this.markerTypeColumn] = marker.data.type
-        newObj.data[this.markerXPositionColumn] = marker.data.positionx
-        newObj.data[this.markerYPositionColumn] = marker.data.positiony
+        newObj.data[this.markerXPositionColumn] = marker.data.positionX
+        newObj.data[this.markerYPositionColumn] = marker.data.positionY
 
         newData.push(newObj)
       })
