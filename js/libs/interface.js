@@ -1,8 +1,8 @@
-const widgetId = parseInt(Fliplet.Widget.getDefaultId(), 10)
-const widgetData = Fliplet.Widget.getData(widgetId) || {}
-
 import * as Sortable from 'sortablejs/Sortable.js'
 import flInteractiveMapColumns from '../config/default-table'
+
+const widgetId = parseInt(Fliplet.Widget.getDefaultId(), 10)
+const widgetData = Fliplet.Widget.getData(widgetId) || {}
 
 Vue.directive('sortable', {
   inserted(el, binding) {
