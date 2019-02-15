@@ -17,6 +17,17 @@ body {
   text-align: center;
   background: rgba(51,51,51,0.1);
   border: 4px solid rgba(51,51,51,0.15);
+  color: #333333;
+}
+
+.widget-not-configured h3 {
+  font-size: 24px;
+  color: #333333;
+}
+
+.widget-not-configured p {
+  font-size: 16px;
+  color: #333333;
 }
 
 .interactive-map-component-wrapper {
