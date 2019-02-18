@@ -209,6 +209,7 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
         this.flPanZoomInstance = Fliplet.UI.PanZoom.create(this.pzElement, {
           maxZoom: 4,
           zoomStep: 0.25,
+          doubleTapZoom: 3,
           animDuration: 0.1
         });
         this.flPanZoomInstance.on('mapImageLoaded', function () {
