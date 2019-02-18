@@ -118,10 +118,14 @@ Fliplet.InteractiveMap.component('map-panel', {
     }
   },
   methods: {
-    onInputData: function onInputData() {
+    onInputData: function onInputData(imageSaved) {
       var componentData = _.pick(this, ['id', 'name', 'image', 'type', 'isFromNew']);
 
       Fliplet.InteractiveMap.emit('map-panel-settings-changed', componentData);
+
+      if (imageSaved) {
+        Fliplet.InteractiveMap.emit('new-map-added');
+      }
     },
     openMapPicker: function openMapPicker() {
       var _this = this;
@@ -130,7 +134,7 @@ Fliplet.InteractiveMap.component('map-panel', {
         selectFiles: this.image ? [this.image] : [],
         selectMultiple: false,
         type: 'image',
-        fileExtension: ['JPG', 'JPEG', 'PNG', 'GIF', 'TIFF'],
+        fileExtension: ['JPG', 'JPEG', 'PNG', 'GIF', 'TIFF', 'SVG'],
         autoSelectOnUpload: true
       };
       window.filePickerProvider = Fliplet.Widget.open('com.fliplet.file-picker', {
@@ -150,7 +154,7 @@ Fliplet.InteractiveMap.component('map-panel', {
       window.filePickerProvider.then(function (result) {
         _this.image = result.data[0];
 
-        _this.onInputData();
+        _this.onInputData(true);
 
         window.filePickerProvider = null;
         Fliplet.Studio.emit('widget-save-label-reset');

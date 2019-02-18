@@ -23,16 +23,19 @@ Fliplet.InteractiveMap.component('map-panel', {
     }
   },
   methods: {
-    onInputData() {
+    onInputData(imageSaved) {
       const componentData = _.pick(this, ['id', 'name', 'image', 'type', 'isFromNew'])
       Fliplet.InteractiveMap.emit('map-panel-settings-changed', componentData)
+      if (imageSaved) {
+        Fliplet.InteractiveMap.emit('new-map-added')
+      }
     },
     openMapPicker() {
       const filePickerData = {
         selectFiles: this.image ? [this.image] : [],
         selectMultiple: false,
         type: 'image',
-        fileExtension: ['JPG', 'JPEG', 'PNG', 'GIF', 'TIFF'],
+        fileExtension: ['JPG', 'JPEG', 'PNG', 'GIF', 'TIFF', 'SVG'],
         autoSelectOnUpload: true
       }
 
@@ -53,7 +56,7 @@ Fliplet.InteractiveMap.component('map-panel', {
 
       window.filePickerProvider.then((result) => {
         this.image = result.data[0]
-        this.onInputData()
+        this.onInputData(true)
         window.filePickerProvider = null
         Fliplet.Studio.emit('widget-save-label-reset')
         return Promise.resolve()
