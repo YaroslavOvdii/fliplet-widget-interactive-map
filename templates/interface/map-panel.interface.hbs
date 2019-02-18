@@ -13,14 +13,13 @@
       <label>Map image</label>
     </div>
     <div class="col-xs-12">
-      <div class="selected-image-container">
-        <div class="btn btn-default" @click.prevent="openMapPicker">
-          <span v-if="image">Replace image</span>
-          <span v-else>Select an image</span>
-        </div>
-        <div v-if="image" class="selected-image-holder" :style="'background-image: url(' + image.url + ')'"></div>
+      <div v-if="!image" class="btn btn-default" @click.prevent="openMapPicker">
+        <span>Select an image</span>
       </div>
-      <div v-if="image" class="selected-image-name">\{{image.name}}</div>
+      <div v-else class="selected-image-container">
+        <div class="selected-image-holder" :style="'background-image: url(' + image.url + ')'"></div>
+        <div class="btn btn-link" @click.prevent="openMapPicker">Replace image</div>
+      </div>
     </div>
   </div>
 </div>
