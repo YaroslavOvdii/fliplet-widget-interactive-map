@@ -22,6 +22,7 @@ const app = new Vue({
       organizationId: Fliplet.Env.get('organizationId'),
       defaultColumns: flInteractiveMapColumns,
       autoDataSource: widgetData.autoDataSource || false,
+      changedDataSource: widgetData.changedDataSource || false,
       dataSources: [],
       filePickerProvider: null,
       settings: widgetData,
@@ -55,6 +56,7 @@ const app = new Vue({
         this.settings.markerXPositionColumn = 'Position X',
         this.settings.markerYPositionColumn = 'Position Y'
         this.settings.autoDataSource = true
+        this.settings.changedDataSource = false
       })
     },
     onAddMap() {

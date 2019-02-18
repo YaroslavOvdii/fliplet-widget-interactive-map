@@ -138,6 +138,7 @@ var app = new Vue({
       organizationId: Fliplet.Env.get('organizationId'),
       defaultColumns: _config_default_table__WEBPACK_IMPORTED_MODULE_3__["default"],
       autoDataSource: widgetData.autoDataSource || false,
+      changedDataSource: widgetData.changedDataSource || false,
       dataSources: [],
       filePickerProvider: null,
       settings: widgetData,
@@ -171,6 +172,7 @@ var app = new Vue({
         _this.settings.markerMapColumn = 'Map name';
         _this.settings.markerTypeColumn = 'Marker style', _this.settings.markerXPositionColumn = 'Position X', _this.settings.markerYPositionColumn = 'Position Y';
         _this.settings.autoDataSource = true;
+        _this.settings.changedDataSource = false;
       });
     },
     onAddMap: function onAddMap() {
