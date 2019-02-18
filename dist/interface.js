@@ -118,10 +118,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _config_default_table__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../config/default-table */ "./js/config/default-table.js");
 
 
+
+
 var widgetId = parseInt(Fliplet.Widget.getDefaultId(), 10);
 var widgetData = Fliplet.Widget.getData(widgetId) || {};
-
-
 Vue.directive('sortable', {
   inserted: function inserted(el, binding) {
     if (sortablejs_Sortable_js__WEBPACK_IMPORTED_MODULE_2__) {
