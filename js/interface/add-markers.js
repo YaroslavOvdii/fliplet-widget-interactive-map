@@ -239,11 +239,9 @@ Fliplet.InteractiveMap.component('add-markers', {
       Fliplet.Studio.emit('widget-mode', 'normal')
     },
     setupFlPanZoom() {
-      if (!this.mappedMarkerData.length) {
-        return
-      }
-
-      const mapName = this.mappedMarkerData[this.activeMarker].data.map
+      const mapName = this.mappedMarkerData.length
+        ? this.mappedMarkerData[this.activeMarker].data.map
+        : this.widgetData.maps[0].name
       this.imageLoaded = false
       this.selectedMarkerData.marker = this.mappedMarkerData[this.activeMarker]
       this.selectedMarkerData.map = _.find(this.widgetData.maps, { name: mapName })
@@ -274,9 +272,12 @@ Fliplet.InteractiveMap.component('add-markers', {
 
       this.pzHandler = new Hammer(this.pzElement.get(0))
 
-      this.addMarkers(true)
       this.attachEventHandler()
-      this.selectPinchMarker()
+      
+      if (this.mappedMarkerData.length) {
+        this.addMarkers(true)
+        this.selectPinchMarker()
+      }
     },
     removeMarkers() {
       $(this.selector).find('.marker').remove()
@@ -309,13 +310,24 @@ Fliplet.InteractiveMap.component('add-markers', {
           marker: options.existingMarker.vars
         })
         $('#' + options.id).addClass('active')
-      } else {
+      } else if (this.selectedMarkerData && this.selectedMarkerData.marker) {
         const markersLength = this.tappedMarkerId || this.flPanZoomInstance.markers.getAll().length
         markerElem = $("<div id='" + this.selectedMarkerData.marker.id + "' class='marker' data-name='" + this.selectedMarkerData.marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + this.selectedMarkerData.marker.data.size + ";'><i class='" + this.selectedMarkerData.marker.data.icon + "' style='color: " + this.selectedMarkerData.marker.data.color + "; font-size: " + this.selectedMarkerData.marker.data.size + ";'></i><div class='active-state'><i class='" + this.selectedMarkerData.marker.data.icon + "' style='color: " + this.selectedMarkerData.marker.data.color + ";'></i></div></div>")
         this.markerElemHandler = new Hammer(markerElem.get(0))
         this.flPanZoomInstance.markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, { x: options.x, y: options.y, name: this.selectedMarkerData.marker.data.name, id: this.selectedMarkerData.marker.id })])
         $('#marker-' + markersLength).addClass('active')
         this.tappedMarkerId = undefined
+      } else {
+        return Fliplet.Modal.confirm({
+          title: 'Add a new marker',
+          message: '<p>You have no markers to place on the map, do you want to create one now?</p>'
+        }).then((result) => {
+          if (!result) {
+            return
+          }
+
+          return this.addNewMarker(options)
+        })
       }
       
       this.markerElemHandler.on('tap', this.onMarkerHandler)
@@ -430,7 +442,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       const data = this.cleanData()
       this.dataSourceConnection.commit(data)
     },
-    addNewMarker() {
+    addNewMarker(options) {
       const newObj = {}
       const markerLength = this.mappedMarkerData.length
       let mapName
@@ -443,8 +455,8 @@ Fliplet.InteractiveMap.component('add-markers', {
       newObj[this.markerNameColumn] = `New marker ${markerLength + 1}`
       newObj[this.markerMapColumn] = mapName
       newObj[this.markerTypeColumn] = this.widgetData.markers.length ? this.widgetData.markers[0].name : ''
-      newObj[this.markerXPositionColumn] = '100'
-      newObj[this.markerYPositionColumn] = '100'
+      newObj[this.markerXPositionColumn] = options ? options.x : '100'
+      newObj[this.markerYPositionColumn] = options ? options.y : '100'
 
       this.dataSourceConnection.insert(newObj)
         .then(() => {
