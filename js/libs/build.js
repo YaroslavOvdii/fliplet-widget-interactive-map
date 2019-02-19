@@ -303,7 +303,7 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
           return this.fetchData(cache)
         }).then((dsData) => {
           this.markersData = dsData 
-          this.mappedMarkerData = this.mapMarkerData()
+          this.mappedMarkerData = _.orderBy(this.mapMarkerData(), ['data.name'], ['asc'])
 
           return Fliplet.Hooks.run('flInteractiveMapBeforeRenderMap', {
             config: this,
