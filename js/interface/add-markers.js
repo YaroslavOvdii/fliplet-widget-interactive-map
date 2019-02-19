@@ -72,7 +72,8 @@ Fliplet.InteractiveMap.component('add-markers', {
       selectedPinchMarker: undefined,
       tappedMarkerId: undefined,
       saveDebounced: _.debounce(this.saveToDataSource, 1000),
-      dsConfigError: false
+      dsConfigError: false,
+      dataSourceToDelete: undefined
     }
   },
   computed: {
@@ -91,17 +92,12 @@ Fliplet.InteractiveMap.component('add-markers', {
           message: '<p>If you change the data source, the one we created for you will be deleted.<br>Are you sure you want to continue?</p>'
         }).then((result) => {
           if (!result) {
-            return Promise.resolve('cancel')
-          }
-
-          return Fliplet.DataSources.delete(this.dataSourceId)
-        }).then((response) => {
-          if (response === 'cancel') {
             this.markersDataSource = oldDs
             this.dataSourceId = oldDs.id
             return
           }
 
+          this.dataSourceToDelete = oldDs.id
           this.dataSourceId = ds.id
           this.dataWasChanged = true
 
@@ -506,7 +502,8 @@ Fliplet.InteractiveMap.component('add-markers', {
         'markerMapColumn',
         'markerTypeColumn',
         'markerXPositionColumn',
-        'markerYPositionColumn'
+        'markerYPositionColumn',
+        'dataSourceToDelete'
       ])
       markersData.markersDataSourceId = this.dataSourceId
       markersData.changedDataSource = this.dataWasChanged

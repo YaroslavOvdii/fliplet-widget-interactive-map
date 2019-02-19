@@ -178,7 +178,8 @@ Fliplet.InteractiveMap.component('add-markers', {
       selectedPinchMarker: undefined,
       tappedMarkerId: undefined,
       saveDebounced: _.debounce(this.saveToDataSource, 1000),
-      dsConfigError: false
+      dsConfigError: false,
+      dataSourceToDelete: undefined
     };
   },
   computed: {
@@ -199,17 +200,12 @@ Fliplet.InteractiveMap.component('add-markers', {
           message: '<p>If you change the data source, the one we created for you will be deleted.<br>Are you sure you want to continue?</p>'
         }).then(function (result) {
           if (!result) {
-            return Promise.resolve('cancel');
-          }
-
-          return Fliplet.DataSources.delete(_this.dataSourceId);
-        }).then(function (response) {
-          if (response === 'cancel') {
             _this.markersDataSource = oldDs;
             _this.dataSourceId = oldDs.id;
             return;
           }
 
+          _this.dataSourceToDelete = oldDs.id;
           _this.dataSourceId = ds.id;
           _this.dataWasChanged = true; // Remove from dataSources
 
@@ -638,7 +634,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       });
     },
     saveData: function saveData() {
-      var markersData = _.pick(this, ['markerNameColumn', 'markerMapColumn', 'markerTypeColumn', 'markerXPositionColumn', 'markerYPositionColumn']);
+      var markersData = _.pick(this, ['markerNameColumn', 'markerMapColumn', 'markerTypeColumn', 'markerXPositionColumn', 'markerYPositionColumn', 'dataSourceToDelete']);
 
       markersData.markersDataSourceId = this.dataSourceId;
       markersData.changedDataSource = this.dataWasChanged;
