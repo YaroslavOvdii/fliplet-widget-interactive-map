@@ -17,7 +17,7 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
         markersData: undefined,
         mappedMarkerData: [],
         searchMarkerData: undefined,
-        flPanZoomInstance: null,
+        flPanZoomInstances: {},
         pzElement: undefined,
         pzHandler: undefined,
         markerElemHandler: undefined,
@@ -85,31 +85,30 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
         return newMarkerData
       },
       setupFlPanZoom() {
-        this.imageLoaded = false
         this.selectedMapData = this.maps[this.activeMap]
         this.selectedMarkerData = this.mappedMarkerData[this.activeMarker]
           ? this.mappedMarkerData[this.activeMarker].data
           : undefined
         this.selectedMarkerToggle = !!this.selectedMarkerData
 
-        if (this.flPanZoomInstance) {
-          this.flPanZoomInstance = null
-        }
-
         this.pzElement = $('#map-' + this.selectedMapData.id)
 
-        this.flPanZoomInstance = Fliplet.UI.PanZoom.create(this.pzElement, {
-          maxZoom: 4,
-          zoomStep: 0.25,
-          doubleTapZoom: 3,
-          animDuration: 0.1
-        })
+        if (_.isEmpty(this.flPanZoomInstances) || !this.flPanZoomInstances[this.selectedMapData.id]) {
+          this.imageLoaded = false
 
-        this.flPanZoomInstance.on('mapImageLoaded', () => {
+          this.flPanZoomInstances[this.selectedMapData.id] = Fliplet.UI.PanZoom.create(this.pzElement, {
+            maxZoom: 4,
+            zoomStep: 0.25,
+            doubleTapZoom: 3,
+            animDuration: 0.1
+          })
+        } else {
+          this.flPanZoomInstances[this.selectedMapData.id].markers.removeAll()
+        }
+
+        this.flPanZoomInstances[this.selectedMapData.id].on('mapImageLoaded', () => {
           this.imageLoaded = true
         })
-
-        this.pzHandler = new Hammer(this.pzElement.get(0))
 
         if (this.mappedMarkerData.length) {
           this.addMarkers(true)
@@ -120,7 +119,7 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
         // Remove any active marker
         $('.marker').removeClass('active')
         // Get markers
-        const markers = this.flPanZoomInstance.markers.getAll()
+        const markers = this.flPanZoomInstances[this.selectedMapData.id].markers.getAll()
 
         if (!markers.length) {
           return
@@ -143,20 +142,18 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
         }
       },
       addMarkers(fromLoad, options) {
-        this.flPanZoomInstance.markers.removeAll()
-
         this.mappedMarkerData.forEach((marker, index) => {
           if (marker.data.map === this.selectedMapData.name) {
             const markerElem = $("<div id='" + marker.id + "' class='marker' data-name='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + ";'></i></div></div>")
 
             this.markerElemHandler = new Hammer(markerElem.get(0))
-            this.flPanZoomInstance.markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, { x: marker.data.positionX, y: marker.data.positionY, name: marker.data.name, id: marker.id })])
+            this.flPanZoomInstances[this.selectedMapData.id].markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, { x: marker.data.positionX, y: marker.data.positionY, name: marker.data.name, id: marker.id })])
             this.markerElemHandler.on('tap', this.onMarkerHandler)
           }
         })
       },
       onMarkerHandler(e) {
-        const markers = this.flPanZoomInstance.markers.getAll()
+        const markers = this.flPanZoomInstances[this.selectedMapData.id].markers.getAll()
         const id = $(e.target).attr('id')
         const marker = _.find(markers, (o) => { return o.vars.id == id })
         this.activeMarker = _.findIndex(this.mappedMarkerData, (o) => { return o.id == marker.vars.id })
