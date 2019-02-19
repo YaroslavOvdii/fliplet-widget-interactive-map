@@ -57,7 +57,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       dataSourceId: this.markersDataSourceId,
       dataWasChanged: this.changedDataSource,
       dataSourceConnection: undefined,
-      flPanZoomInstance: null,
+      flPanZoomInstances: {},
       pzElement: undefined,
       pzHandler: undefined,
       markerElemHandler: undefined,
@@ -190,13 +190,13 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.confirmName(index, true)
     },
     deleteMarker(index) {
-      const markers = this.flPanZoomInstance.markers.getAll()
+      const markers = this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll()
       const markerId = $('.map-wrapper-holder')
         .find('.marker[data-name="' + this.mappedMarkerData[index].data.name + '"]')
         .attr('id')
         
       if (markerId) {
-        this.flPanZoomInstance.markers.remove(markerId, {keepInDom: false})
+        this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.remove(markerId, {keepInDom: false})
       }
 
       this.mappedMarkerData.splice(index, 1)
@@ -253,7 +253,6 @@ Fliplet.InteractiveMap.component('add-markers', {
       const mapName = this.mappedMarkerData.length
         ? this.mappedMarkerData[this.activeMarker].data.map
         : this.widgetData.maps[0].name
-      this.imageLoaded = false
       this.selectedMarkerData.marker = this.mappedMarkerData[this.activeMarker]
       this.selectedMarkerData.map = _.find(this.widgetData.maps, { name: mapName })
       // If the map doesn't exist anymore set the first one in the list
@@ -263,29 +262,29 @@ Fliplet.InteractiveMap.component('add-markers', {
         this.saveDebounced()
       }
 
-      if (this.flPanZoomInstance) {
-        this.detachEventHandler()
-        this.flPanZoomInstance = null
-      }
-
       this.pzElement = $('#map-' + this.selectedMarkerData.map.id)
 
-      this.flPanZoomInstance = Fliplet.UI.PanZoom.create(this.pzElement, {
-        maxZoom: 4,
-        zoomStep: 0.25,
-        doubleTapZoom: 3,
-        animDuration: 0.1,
-        tapMarkerToActivate: false
-      })
+      if (_.isEmpty(this.flPanZoomInstances) || !this.flPanZoomInstances[this.selectedMarkerData.map.id]) {
+        this.imageLoaded = false
+        
+        this.flPanZoomInstances[this.selectedMarkerData.map.id] = Fliplet.UI.PanZoom.create(this.pzElement, {
+          maxZoom: 4,
+          zoomStep: 0.25,
+          doubleTapZoom: 3,
+          animDuration: 0.1,
+          tapMarkerToActivate: false
+        })
 
-      this.flPanZoomInstance.on('mapImageLoaded', () => {
+        this.pzHandler = new Hammer(this.pzElement.get(0))
+        this.attachEventHandler()
+      } else {
+        this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.removeAll()
+      }
+
+      this.flPanZoomInstances[this.selectedMarkerData.map.id].on('mapImageLoaded', () => {
         this.imageLoaded = true
       })
 
-      this.pzHandler = new Hammer(this.pzElement.get(0))
-
-      this.attachEventHandler()
-      
       if (this.mappedMarkerData.length) {
         this.addMarkers(true)
         this.selectPinchMarker()
@@ -304,10 +303,10 @@ Fliplet.InteractiveMap.component('add-markers', {
 
         this.mappedMarkerData.forEach((marker, index) => {
           if (marker.data.map === this.selectedMarkerData.map.name) {
-            const markersLength = this.flPanZoomInstance.markers.getAll().length
+            const markersLength = this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll().length
             markerElem = $("<div id='" + marker.id + "' class='marker' data-name='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + ";'></i></div></div>")
             this.markerElemHandler = new Hammer(markerElem.get(0))
-            this.flPanZoomInstance.markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, { x: marker.data.positionX, y: marker.data.positionY, name: marker.data.name, id: marker.id })])
+            this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, { x: marker.data.positionX, y: marker.data.positionY, name: marker.data.name, id: marker.id })])
             this.markerElemHandler.on('tap', this.onMarkerHandler)
           }
         })
@@ -323,16 +322,26 @@ Fliplet.InteractiveMap.component('add-markers', {
         })
         $('#' + options.id).addClass('active')
       } else if (this.selectedMarkerData && this.selectedMarkerData.marker) {
-        const markersLength = this.tappedMarkerId || this.flPanZoomInstance.markers.getAll().length
+        const markersLength = this.tappedMarkerId || this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll().length
         markerElem = $("<div id='" + this.selectedMarkerData.marker.id + "' class='marker' data-name='" + this.selectedMarkerData.marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + this.selectedMarkerData.marker.data.size + ";'><i class='" + this.selectedMarkerData.marker.data.icon + "' style='color: " + this.selectedMarkerData.marker.data.color + "; font-size: " + this.selectedMarkerData.marker.data.size + ";'></i><div class='active-state'><i class='" + this.selectedMarkerData.marker.data.icon + "' style='color: " + this.selectedMarkerData.marker.data.color + ";'></i></div></div>")
         this.markerElemHandler = new Hammer(markerElem.get(0))
-        this.flPanZoomInstance.markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, { x: options.x, y: options.y, name: this.selectedMarkerData.marker.data.name, id: this.selectedMarkerData.marker.id })])
+        this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, { x: options.x, y: options.y, name: this.selectedMarkerData.marker.data.name, id: this.selectedMarkerData.marker.id })])
         $('#marker-' + markersLength).addClass('active')
         this.tappedMarkerId = undefined
       } else {
         return Fliplet.Modal.confirm({
           title: 'Add a new marker',
-          message: '<p>You have no markers to place on the map, do you want to create one now?</p>'
+          message: '<p>You have no markers to place on the map, do you want to create one now?</p>',
+          buttons: {
+            confirm: {
+              label: 'Create marker',
+              className: 'btn-primary'
+            },
+            cancel: {
+              label: 'Cancel',
+              className: 'btn-default'
+            }
+          }
         }).then((result) => {
           if (!result) {
             return
@@ -364,7 +373,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.pzHandler.off('tap', this.onTapHandler)
     },
     onTapHandler(e) {
-      const markers = this.flPanZoomInstance.markers.getAll()
+      const markers = this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll()
 
       if (!$(e.target).hasClass('marker')) {
         // Find a marker
@@ -382,8 +391,8 @@ Fliplet.InteractiveMap.component('add-markers', {
         const elemPosX = clientRect.left
         const elemPosY = clientRect.top
         const center = e.center
-        const x = (center.x - elemPosX) / (this.flPanZoomInstance.getBaseZoom() * this.flPanZoomInstance.getCurrentZoom())
-        const y = (center.y - elemPosY) / (this.flPanZoomInstance.getBaseZoom() * this.flPanZoomInstance.getCurrentZoom())
+        const x = (center.x - elemPosX) / (this.flPanZoomInstances[this.selectedMarkerData.map.id].getBaseZoom() * this.flPanZoomInstances[this.selectedMarkerData.map.id].getCurrentZoom())
+        const y = (center.y - elemPosY) / (this.flPanZoomInstances[this.selectedMarkerData.map.id].getBaseZoom() * this.flPanZoomInstances[this.selectedMarkerData.map.id].getCurrentZoom())
 
         this.addMarkers(false, {
           x: x,
@@ -394,18 +403,18 @@ Fliplet.InteractiveMap.component('add-markers', {
       }
     },
     onMarkerHandler(e) {
-      const markers = this.flPanZoomInstance.markers.getAll()
+      const markers = this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll()
       const markerId = $(e.target).attr('id')
       
       if (markerId && markerId === this.selectedMarkerData.marker.id) {
-        this.flPanZoomInstance.markers.remove(markerId, true)
+        this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.remove(markerId, true)
       }
     },
     selectPinchMarker() {
       // Remove any active marker
       $('.marker').removeClass('active')
       // Get markers
-      const markers = this.flPanZoomInstance.markers.getAll()
+      const markers = this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll()
       // Store first marker
       const marker = markers[0]
 
@@ -468,8 +477,8 @@ Fliplet.InteractiveMap.component('add-markers', {
       const image = $('#map-' + this.selectedMarkerData.map.id).find('img')[0]
       const rect = image.getBoundingClientRect()
       const position = {
-        x: (rect.width * 0.5) / (this.flPanZoomInstance.getBaseZoom() * this.flPanZoomInstance.getCurrentZoom()),
-        y: (rect.height * 0.5) / (this.flPanZoomInstance.getBaseZoom() * this.flPanZoomInstance.getCurrentZoom())
+        x: (rect.width * 0.5) / (this.flPanZoomInstances[this.selectedMarkerData.map.id].getBaseZoom() * this.flPanZoomInstances[this.selectedMarkerData.map.id].getCurrentZoom()),
+        y: (rect.height * 0.5) / (this.flPanZoomInstances[this.selectedMarkerData.map.id].getBaseZoom() * this.flPanZoomInstances[this.selectedMarkerData.map.id].getCurrentZoom())
       }
 
       newObj[this.markerNameColumn] = `New marker ${markerLength + 1}`
