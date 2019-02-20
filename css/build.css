@@ -444,6 +444,8 @@ body.fl-with-bottom-menu .interactive-map-component-wrapper {
   border-radius: 40px;
   box-shadow: none;
   padding-right: 55px;
+  background: #333333;
+  border-color: #ffffff;
 }
 
 .interactive-map-overlay-search-holder span {
@@ -458,7 +460,7 @@ body.fl-with-bottom-menu .interactive-map-component-wrapper {
   padding: 0px 10px;
   text-align: center;
   font-size: 0.8em;
-  background: rgba(51, 51, 51, 0.1);
+  background: rgba(255, 255, 255, 0.1);
   color: #333333;
   cursor: pointer;
   transition: opacity 0.1s ease-in-out;
