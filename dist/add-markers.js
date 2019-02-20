@@ -143,7 +143,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       type: Array,
       default: []
     },
-    autoDataSource: {
+    changedDataSource: {
       type: Boolean,
       default: false
     }
@@ -155,12 +155,13 @@ Fliplet.InteractiveMap.component('add-markers', {
     return {
       selector: '#interactive-map-app',
       isLoading: true,
-      manualSelectDataSource: false,
       manualSetSettings: false,
       savedData: this.widgetData.savedData,
       markersDataSource: _.find(this.dataSources, {
         id: this.markersDataSourceId
       }),
+      dataSourceId: this.markersDataSourceId,
+      dataWasChanged: this.changedDataSource,
       dataSourceConnection: undefined,
       flPanZoomInstance: null,
       pzElement: undefined,
@@ -181,45 +182,75 @@ Fliplet.InteractiveMap.component('add-markers', {
     };
   },
   computed: {
-    markerFieldColumns: function markerFieldColumns() {
-      return this.markersDataSource ? this.markersDataSource.columns : [];
-    },
     selectedMap: function selectedMap() {
       return this.widgetData.maps[this.selectedMapIndex];
     }
   },
   watch: {
     markersDataSource: function markersDataSource(ds, oldDs) {
-      if (!ds || !oldDs || ds.id !== oldDs.id) {
-        // Resets select fields
-        this.markerNameColumn = '';
-        this.markerMapColumn = '';
-        this.markerTypeColumn = '';
-        this.markerXPositionColumn = '';
-        this.markerYPositionColumn = '';
+      var _this = this;
+
+      if (!ds || !oldDs || ds.id !== this.dataSourceId && !this.dataWasChanged) {
+        return Fliplet.Modal.confirm({
+          title: 'Changing data source',
+          message: '<p>If you change the data source, the one we created for you will be deleted.<br>Are you sure you want to continue?</p>'
+        }).then(function (result) {
+          if (!result) {
+            return Promise.resolve('cancel');
+          }
+
+          return Fliplet.DataSources.delete(_this.dataSourceId);
+        }).then(function (response) {
+          if (response === 'cancel') {
+            _this.markersDataSource = oldDs;
+            _this.dataSourceId = oldDs.id;
+            return;
+          }
+
+          _this.dataSourceId = ds.id;
+          _this.dataWasChanged = true; // Remove from dataSources
+
+          _this.dataSources = _.filter(_this.dataSources, function (dataSource) {
+            return dataSource.id !== oldDs.id;
+          }); // Resets select fields
+
+          _this.markerNameColumn = '';
+          _this.markerMapColumn = '';
+          _this.markerTypeColumn = '';
+          _this.markerXPositionColumn = '';
+          _this.markerYPositionColumn = '';
+        });
       }
+
+      this.dataSourceId = ds.id; // Resets select fields
+
+      this.markerNameColumn = '';
+      this.markerMapColumn = '';
+      this.markerTypeColumn = '';
+      this.markerXPositionColumn = '';
+      this.markerYPositionColumn = '';
     }
   },
   methods: {
     mapMarkerData: function mapMarkerData() {
-      var _this = this;
+      var _this2 = this;
 
       var newMarkerData = this.markersData.map(function (marker) {
-        var markerData = _.find(_this.widgetData.markers, {
-          name: marker.data[_this.markerTypeColumn]
+        var markerData = _.find(_this2.widgetData.markers, {
+          name: marker.data[_this2.markerTypeColumn]
         });
 
         return {
           id: marker.id,
           data: {
-            name: marker.data[_this.markerNameColumn] || 'Data source marker',
-            map: marker.data[_this.markerMapColumn] || _this.widgetData.maps[0].name,
-            type: marker.data[_this.markerTypeColumn] || _this.widgetData.markers[0].name,
-            icon: markerData ? markerData.icon : _this.widgetData.markers[0].icon,
-            color: markerData ? markerData.color : _this.widgetData.markers[0].color,
-            size: markerData ? markerData.size : _this.widgetData.markers[0].size,
-            positionX: marker.data[_this.markerXPositionColumn] || '100',
-            positionY: marker.data[_this.markerYPositionColumn] || '100',
+            name: marker.data[_this2.markerNameColumn] || 'Data source marker',
+            map: marker.data[_this2.markerMapColumn] || _this2.widgetData.maps[0].name,
+            type: marker.data[_this2.markerTypeColumn] || _this2.widgetData.markers[0].name,
+            icon: markerData ? markerData.icon : _this2.widgetData.markers[0].icon,
+            color: markerData ? markerData.color : _this2.widgetData.markers[0].color,
+            size: markerData ? markerData.size : _this2.widgetData.markers[0].size,
+            positionX: marker.data[_this2.markerXPositionColumn] || '100',
+            positionY: marker.data[_this2.markerYPositionColumn] || '100',
             updateName: false,
             copyOfName: ''
           }
@@ -247,12 +278,12 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.setupFlPanZoom();
     },
     toUpdateName: function toUpdateName(index, currentName) {
-      var _this2 = this;
+      var _this3 = this;
 
       this.mappedMarkerData[index].data.updateName = !this.mappedMarkerData[index].data.updateName;
       this.mappedMarkerData[index].data.copyOfName = currentName;
       this.$nextTick(function () {
-        return _this2.$refs['changename-' + index][0].focus();
+        return _this3.$refs['changename-' + index][0].focus();
       });
     },
     confirmName: function confirmName(index, fromCancel) {
@@ -288,26 +319,8 @@ Fliplet.InteractiveMap.component('add-markers', {
       return "".concat(name, " \u2014 [").concat(id, "]");
     },
     chooseExistingData: function chooseExistingData() {
-      var _this3 = this;
-
-      Fliplet.Modal.confirm({
-        title: 'Changing data source',
-        message: '<p>If you continue the data source we created for you will be deleted.</p><p>Are you sure you want to continue?</p>'
-      }).then(function (result) {
-        if (!result) {
-          return;
-        }
-
-        return _this3.deleteDataSource();
-      }).then(function () {
-        // Remove from dataSources
-        _this3.dataSources = _.filter(_this3.dataSources, function (ds) {
-          return ds.id !== _this3.markersDataSourceId;
-        });
-        _this3.markersDataSource = null;
-        _this3.markersDataSourceId = undefined;
-        _this3.manualSelectDataSource = true;
-      });
+      this.savedData = false;
+      Fliplet.Studio.emit('widget-mode', 'normal');
     },
     editDataSource: function editDataSource() {
       Fliplet.Studio.emit('overlay', {
@@ -319,13 +332,10 @@ Fliplet.InteractiveMap.component('add-markers', {
           classes: 'data-source-overlay',
           data: {
             context: 'overlay',
-            dataSourceId: this.markersDataSourceId
+            dataSourceId: this.dataSourceId
           }
         }
       });
-    },
-    deleteDataSource: function deleteDataSource() {
-      return Fliplet.DataSources.delete(this.markersDataSourceId);
     },
     reloadDataSources: function reloadDataSources() {
       return Fliplet.DataSources.get({
@@ -341,13 +351,9 @@ Fliplet.InteractiveMap.component('add-markers', {
         return;
       }
 
-      this.markersDataSourceId = this.markersDataSource.id;
+      this.dataSourceId = this.markersDataSource.id;
       this.savedData = true;
       Fliplet.Studio.emit('widget-mode', 'full-screen');
-    },
-    changeSettings: function changeSettings() {
-      this.savedData = false;
-      Fliplet.Studio.emit('widget-mode', 'normal');
     },
     setupFlPanZoom: function setupFlPanZoom() {
       var _this4 = this;
@@ -537,7 +543,7 @@ Fliplet.InteractiveMap.component('add-markers', {
     getMarkersData: function getMarkersData() {
       var _this9 = this;
 
-      return Fliplet.DataSources.connect(this.markersDataSourceId, {
+      return Fliplet.DataSources.connect(this.dataSourceId, {
         offline: false
       }).then(function (connection) {
         // If you want to do specific queries to return your rows
@@ -608,8 +614,10 @@ Fliplet.InteractiveMap.component('add-markers', {
       });
     },
     saveData: function saveData() {
-      var markersData = _.pick(this, ['markersDataSourceId', 'markerNameColumn', 'markerMapColumn', 'markerTypeColumn', 'markerXPositionColumn', 'markerYPositionColumn']);
+      var markersData = _.pick(this, ['markerNameColumn', 'markerMapColumn', 'markerTypeColumn', 'markerXPositionColumn', 'markerYPositionColumn']);
 
+      markersData.markersDataSourceId = this.dataSourceId;
+      markersData.changedDataSource = this.dataWasChanged;
       Fliplet.InteractiveMap.emit('add-markers-settings-changed', markersData);
     }
   },
