@@ -421,6 +421,7 @@ header .title-holder p {
   bottom: 15px;
   left: 15px;
   width: auto;
+  max-width: calc(100% - 85px);
   height: 40px;
   padding: 0 10px;
   display: flex;
@@ -431,11 +432,17 @@ header .title-holder p {
   border-radius: 200px;
 }
 
+.map-button-text {
+  width: calc(100% - 24px);
+}
+
 .map-button-text p {
   font-size: 16px;
   color: #fff;
   margin: 0;
-  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .maps-button .fa-map-o {

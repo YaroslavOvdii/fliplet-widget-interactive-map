@@ -210,6 +210,7 @@ body.fl-with-bottom-menu .interactive-map-component-wrapper {
   bottom: 5px;
   left: 5px;
   width: auto;
+  max-width: calc(100% - 65px);
   height: 40px;
   padding: 0 10px;
   font-size: 23px;
@@ -233,11 +234,17 @@ body.fl-with-bottom-menu .interactive-map-component-wrapper {
   margin-right: 8px;
 }
 
+.maps-button-text {
+  width: calc(100% - 44px);
+}
+
 .maps-button-text p {
   font-size: 16px;
   color: #ffffff;
   margin: 0;
-  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .maps-button .fa-map-o {
