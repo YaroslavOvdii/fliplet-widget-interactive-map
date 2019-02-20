@@ -372,6 +372,7 @@ Fliplet.InteractiveMap.component('add-markers', {
           Vue.set(_this4.widgetData.markers, index, panelData);
         }
       });
+      this.saveData();
     },
     onAddMarker: function onAddMarker() {
       var newItem = {
@@ -384,6 +385,7 @@ Fliplet.InteractiveMap.component('add-markers', {
         size: '24px'
       };
       this.widgetData.markers.push(newItem);
+      this.saveData();
     }
   }, _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(_methods, "deleteMarker", function deleteMarker(index) {
     var _this5 = this;
@@ -408,7 +410,7 @@ Fliplet.InteractiveMap.component('add-markers', {
     }
 
     var mapName = this.mappedMarkerData[this.activeMarker].data.map;
-    this.selectedMarkerData.marker = this.mappedMarkerData[this.activeMarker];
+    this.selectedMarkerData.marker = this.mappedMarkerData[this.activeMarker] || this.widgetData.markers[0].name;
     this.selectedMarkerData.map = _.find(this.widgetData.maps, {
       name: mapName
     }); // If the map doesn't exist anymore set the first one in the list
@@ -675,6 +677,7 @@ Fliplet.InteractiveMap.component('add-markers', {
 
     markersData.markersDataSourceId = this.dataSourceId;
     markersData.changedDataSource = this.dataWasChanged;
+    markersData.markers = this.widgetData.markers;
     Fliplet.InteractiveMap.emit('add-markers-settings-changed', markersData);
   }), _methods),
   created: function () {

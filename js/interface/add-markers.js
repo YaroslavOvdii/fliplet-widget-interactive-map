@@ -255,6 +255,8 @@ Fliplet.InteractiveMap.component('add-markers', {
           Vue.set(this.widgetData.markers, index, panelData)
         }
       })
+
+      this.saveData()
     },
     onAddMarker() {
       const newItem = {
@@ -268,6 +270,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       }
 
       this.widgetData.markers.push(newItem)
+      this.saveData()
     },
     deleteMarker(index) {
       Fliplet.Modal.confirm({
@@ -290,7 +293,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       }
 
       const mapName = this.mappedMarkerData[this.activeMarker].data.map
-      this.selectedMarkerData.marker = this.mappedMarkerData[this.activeMarker]
+      this.selectedMarkerData.marker = this.mappedMarkerData[this.activeMarker] || this.widgetData.markers[0].name
       this.selectedMarkerData.map = _.find(this.widgetData.maps, { name: mapName })
       // If the map doesn't exist anymore set the first one in the list
       if (!this.selectedMarkerData.map) {
@@ -548,6 +551,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       ])
       markersData.markersDataSourceId = this.dataSourceId
       markersData.changedDataSource = this.dataWasChanged
+      markersData.markers = this.widgetData.markers
 
       Fliplet.InteractiveMap.emit('add-markers-settings-changed', markersData)
     }
