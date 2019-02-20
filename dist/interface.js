@@ -285,6 +285,9 @@ var app = new Vue({
       this.showAddMarkersUI = false;
       Fliplet.Studio.emit('widget-mode', 'normal');
     },
+    saveMapSettings: function saveMapSettings() {
+      this.prepareToSaveData(true, true);
+    },
     prepareToSaveData: function prepareToSaveData(stopComplete, imageSaved) {
       if (!stopComplete && !this.maps.length) {
         this.hasErrorOnSave = true;
