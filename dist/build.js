@@ -119,9 +119,8 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
         markersData: undefined,
         mappedMarkerData: [],
         searchMarkerData: undefined,
-        flPanZoomInstance: null,
+        flPanZoomInstances: {},
         pzElement: undefined,
-        pzHandler: undefined,
         markerElemHandler: undefined,
         activeMap: 0,
         activeMarker: 0,
@@ -196,26 +195,26 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
       setupFlPanZoom: function setupFlPanZoom() {
         var _this3 = this;
 
-        this.imageLoaded = false;
         this.selectedMapData = this.maps[this.activeMap];
         this.selectedMarkerData = this.mappedMarkerData[this.activeMarker] ? this.mappedMarkerData[this.activeMarker].data : undefined;
         this.selectedMarkerToggle = !!this.selectedMarkerData;
+        this.pzElement = $('#map-' + this.selectedMapData.id);
 
-        if (this.flPanZoomInstance) {
-          this.flPanZoomInstance = null;
+        if (_.isEmpty(this.flPanZoomInstances) || !this.flPanZoomInstances[this.selectedMapData.id]) {
+          this.imageLoaded = false;
+          this.flPanZoomInstances[this.selectedMapData.id] = Fliplet.UI.PanZoom.create(this.pzElement, {
+            maxZoom: 4,
+            zoomStep: 0.25,
+            doubleTapZoom: 3,
+            animDuration: 0.1
+          });
+        } else {
+          this.flPanZoomInstances[this.selectedMapData.id].markers.removeAll();
         }
 
-        this.pzElement = $('#map-' + this.selectedMapData.id);
-        this.flPanZoomInstance = Fliplet.UI.PanZoom.create(this.pzElement, {
-          maxZoom: 4,
-          zoomStep: 0.25,
-          doubleTapZoom: 3,
-          animDuration: 0.1
-        });
-        this.flPanZoomInstance.on('mapImageLoaded', function () {
+        this.flPanZoomInstances[this.selectedMapData.id].on('mapImageLoaded', function () {
           _this3.imageLoaded = true;
         });
-        this.pzHandler = new Hammer(this.pzElement.get(0));
 
         if (this.mappedMarkerData.length) {
           this.addMarkers(true);
@@ -228,7 +227,7 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
         // Remove any active marker
         $('.marker').removeClass('active'); // Get markers
 
-        var markers = this.flPanZoomInstance.markers.getAll();
+        var markers = this.flPanZoomInstances[this.selectedMapData.id].markers.getAll();
 
         if (!markers.length) {
           return;
@@ -254,13 +253,12 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
       addMarkers: function addMarkers(fromLoad, options) {
         var _this5 = this;
 
-        this.flPanZoomInstance.markers.removeAll();
         this.mappedMarkerData.forEach(function (marker, index) {
           if (marker.data.map === _this5.selectedMapData.name) {
             var markerElem = $("<div id='" + marker.id + "' class='marker' data-name='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + ";'></i></div></div>");
             _this5.markerElemHandler = new Hammer(markerElem.get(0));
 
-            _this5.flPanZoomInstance.markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, {
+            _this5.flPanZoomInstances[_this5.selectedMapData.id].markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, {
               x: marker.data.positionX,
               y: marker.data.positionY,
               name: marker.data.name,
@@ -272,7 +270,7 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
         });
       },
       onMarkerHandler: function onMarkerHandler(e) {
-        var markers = this.flPanZoomInstance.markers.getAll();
+        var markers = this.flPanZoomInstances[this.selectedMapData.id].markers.getAll();
         var id = $(e.target).attr('id');
 
         var marker = _.find(markers, function (o) {
