@@ -316,13 +316,34 @@ Fliplet.InteractiveMap.component('add-markers', {
           marker: options.existingMarker.vars
         })
         $('#' + options.id).addClass('active')
-      } else {
+      } else if (this.selectedMarkerData && this.selectedMarkerData.marker) {
         const markersLength = this.tappedMarkerId || this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll().length
         markerElem = $("<div id='" + this.selectedMarkerData.marker.id + "' class='marker' data-name='" + this.selectedMarkerData.marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + this.selectedMarkerData.marker.data.size + ";'><i class='" + this.selectedMarkerData.marker.data.icon + "' style='color: " + this.selectedMarkerData.marker.data.color + "; font-size: " + this.selectedMarkerData.marker.data.size + ";'></i><div class='active-state'><i class='" + this.selectedMarkerData.marker.data.icon + "' style='color: " + this.selectedMarkerData.marker.data.color + ";'></i></div></div>")
         this.markerElemHandler = new Hammer(markerElem.get(0))
         this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, { x: options.x, y: options.y, name: this.selectedMarkerData.marker.data.name, id: this.selectedMarkerData.marker.id })])
         $('#marker-' + markersLength).addClass('active')
         this.tappedMarkerId = undefined
+      } else {
+        return Fliplet.Modal.confirm({
+          title: 'Add a new marker',
+          message: '<p>You have no markers to place on the map, do you want to create one now?</p>',
+          buttons: {
+            confirm: {
+              label: 'Create marker',
+              className: 'btn-primary'
+            },
+            cancel: {
+              label: 'Cancel',
+              className: 'btn-default'
+            }
+          }
+        }).then((result) => {
+          if (!result) {
+            return
+          }
+
+          return this.addNewMarker(options)
+        })
       }
       
       this.markerElemHandler.on('tap', this.onMarkerHandler)
@@ -437,7 +458,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       const data = this.cleanData()
       this.dataSourceConnection.commit(data)
     },
-    addNewMarker() {
+    addNewMarker(options) {
       const newObj = {}
       const markerLength = this.mappedMarkerData.length
       let mapName

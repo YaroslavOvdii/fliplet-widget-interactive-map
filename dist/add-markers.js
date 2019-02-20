@@ -439,7 +439,7 @@ Fliplet.InteractiveMap.component('add-markers', {
           marker: options.existingMarker.vars
         });
         $('#' + options.id).addClass('active');
-      } else {
+      } else if (this.selectedMarkerData && this.selectedMarkerData.marker) {
         var markersLength = this.tappedMarkerId || this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll().length;
         markerElem = $("<div id='" + this.selectedMarkerData.marker.id + "' class='marker' data-name='" + this.selectedMarkerData.marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + this.selectedMarkerData.marker.data.size + ";'><i class='" + this.selectedMarkerData.marker.data.icon + "' style='color: " + this.selectedMarkerData.marker.data.color + "; font-size: " + this.selectedMarkerData.marker.data.size + ";'></i><div class='active-state'><i class='" + this.selectedMarkerData.marker.data.icon + "' style='color: " + this.selectedMarkerData.marker.data.color + ";'></i></div></div>");
         this.markerElemHandler = new Hammer(markerElem.get(0));
@@ -451,6 +451,27 @@ Fliplet.InteractiveMap.component('add-markers', {
         })]);
         $('#marker-' + markersLength).addClass('active');
         this.tappedMarkerId = undefined;
+      } else {
+        return Fliplet.Modal.confirm({
+          title: 'Add a new marker',
+          message: '<p>You have no markers to place on the map, do you want to create one now?</p>',
+          buttons: {
+            confirm: {
+              label: 'Create marker',
+              className: 'btn-primary'
+            },
+            cancel: {
+              label: 'Cancel',
+              className: 'btn-default'
+            }
+          }
+        }).then(function (result) {
+          if (!result) {
+            return;
+          }
+
+          return _this5.addNewMarker(options);
+        });
       }
 
       this.markerElemHandler.on('tap', this.onMarkerHandler);
@@ -575,7 +596,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       var data = this.cleanData();
       this.dataSourceConnection.commit(data);
     },
-    addNewMarker: function addNewMarker() {
+    addNewMarker: function addNewMarker(options) {
       var _this11 = this;
 
       var newObj = {};
