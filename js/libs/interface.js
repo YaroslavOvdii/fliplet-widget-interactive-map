@@ -90,7 +90,8 @@ const app = new Vue({
         name: `Marker ${this.markers.length + 1}`,
         icon: 'fa fa-circle',
         color: '#337ab7',
-        type: 'marker-panel'
+        type: 'marker-panel',
+        size: '24px'
       }
 
       this.markers.push(newItem)
