@@ -109,6 +109,7 @@ const app = new Vue({
     },
     onAddMarkersSettingChanged(addMarkersData) {
       this.settings = _.assignIn(this.settings, addMarkersData)
+      this.prepareToSaveData(true)
     },
     openAddMarkers() {
       if (!this.markers.length) {
@@ -164,7 +165,7 @@ const app = new Vue({
       this.settings.savedData = true
 
       let promise = Promise.resolve()
-      if (this.settings.dataSourceToDelete) {
+      if (this.settings.dataSourceToDelete && !stopComplete) {
         promise = Fliplet.DataSources.delete(this.settings.dataSourceToDelete)
       }
 

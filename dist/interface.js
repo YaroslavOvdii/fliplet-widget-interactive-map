@@ -228,6 +228,7 @@ var app = new Vue({
     },
     onAddMarkersSettingChanged: function onAddMarkersSettingChanged(addMarkersData) {
       this.settings = _.assignIn(this.settings, addMarkersData);
+      this.prepareToSaveData(true);
     },
     openAddMarkers: function openAddMarkers() {
       if (!this.markers.length) {
@@ -282,7 +283,7 @@ var app = new Vue({
       this.settings.savedData = true;
       var promise = Promise.resolve();
 
-      if (this.settings.dataSourceToDelete) {
+      if (this.settings.dataSourceToDelete && !stopComplete) {
         promise = Fliplet.DataSources.delete(this.settings.dataSourceToDelete);
       }
 
