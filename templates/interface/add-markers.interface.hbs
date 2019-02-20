@@ -16,7 +16,7 @@
       </div>
       <div v-if="selectedMarkerData.map && selectedMarkerData.map.name" class="maps-button">
         <i class="fa fa-map-o"></i>
-        <span class="map-button-text"><p>\{{selectedMarkerData.map.name}}</p></span>
+        <div class="map-button-text"><p>\{{selectedMarkerData.map.name}}</p></div>
       </div>
       <div v-if="selectedMarkerData.map && selectedMarkerData.map.name" class="map-hint-holder">
         <div class="map-hint">Click the image to set the marker position</div>
@@ -118,7 +118,7 @@
                   <div class="btn-group">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <template v-if="markerInfo.data && markerInfo.data.map">
-                        \{{markerInfo.data.map}}
+                        <span class="map-name">\{{markerInfo.data.map}}</span>
                       </template>
                       <template v-else>
                         &nbsp;

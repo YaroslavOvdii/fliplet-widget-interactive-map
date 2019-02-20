@@ -338,6 +338,7 @@ header .title-holder p {
 
 .maps-wrapper {
   padding: 0;
+  width: calc(100% - 450px);
 }
 
 .settings-holder {
@@ -352,6 +353,7 @@ header .title-holder p {
 
 .settings-holder.with-border {
   border-left: 1px solid #e3e9eb;
+  width: 450px;
 }
 
 .marker-settings-wrapper {
@@ -425,6 +427,7 @@ header .title-holder p {
   bottom: 15px;
   left: 15px;
   width: auto;
+  max-width: calc(100% - 85px);
   height: 40px;
   padding: 0 10px;
   display: flex;
@@ -435,11 +438,17 @@ header .title-holder p {
   border-radius: 200px;
 }
 
+.map-button-text {
+  width: calc(100% - 24px);
+}
+
 .map-button-text p {
   font-size: 16px;
   color: #fff;
   margin: 0;
-  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .maps-button .fa-map-o {
@@ -571,7 +580,13 @@ header .title-holder p {
   display: flex;
   align-items: center;
   height: 44px;
-  max-width: 180px;
+  min-width: 200px;
+}
+
+.marker-name-holder {
+  width: 200px;
+  min-width: 200px;
+  max-width: 200px;
 }
 
 .marker-name-holder span {
@@ -610,18 +625,48 @@ header .title-holder p {
   padding: 6px 8px;
 }
 
+.marker-map-holder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
+}
+
 .marker-map-holder .btn {
   position: relative;
-  min-width: 100px;
+  max-width: 120px;
   background: transparent;
   border: none;
+  padding: 0 0 0 15px;
+}
+
+.marker-map-holder .btn .map-name {
+  display: block;
+  float: left;
+  max-width: 97px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.marker-icon-holder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 55px;
+  min-width: 55px;
+  max-width: 55px;
 }
 
 .marker-icon-holder .btn {
   position: relative;
-  min-width: 70px;
+  max-width: 55px;
   background: transparent;
   border: none;
+  overflow: hidden;
+  padding: 0 0 0 15px;
 }
 
 .marker-map-holder .btn .caret,
