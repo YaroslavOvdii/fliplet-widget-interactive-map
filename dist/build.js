@@ -448,8 +448,13 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
 
           return _this10.fetchData(cache);
         }).then(function (dsData) {
-          _this10.markersData = dsData;
-          _this10.mappedMarkerData = _.orderBy(_this10.mapMarkerData(), ['data.name'], ['asc']);
+          _this10.markersData = dsData; // Ordering and take into account numbers on the string
+
+          _this10.mappedMarkerData = _this10.mapMarkerData().slice().sort(function (a, b) {
+            return a.data.name.localeCompare(b.data.name, undefined, {
+              numeric: true
+            });
+          });
           return Fliplet.Hooks.run('flInteractiveMapBeforeRenderMap', {
             config: _this10,
             id: widgetData.id,

@@ -306,7 +306,8 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
           return this.fetchData(cache)
         }).then((dsData) => {
           this.markersData = dsData 
-          this.mappedMarkerData = _.orderBy(this.mapMarkerData(), ['data.name'], ['asc'])
+          // Ordering and take into account numbers on the string
+          this.mappedMarkerData = this.mapMarkerData().slice().sort((a,b) => a.data.name.localeCompare(b.data.name, undefined, { numeric: true }))
 
           return Fliplet.Hooks.run('flInteractiveMapBeforeRenderMap', {
             config: this,
