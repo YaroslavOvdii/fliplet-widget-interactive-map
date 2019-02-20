@@ -130,7 +130,7 @@ Fliplet.InteractiveMap.component('map-panel', {
         selectFiles: this.image ? [this.image] : [],
         selectMultiple: false,
         type: 'image',
-        fileExtension: ['JPG', 'JPEG', 'PNG', 'GIF', 'TIFF'],
+        fileExtension: ['JPG', 'JPEG', 'PNG', 'GIF', 'TIFF', 'SVG'],
         autoSelectOnUpload: true
       };
       window.filePickerProvider = Fliplet.Widget.open('com.fliplet.file-picker', {
