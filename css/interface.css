@@ -328,6 +328,10 @@ header .title-holder p {
   height: 100%;
 }
 
+.add-markers-component {
+  position: relative;
+}
+
 .maps-container.empty-state {
   padding: 40% 60px 0;
 }
@@ -751,4 +755,117 @@ header .title-holder p {
 .colorpicker-right:after {
   left: 16px;
   right: auto;
+}
+
+/* Edit Marker Overlay */
+.edit-marker-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 99;
+  background-color: transparent;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.edit-marker-overlay-content {
+  position: absolute;
+  left: auto;
+  right: auto;
+  background-color: #f8f6f7;
+  box-shadow: 0px 12px 40px 14px rgba(0, 0, 0, 0.3);
+  width: 630px;
+  height: 580px;
+}
+
+.marker-overlay-content-header {
+  position: absolute;
+  height: 65px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 65px;
+  padding: 0 15px;
+  border-bottom: 1px solid #e3e9eb;
+  background-color: #f8f6f7;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.marker-overlay-content-header h3 {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 0;
+  color: #333333;
+  border: none;
+}
+
+.fa-times-thin:before {
+  content: '\00d7';
+}
+
+.marker-overlay-content-header .marker-overlay-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 65px;
+  height: 65px;
+  border-radius: 0;
+  text-align: center;
+  line-height: 1.714;
+  font-size: 1.4rem;
+  z-index: 1;
+  pointer-events: all;
+}
+
+.marker-overlay-content-header .marker-overlay-close a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: auto;
+  right: 0;
+  width: 65px;
+  height: 65px;
+  text-decoration: none;
+  user-select: none;
+  color: #999999;
+  border-radius: 0;
+}
+
+.marker-overlay-content-header .marker-overlay-close a:hover,
+.marker-overlay-content-header .marker-overlay-close a:focus {
+  background-color: #e4e9eb;
+  color: #333333;
+}
+
+.marker-overlay-content-header .marker-overlay-close a i{
+  margin-top: -4px;
+}
+
+.marker-overlay-content-body {
+  margin-top: 65px;
+  height: calc(100% - 65px);
+  overflow: auto;
+  padding: 30px 60px 60px;
+}
+
+/* Vue Transitions */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .25s ease-out;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }

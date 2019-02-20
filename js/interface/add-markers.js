@@ -73,7 +73,8 @@ Fliplet.InteractiveMap.component('add-markers', {
       tappedMarkerId: undefined,
       saveDebounced: _.debounce(this.saveToDataSource, 1000),
       dsConfigError: false,
-      dataSourceToDelete: undefined
+      dataSourceToDelete: undefined,
+      showEditMarkerOverlay: false
     }
   },
   computed: {
@@ -241,6 +242,47 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.dataSourceId = this.markersDataSource.id
       this.savedData = true
       Fliplet.Studio.emit('widget-mode', 'full-screen')
+    },
+    onMarkerPanelSettingChanged(panelData) {
+      this.widgetData.markers.forEach((panel, index) => {
+        if (panelData.name == panel.name && panelData.id !== panel.id) {
+          panelData.error = 'Marker styles must have different names'
+        }
+
+        if (panelData.id === panel.id) {
+          // To overcome the array change caveat
+          // https://vuejs.org/v2/guide/list.html#Caveats
+          Vue.set(this.widgetData.markers, index, panelData)
+        }
+      })
+    },
+    onAddMarker() {
+      const newItem = {
+        id: Fliplet.guid(),
+        isFromNew: true,
+        name: `Marker ${this.widgetData.markers.length + 1}`,
+        icon: 'fa fa-circle',
+        color: '#337ab7',
+        type: 'marker-panel',
+        size: '24px'
+      }
+
+      this.widgetData.markers.push(newItem)
+    },
+    deleteMarker(index) {
+      Fliplet.Modal.confirm({
+        title: 'Delete marker style',
+        message: '<p>You will have to manually update any marker that has this style applied.</p><p>Are you sure you want to delete this marker style?</p>'
+      }).then((result) => {
+        if (!result) {
+          return
+        }
+
+        this.widgetData.markers.splice(index, 1)
+      })
+    },
+    toggleEditMarkerOverlay() {
+      this.showEditMarkerOverlay = !!!this.showEditMarkerOverlay
     },
     setupFlPanZoom() {
       if (!this.mappedMarkerData.length) {
@@ -532,6 +574,7 @@ Fliplet.InteractiveMap.component('add-markers', {
     })
 
     Fliplet.InteractiveMap.on('add-markers-save', this.saveData)
+    Fliplet.InteractiveMap.on('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
   },
   mounted() {
     // vm.$nextTick is not enough
@@ -539,5 +582,6 @@ Fliplet.InteractiveMap.component('add-markers', {
   },
   destroyed() {
     Fliplet.InteractiveMap.off('add-markers-save', this.saveData)
+    Fliplet.InteractiveMap.off('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
   }
 });
