@@ -198,7 +198,15 @@ const app = new Vue({
       this.settings = _.assignIn(this.settings, newSettings)
       this.settings.savedData = true
 
-      this.saveData(stopComplete, imageSaved)
+      let promise = Promise.resolve()
+      if (this.settings.dataSourceToDelete) {
+        promise = Fliplet.DataSources.delete(this.settings.dataSourceToDelete)
+      }
+
+      promise
+        .then(() => {
+          this.saveData(stopComplete, imageSaved)
+        })
     },
     saveData(stopComplete, imageSaved) {
       Fliplet.Widget.save(this.settings)
