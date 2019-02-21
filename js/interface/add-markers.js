@@ -264,6 +264,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.flPanZoomInstance = Fliplet.UI.PanZoom.create(this.pzElement, {
         maxZoom: 4,
         zoomStep: 0.25,
+        doubleTapZoom: 3,
         animDuration: 0.1,
         tapMarkerToActivate: false
       })
@@ -440,11 +441,19 @@ Fliplet.InteractiveMap.component('add-markers', {
         mapName = this.widgetData.maps[0].name
       }
 
+      // Get image size and center position
+      const image = $('#map-' + this.selectedMarkerData.map.id).find('img')[0]
+      const rect = image.getBoundingClientRect()
+      const position = {
+        x: (rect.width * 0.5) / (this.flPanZoomInstance.getBaseZoom() * this.flPanZoomInstance.getCurrentZoom()),
+        y: (rect.height * 0.5) / (this.flPanZoomInstance.getBaseZoom() * this.flPanZoomInstance.getCurrentZoom())
+      }
+
       newObj[this.markerNameColumn] = `New marker ${markerLength + 1}`
       newObj[this.markerMapColumn] = mapName
       newObj[this.markerTypeColumn] = this.widgetData.markers.length ? this.widgetData.markers[0].name : ''
-      newObj[this.markerXPositionColumn] = '100'
-      newObj[this.markerYPositionColumn] = '100'
+      newObj[this.markerXPositionColumn] = options && _.hasIn(options, 'existingMarker') ? options.x : position.x
+      newObj[this.markerYPositionColumn] = options && _.hasIn(options, 'existingMarker') ? options.y : position.y
 
       this.dataSourceConnection.insert(newObj)
         .then(() => {

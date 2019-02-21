@@ -209,6 +209,7 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
         this.flPanZoomInstance = Fliplet.UI.PanZoom.create(this.pzElement, {
           maxZoom: 4,
           zoomStep: 0.25,
+          doubleTapZoom: 3,
           animDuration: 0.1
         });
         this.flPanZoomInstance.on('mapImageLoaded', function () {
@@ -447,8 +448,13 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
 
           return _this10.fetchData(cache);
         }).then(function (dsData) {
-          _this10.markersData = dsData;
-          _this10.mappedMarkerData = _this10.mapMarkerData();
+          _this10.markersData = dsData; // Ordering and take into account numbers on the string
+
+          _this10.mappedMarkerData = _this10.mapMarkerData().slice().sort(function (a, b) {
+            return a.data.name.localeCompare(b.data.name, undefined, {
+              numeric: true
+            });
+          });
           return Fliplet.Hooks.run('flInteractiveMapBeforeRenderMap', {
             config: _this10,
             id: widgetData.id,
