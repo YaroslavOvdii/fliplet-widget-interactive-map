@@ -22,6 +22,7 @@ const app = new Vue({
       organizationId: Fliplet.Env.get('organizationId'),
       defaultColumns: flInteractiveMapColumns,
       autoDataSource: widgetData.autoDataSource || false,
+      changedDataSource: widgetData.changedDataSource || false,
       dataSources: [],
       filePickerProvider: null,
       settings: widgetData,
@@ -55,6 +56,7 @@ const app = new Vue({
         this.settings.markerXPositionColumn = 'Position X',
         this.settings.markerYPositionColumn = 'Position Y'
         this.settings.autoDataSource = true
+        this.settings.changedDataSource = false
       })
     },
     onAddMap() {
@@ -163,13 +165,16 @@ const app = new Vue({
       this.showAddMarkersUI = false
       Fliplet.Studio.emit('widget-mode', 'normal')
     },
-    prepareToSaveData(stopComplete) {
+    saveMapSettings() {
+      this.prepareToSaveData(true, true)
+    },
+    prepareToSaveData(stopComplete, imageSaved) {
       if (!stopComplete && !this.maps.length) {
         this.hasErrorOnSave = true
         return
       }
 
-      if (stopComplete && (!this.maps.length || !this.markers.length)) {
+      if (stopComplete && !imageSaved && (!this.maps.length || !this.markers.length)) {
         this.hasError = true
         return
       }
@@ -193,13 +198,25 @@ const app = new Vue({
       this.settings = _.assignIn(this.settings, newSettings)
       this.settings.savedData = true
 
-      this.saveData(stopComplete)
+      let promise = Promise.resolve()
+      if (this.settings.dataSourceToDelete) {
+        promise = Fliplet.DataSources.delete(this.settings.dataSourceToDelete)
+      }
+
+      promise
+        .then(() => {
+          this.saveData(stopComplete, imageSaved)
+        })
     },
-    saveData(stopComplete) {
+    saveData(stopComplete, imageSaved) {
       Fliplet.Widget.save(this.settings)
         .then(() => {
           if (!stopComplete) {
             Fliplet.Widget.complete()
+            Fliplet.Studio.emit('reload-widget-instance', widgetId)
+            return
+          }
+          if (imageSaved) {
             Fliplet.Studio.emit('reload-widget-instance', widgetId)
           }
         })
@@ -207,6 +224,7 @@ const app = new Vue({
   },
   async created() {
     Fliplet.InteractiveMap.on('map-panel-settings-changed', this.onPanelSettingChanged)
+    Fliplet.InteractiveMap.on('new-map-added', this.saveMapSettings)
     Fliplet.InteractiveMap.on('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
     Fliplet.InteractiveMap.on('add-markers-settings-changed', this.onAddMarkersSettingChanged)
 
@@ -249,6 +267,7 @@ const app = new Vue({
   },
   destroyed() {
     Fliplet.InteractiveMap.off('map-panel-settings-changed', this.onPanelSettingChanged)
+    Fliplet.InteractiveMap.off('new-map-added', this.saveMapSettings)
     Fliplet.InteractiveMap.off('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
     Fliplet.InteractiveMap.off('add-markers-settings-changed', this.onAddMarkersSettingChanged)
   }

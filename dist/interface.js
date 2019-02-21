@@ -138,6 +138,7 @@ var app = new Vue({
       organizationId: Fliplet.Env.get('organizationId'),
       defaultColumns: _config_default_table__WEBPACK_IMPORTED_MODULE_3__["default"],
       autoDataSource: widgetData.autoDataSource || false,
+      changedDataSource: widgetData.changedDataSource || false,
       dataSources: [],
       filePickerProvider: null,
       settings: widgetData,
@@ -171,6 +172,7 @@ var app = new Vue({
         _this.settings.markerMapColumn = 'Map name';
         _this.settings.markerTypeColumn = 'Marker style', _this.settings.markerXPositionColumn = 'Position X', _this.settings.markerYPositionColumn = 'Position Y';
         _this.settings.autoDataSource = true;
+        _this.settings.changedDataSource = false;
       });
     },
     onAddMap: function onAddMap() {
@@ -285,13 +287,18 @@ var app = new Vue({
       this.showAddMarkersUI = false;
       Fliplet.Studio.emit('widget-mode', 'normal');
     },
-    prepareToSaveData: function prepareToSaveData(stopComplete) {
+    saveMapSettings: function saveMapSettings() {
+      this.prepareToSaveData(true, true);
+    },
+    prepareToSaveData: function prepareToSaveData(stopComplete, imageSaved) {
+      var _this6 = this;
+
       if (!stopComplete && !this.maps.length) {
         this.hasErrorOnSave = true;
         return;
       }
 
-      if (stopComplete && (!this.maps.length || !this.markers.length)) {
+      if (stopComplete && !imageSaved && (!this.maps.length || !this.markers.length)) {
         this.hasError = true;
         return;
       }
@@ -311,12 +318,25 @@ var app = new Vue({
       };
       this.settings = _.assignIn(this.settings, newSettings);
       this.settings.savedData = true;
-      this.saveData(stopComplete);
+      var promise = Promise.resolve();
+
+      if (this.settings.dataSourceToDelete) {
+        promise = Fliplet.DataSources.delete(this.settings.dataSourceToDelete);
+      }
+
+      promise.then(function () {
+        _this6.saveData(stopComplete, imageSaved);
+      });
     },
-    saveData: function saveData(stopComplete) {
+    saveData: function saveData(stopComplete, imageSaved) {
       Fliplet.Widget.save(this.settings).then(function () {
         if (!stopComplete) {
           Fliplet.Widget.complete();
+          Fliplet.Studio.emit('reload-widget-instance', widgetId);
+          return;
+        }
+
+        if (imageSaved) {
           Fliplet.Studio.emit('reload-widget-instance', widgetId);
         }
       });
@@ -326,35 +346,36 @@ var app = new Vue({
     var _created = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
     /*#__PURE__*/
     _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-      var _this6 = this;
+      var _this7 = this;
 
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
         while (1) {
           switch (_context.prev = _context.next) {
             case 0:
               Fliplet.InteractiveMap.on('map-panel-settings-changed', this.onPanelSettingChanged);
+              Fliplet.InteractiveMap.on('new-map-added', this.saveMapSettings);
               Fliplet.InteractiveMap.on('marker-panel-settings-changed', this.onMarkerPanelSettingChanged);
               Fliplet.InteractiveMap.on('add-markers-settings-changed', this.onAddMarkersSettingChanged); // Create data source on first time
 
               if (this.autoDataSource) {
-                _context.next = 6;
+                _context.next = 7;
                 break;
               }
 
-              _context.next = 6;
+              _context.next = 7;
               return this.createDataSource();
 
-            case 6:
-              _context.next = 8;
+            case 7:
+              _context.next = 9;
               return this.loadDataSources();
 
-            case 8:
+            case 9:
               this.dataSources = _context.sent;
               // Switches UI to ready state
               $(selector).removeClass('is-loading');
               Fliplet.Studio.onMessage(function (event) {
                 if (event.data && event.data.event === 'overlay-close' && event.data.data && event.data.data.dataSourceId) {
-                  _this6.loadDataSources();
+                  _this7.loadDataSources();
                 }
               });
               Fliplet.Widget.onSaveRequest(function () {
@@ -372,10 +393,10 @@ var app = new Vue({
                 Fliplet.InteractiveMap.emit('markers-save');
                 Fliplet.InteractiveMap.emit('add-markers-save');
 
-                _this6.prepareToSaveData();
+                _this7.prepareToSaveData();
               });
 
-            case 12:
+            case 13:
             case "end":
               return _context.stop();
           }
@@ -391,6 +412,7 @@ var app = new Vue({
   }(),
   destroyed: function destroyed() {
     Fliplet.InteractiveMap.off('map-panel-settings-changed', this.onPanelSettingChanged);
+    Fliplet.InteractiveMap.off('new-map-added', this.saveMapSettings);
     Fliplet.InteractiveMap.off('marker-panel-settings-changed', this.onMarkerPanelSettingChanged);
     Fliplet.InteractiveMap.off('add-markers-settings-changed', this.onAddMarkersSettingChanged);
   }
