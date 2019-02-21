@@ -452,6 +452,7 @@ Fliplet.InteractiveMap.component('add-markers', {
     var _this7 = this;
 
     var markerElem = undefined;
+    var createdMarkers = [];
     options = options || {};
 
     if (fromLoad) {
@@ -464,16 +465,17 @@ Fliplet.InteractiveMap.component('add-markers', {
           markerElem = $("<div id='" + marker.id + "' class='marker' data-name='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + ";'></i></div></div>");
           _this7.markerElemHandler = new Hammer(markerElem.get(0));
 
-          _this7.flPanZoomInstances[_this7.selectedMarkerData.map.id].markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, {
+          _this7.markerElemHandler.on('tap', _this7.onMarkerHandler);
+
+          createdMarkers.push(Fliplet.UI.PanZoom.Markers.create(markerElem, {
             x: marker.data.positionX,
             y: marker.data.positionY,
             name: marker.data.name,
             id: marker.id
-          })]);
-
-          _this7.markerElemHandler.on('tap', _this7.onMarkerHandler);
+          }));
         }
       });
+      this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.set(createdMarkers);
       return;
     }
 
@@ -492,12 +494,13 @@ Fliplet.InteractiveMap.component('add-markers', {
       var markersLength = this.tappedMarkerId || this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll().length;
       markerElem = $("<div id='" + this.selectedMarkerData.marker.id + "' class='marker' data-name='" + this.selectedMarkerData.marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + this.selectedMarkerData.marker.data.size + ";'><i class='" + this.selectedMarkerData.marker.data.icon + "' style='color: " + this.selectedMarkerData.marker.data.color + "; font-size: " + this.selectedMarkerData.marker.data.size + ";'></i><div class='active-state'><i class='" + this.selectedMarkerData.marker.data.icon + "' style='color: " + this.selectedMarkerData.marker.data.color + ";'></i></div></div>");
       this.markerElemHandler = new Hammer(markerElem.get(0));
-      this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, {
+      createdMarkers.push(Fliplet.UI.PanZoom.Markers.create(markerElem, {
         x: options.x,
         y: options.y,
         name: this.selectedMarkerData.marker.data.name,
         id: this.selectedMarkerData.marker.id
-      })]);
+      }));
+      this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.set(createdMarkers);
       $('#marker-' + markersLength).addClass('active');
       this.tappedMarkerId = undefined;
     } else {

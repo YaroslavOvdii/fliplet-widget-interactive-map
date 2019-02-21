@@ -335,6 +335,7 @@ Fliplet.InteractiveMap.component('add-markers', {
     },
     addMarkers(fromLoad, options) {
       let markerElem = undefined
+      const createdMarkers = []
       options = options || {}
 
       if (fromLoad) {
@@ -346,10 +347,12 @@ Fliplet.InteractiveMap.component('add-markers', {
             const markersLength = this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll().length
             markerElem = $("<div id='" + marker.id + "' class='marker' data-name='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + ";'></i></div></div>")
             this.markerElemHandler = new Hammer(markerElem.get(0))
-            this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, { x: marker.data.positionX, y: marker.data.positionY, name: marker.data.name, id: marker.id })])
             this.markerElemHandler.on('tap', this.onMarkerHandler)
+
+            createdMarkers.push(Fliplet.UI.PanZoom.Markers.create(markerElem, { x: marker.data.positionX, y: marker.data.positionY, name: marker.data.name, id: marker.id }))
           }
         })
+        this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.set(createdMarkers)
         return
       }
 
@@ -365,7 +368,10 @@ Fliplet.InteractiveMap.component('add-markers', {
         const markersLength = this.tappedMarkerId || this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll().length
         markerElem = $("<div id='" + this.selectedMarkerData.marker.id + "' class='marker' data-name='" + this.selectedMarkerData.marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + this.selectedMarkerData.marker.data.size + ";'><i class='" + this.selectedMarkerData.marker.data.icon + "' style='color: " + this.selectedMarkerData.marker.data.color + "; font-size: " + this.selectedMarkerData.marker.data.size + ";'></i><div class='active-state'><i class='" + this.selectedMarkerData.marker.data.icon + "' style='color: " + this.selectedMarkerData.marker.data.color + ";'></i></div></div>")
         this.markerElemHandler = new Hammer(markerElem.get(0))
-        this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, { x: options.x, y: options.y, name: this.selectedMarkerData.marker.data.name, id: this.selectedMarkerData.marker.id })])
+
+        createdMarkers.push(Fliplet.UI.PanZoom.Markers.create(markerElem, { x: options.x, y: options.y, name: this.selectedMarkerData.marker.data.name, id: this.selectedMarkerData.marker.id }))
+        this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.set(createdMarkers)
+
         $('#marker-' + markersLength).addClass('active')
         this.tappedMarkerId = undefined
       } else {
