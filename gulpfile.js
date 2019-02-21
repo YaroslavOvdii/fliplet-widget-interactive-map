@@ -34,6 +34,7 @@ gulp.task('copy-js', () => {
         chunkModules: true
       },
       mode: 'development',
+      devtool: 'hidden-source-map',
       watch: true,
       module: {
         rules: [

@@ -188,9 +188,7 @@ Fliplet.InteractiveMap.component('add-markers', {
     },
     deleteMarker(index) {
       const markers = this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll()
-      const markerId = $('.map-wrapper-holder')
-        .find('.marker[data-name="' + this.mappedMarkerData[index].data.name + '"]')
-        .attr('id')
+      const markerId = this.mappedMarkerData[index].id
         
       if (markerId) {
         this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.remove(markerId, {keepInDom: false})
@@ -275,7 +273,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.widgetData.markers.push(newItem)
       this.saveData()
     },
-    deleteMarker(index) {
+    deleteMarkerStyle(index) {
       Fliplet.Modal.confirm({
         title: 'Delete marker style',
         message: '<p>You will have to manually update any marker that has this style applied.</p><p>Are you sure you want to delete this marker style?</p>'
@@ -291,12 +289,10 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.showEditMarkerOverlay = !!!this.showEditMarkerOverlay
     },
     setupFlPanZoom() {
-      if (!this.mappedMarkerData.length) {
-        return
-      }
-
-      const mapName = this.mappedMarkerData[this.activeMarker].data.map
-      this.selectedMarkerData.marker = this.mappedMarkerData[this.activeMarker] || this.widgetData.markers[0].name
+      const mapName = this.mappedMarkerData.length
+        ? this.mappedMarkerData[this.activeMarker].data.map
+        : this.widgetData.maps[0].name
+      this.selectedMarkerData.marker = this.mappedMarkerData[this.activeMarker]
       this.selectedMarkerData.map = _.find(this.widgetData.maps, { name: mapName })
       // If the map doesn't exist anymore set the first one in the list
       if (!this.selectedMarkerData.map) {

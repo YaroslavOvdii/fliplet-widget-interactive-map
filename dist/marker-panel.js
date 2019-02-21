@@ -93,7 +93,123 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("Fliplet.InteractiveMap.component('marker-panel', {\n  componentName: 'Marker Panel',\n  props: {\n    id: {\n      type: String,\n      default: ''\n    },\n    name: {\n      type: String,\n      default: ''\n    },\n    icon: {\n      type: String,\n      default: 'fa fa-circle'\n    },\n    color: {\n      type: String,\n      default: '#337ab7'\n    },\n    size: {\n      type: String,\n      default: '24px'\n    },\n    type: {\n      type: String,\n      default: 'marker-panel'\n    },\n    isFromNew: {\n      type: Boolean,\n      default: true\n    }\n  },\n  methods: {\n    onInputData: function onInputData() {\n      var componentData = _.pick(this, ['id', 'name', 'icon', 'color', 'size', 'type', 'isFromNew']);\n\n      Fliplet.InteractiveMap.emit('marker-panel-settings-changed', componentData);\n    },\n    openIconPicker: function openIconPicker() {\n      var _this = this;\n\n      this.icon = this.icon || '';\n      window.iconPickerProvider = Fliplet.Widget.open('com.fliplet.icon-selector', {\n        // Also send the data I have locally, so that\n        // the interface gets repopulated with the same stuff\n        data: this.icon,\n        // Events fired from the provider\n        onEvent: function onEvent(event, data) {\n          if (event === 'interface-validate') {\n            Fliplet.Widget.toggleSaveButton(data.isValid === true);\n          }\n        }\n      });\n      window.addEventListener('message', function (event) {\n        if (event.data === 'cancel-button-pressed') {\n          window.iconPickerProvider.close();\n          window.iconPickerProvider = null;\n          Fliplet.Studio.emit('widget-save-label-update', {\n            text: 'Save'\n          });\n        }\n      });\n      Fliplet.Studio.emit('widget-save-label-update', {\n        text: 'Select & Save'\n      });\n      window.iconPickerProvider.then(function (data) {\n        if (data.data) {\n          _this.icon = data.data.icon;\n        }\n\n        _this.onInputData();\n\n        window.iconPickerProvider = null;\n        Fliplet.Studio.emit('widget-save-label-reset');\n        return Promise.resolve();\n      });\n    }\n  },\n  created: function created() {\n    Fliplet.InteractiveMap.on('markers-save', this.onInputData);\n  },\n  destroyed: function destroyed() {\n    Fliplet.InteractiveMap.off('markers-save', this.onInputData);\n  },\n  mounted: function mounted() {\n    var _this2 = this;\n\n    var $vm = this;\n    var $colorpickerElement = $('#list-item-color-' + $vm.id).parents('[colorpicker-component]');\n    $colorpickerElement.colorpicker({\n      container: true,\n      customClass: 'colorpicker-2x',\n      sliders: {\n        saturation: {\n          maxLeft: 235,\n          maxTop: 235\n        },\n        hue: {\n          maxTop: 235\n        },\n        alpha: {\n          maxTop: 235\n        }\n      }\n    });\n    $colorpickerElement.on('changeColor', function (e) {\n      $vm.color = e.value;\n      $vm.onInputData();\n    });\n    $('#list-item-color-' + $vm.id).on('click', function () {\n      $(_this2).prev('.input-group-addon').find('i').trigger('click');\n    });\n    $('.input-group-addon i').on('click', function () {\n      $(_this2).parents('.input-group-addon').next('#list-item-color-' + $vm.id).trigger('focus');\n    });\n  }\n});\n\n//# sourceURL=webpack:///./js/interface/marker-panel.js?");
+Fliplet.InteractiveMap.component('marker-panel', {
+  componentName: 'Marker Panel',
+  props: {
+    id: {
+      type: String,
+      default: ''
+    },
+    name: {
+      type: String,
+      default: ''
+    },
+    icon: {
+      type: String,
+      default: 'fa fa-circle'
+    },
+    color: {
+      type: String,
+      default: '#337ab7'
+    },
+    size: {
+      type: String,
+      default: '24px'
+    },
+    type: {
+      type: String,
+      default: 'marker-panel'
+    },
+    isFromNew: {
+      type: Boolean,
+      default: true
+    }
+  },
+  methods: {
+    onInputData: function onInputData() {
+      var componentData = _.pick(this, ['id', 'name', 'icon', 'color', 'size', 'type', 'isFromNew']);
+
+      Fliplet.InteractiveMap.emit('marker-panel-settings-changed', componentData);
+    },
+    openIconPicker: function openIconPicker() {
+      var _this = this;
+
+      this.icon = this.icon || '';
+      window.iconPickerProvider = Fliplet.Widget.open('com.fliplet.icon-selector', {
+        // Also send the data I have locally, so that
+        // the interface gets repopulated with the same stuff
+        data: this.icon,
+        // Events fired from the provider
+        onEvent: function onEvent(event, data) {
+          if (event === 'interface-validate') {
+            Fliplet.Widget.toggleSaveButton(data.isValid === true);
+          }
+        }
+      });
+      window.addEventListener('message', function (event) {
+        if (event.data === 'cancel-button-pressed') {
+          window.iconPickerProvider.close();
+          window.iconPickerProvider = null;
+          Fliplet.Studio.emit('widget-save-label-update', {
+            text: 'Save'
+          });
+        }
+      });
+      Fliplet.Studio.emit('widget-save-label-update', {
+        text: 'Select & Save'
+      });
+      window.iconPickerProvider.then(function (data) {
+        if (data.data) {
+          _this.icon = data.data.icon;
+        }
+
+        _this.onInputData();
+
+        window.iconPickerProvider = null;
+        Fliplet.Studio.emit('widget-save-label-reset');
+        return Promise.resolve();
+      });
+    }
+  },
+  created: function created() {
+    Fliplet.InteractiveMap.on('markers-save', this.onInputData);
+  },
+  destroyed: function destroyed() {
+    Fliplet.InteractiveMap.off('markers-save', this.onInputData);
+  },
+  mounted: function mounted() {
+    var _this2 = this;
+
+    var $vm = this;
+    var $colorpickerElement = $('#list-item-color-' + $vm.id).parents('[colorpicker-component]');
+    $colorpickerElement.colorpicker({
+      container: true,
+      customClass: 'colorpicker-2x',
+      sliders: {
+        saturation: {
+          maxLeft: 235,
+          maxTop: 235
+        },
+        hue: {
+          maxTop: 235
+        },
+        alpha: {
+          maxTop: 235
+        }
+      }
+    });
+    $colorpickerElement.on('changeColor', function (e) {
+      $vm.color = e.value;
+      $vm.onInputData();
+    });
+    $('#list-item-color-' + $vm.id).on('click', function () {
+      $(_this2).prev('.input-group-addon').find('i').trigger('click');
+    });
+    $('.input-group-addon i').on('click', function () {
+      $(_this2).parents('.input-group-addon').next('#list-item-color-' + $vm.id).trigger('focus');
+    });
+  }
+});
 
 /***/ }),
 
@@ -104,7 +220,8 @@ eval("Fliplet.InteractiveMap.component('marker-panel', {\n  componentName: 'Mark
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("module.exports = __webpack_require__(/*! /Users/hcarneiro/Repos/Fliplet/fliplet-widget-interactive-floorplan/js/interface/marker-panel.js */\"./js/interface/marker-panel.js\");\n\n\n//# sourceURL=webpack:///multi_./js/interface/marker-panel.js?");
+module.exports = __webpack_require__(/*! /Users/hcarneiro/Repos/Fliplet/fliplet-widget-interactive-floorplan/js/interface/marker-panel.js */"./js/interface/marker-panel.js");
+
 
 /***/ })
 
