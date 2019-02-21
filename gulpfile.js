@@ -35,7 +35,6 @@ gulp.task('copy-js', () => {
       },
       mode: 'development',
       watch: true,
-      devtool: 'source-map',
       module: {
         rules: [
           {
