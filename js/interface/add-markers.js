@@ -83,6 +83,7 @@ Fliplet.InteractiveMap.component('add-markers', {
   },
   watch: {
     markersDataSource(ds, oldDs) {
+      // If the user is changes away from the data source the component creates
       if (!ds || !oldDs || (ds.id !== this.dataSourceId && !this.dataWasChanged)) {
         return Fliplet.Modal.confirm({
           title: 'Changing data source',
@@ -94,7 +95,9 @@ Fliplet.InteractiveMap.component('add-markers', {
             return
           }
 
+          // Keep ref to delete ds later on save
           this.dataSourceToDelete = oldDs.id
+
           this.dataSourceId = ds.id
           this.dataWasChanged = true
 
@@ -482,6 +485,7 @@ Fliplet.InteractiveMap.component('add-markers', {
         'dataSourceToDelete'
       ])
       markersData.markersDataSourceId = this.dataSourceId
+      // Ref to know if the user changed data source
       markersData.changedDataSource = this.dataWasChanged
 
       Fliplet.InteractiveMap.emit('add-markers-settings-changed', markersData)
