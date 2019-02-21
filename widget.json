@@ -21,12 +21,17 @@
       "vendor/bootstrap-colorpicker.css",
 
       "js/interface.templates.js",
+      "dist/core.js.map",
       "dist/core.js",
 
+      "dist/map-panel.js.map",
+      "dist/marker-panel.js.map",
+      "dist/add-markers.js.map",
       "dist/map-panel.js",
       "dist/marker-panel.js",
       "dist/add-markers.js",
 
+      "dist/interface.js.map",
       "dist/interface.js",
       "css/interface.css",
       "dist/vue-multiselect.min.css"
@@ -43,6 +48,7 @@
       "vue.js"
     ],
     "assets": [
+      "dist/build.js.map",
       "dist/build.js",
       "css/build.css"
     ]
