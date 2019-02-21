@@ -230,9 +230,22 @@ var app = new Vue({
       this.settings = _.assignIn(this.settings, addMarkersData);
       this.prepareToSaveData(true);
     },
+    addMarker: function addMarker() {
+      var newItem = {
+        id: Fliplet.guid(),
+        isFromNew: true,
+        name: "Marker ".concat(this.widgetData.markers.length + 1),
+        icon: 'fa fa-circle',
+        color: '#337ab7',
+        type: 'marker-panel',
+        size: '24px'
+      };
+      this.widgetData.markers.push(newItem);
+      this.saveData();
+    },
     openAddMarkers: function openAddMarkers() {
       if (!this.markers.length) {
-        this.onAddMarker();
+        this.addMarker();
       }
 
       if (!this.maps.length || !this.markers.length) {
