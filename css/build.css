@@ -235,7 +235,7 @@ body.fl-with-bottom-menu .interactive-map-component-wrapper {
 }
 
 .maps-button-text {
-  width: calc(100% - 42px);
+  width: calc(100% - 40px);
   padding: 0 5px;
 }
 
