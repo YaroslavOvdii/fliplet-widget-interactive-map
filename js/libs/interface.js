@@ -115,14 +115,14 @@ const app = new Vue({
       const newItem = {
         id: Fliplet.guid(),
         isFromNew: true,
-        name: `Marker ${this.widgetData.markers.length + 1}`,
+        name: `Marker ${this.markers.length + 1}`,
         icon: 'fa fa-circle',
         color: '#337ab7',
         type: 'marker-panel',
         size: '24px'
       }
 
-      this.widgetData.markers.push(newItem)
+      this.markers.push(newItem)
       this.saveData()
     },
     openAddMarkers() {
