@@ -189,7 +189,7 @@
                     <span class="panel-title-text">\{{marker.name}}</span>
                     <span class="fa panel-chevron fa-chevron-up"></span>
                   </h4>
-                  <a href="#" @click.prevent="deleteMarker(idx)"><span class="icon-delete fa fa-trash"></span></a>
+                  <a href="#" @click.prevent="deleteMarkerStyle(idx)"><span class="icon-delete fa fa-trash"></span></a>
                 </div>
                 <div :id="'collapse-' + marker.id" class="panel-collapse collapse" v-bind:class="{ in: marker.isFromNew }">
                   <div class="panel-body">
