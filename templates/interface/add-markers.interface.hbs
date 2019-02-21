@@ -7,21 +7,18 @@
       </div>
     </div>
     <div v-else class="maps-container" v-bind:class="{ 'empty-state': !mappedMarkerData.length }">
-      <div v-show="!mappedMarkerData.length" class="no-markers">
-        Your map will appear here once you create a new marker and assign a map to it.
-      </div>
-      <div v-show="mappedMarkerData.length" class="map-wrapper-holder">
+      <div v-show="mappedMarkerData.length || widgetData.maps.length" class="map-wrapper-holder">
         <div v-for="(map, index) in widgetData.maps" class="map-wrapper" v-bind:class="{ 'active': selectedMarkerData.map && map.id === selectedMarkerData.map.id && imageLoaded }">
           <div class="map-container" :id="'map-' + map.id">
             <img v-if="map.image" class="map-image" :src="map.image.url"/>
           </div>
         </div>
       </div>
-      <div v-if="selectedMarkerData.map && selectedMarkerData.map.name && mappedMarkerData.length" class="maps-button">
+      <div v-if="selectedMarkerData.map && selectedMarkerData.map.name" class="maps-button">
         <i class="fa fa-map-o"></i>
         <div class="map-button-text"><p>\{{selectedMarkerData.map.name}}</p></div>
       </div>
-      <div v-if="selectedMarkerData.map && selectedMarkerData.map.name && mappedMarkerData.length" class="map-hint-holder">
+      <div v-if="selectedMarkerData.map && selectedMarkerData.map.name" class="map-hint-holder">
         <div class="map-hint">Click the image to set the marker position</div>
       </div>
     </div>

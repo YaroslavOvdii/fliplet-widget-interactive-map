@@ -403,12 +403,8 @@ Fliplet.InteractiveMap.component('add-markers', {
     setupFlPanZoom: function setupFlPanZoom() {
       var _this6 = this;
 
-      if (!this.mappedMarkerData.length) {
-        return;
-      }
-
-      var mapName = this.mappedMarkerData[this.activeMarker].data.map;
-      this.selectedMarkerData.marker = this.mappedMarkerData[this.activeMarker] || this.widgetData.markers[0].name;
+      var mapName = this.mappedMarkerData.length ? this.mappedMarkerData[this.activeMarker].data.map : this.widgetData.maps[0].name;
+      this.selectedMarkerData.marker = this.mappedMarkerData[this.activeMarker];
       this.selectedMarkerData.map = _.find(this.widgetData.maps, {
         name: mapName
       }); // If the map doesn't exist anymore set the first one in the list
