@@ -93,7 +93,36 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("Fliplet.InteractiveMap = function () {\n  var components = {};\n  var eventHub = new Vue();\n  var templates = Fliplet.Widget.Templates;\n  return {\n    on: function on(eventName, fn) {\n      eventHub.$on(eventName, fn);\n    },\n    off: function off(eventName, fn) {\n      eventHub.$off(eventName, fn);\n    },\n    emit: function emit(eventName, data) {\n      eventHub.$emit(eventName, data);\n    },\n    component: function component(componentName, _component) {\n      if (!componentName || !_component.componentName) {\n        throw new Error('The component name is required');\n      }\n\n      var template = templates['templates.interface.' + componentName];\n\n      if (!template) {\n        throw new Error('A template for the ' + componentName + ' component has not been found');\n      }\n\n      _component.template = template();\n      Vue.component(componentName, _component);\n    }\n  };\n}();\n\n//# sourceURL=webpack:///./js/libs/core.js?");
+Fliplet.InteractiveMap = function () {
+  var components = {};
+  var eventHub = new Vue();
+  var templates = Fliplet.Widget.Templates;
+  return {
+    on: function on(eventName, fn) {
+      eventHub.$on(eventName, fn);
+    },
+    off: function off(eventName, fn) {
+      eventHub.$off(eventName, fn);
+    },
+    emit: function emit(eventName, data) {
+      eventHub.$emit(eventName, data);
+    },
+    component: function component(componentName, _component) {
+      if (!componentName || !_component.componentName) {
+        throw new Error('The component name is required');
+      }
+
+      var template = templates['templates.interface.' + componentName];
+
+      if (!template) {
+        throw new Error('A template for the ' + componentName + ' component has not been found');
+      }
+
+      _component.template = template();
+      Vue.component(componentName, _component);
+    }
+  };
+}();
 
 /***/ }),
 
@@ -104,7 +133,8 @@ eval("Fliplet.InteractiveMap = function () {\n  var components = {};\n  var even
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("module.exports = __webpack_require__(/*! /Users/hcarneiro/Repos/Fliplet/fliplet-widget-interactive-floorplan/js/libs/core.js */\"./js/libs/core.js\");\n\n\n//# sourceURL=webpack:///multi_./js/libs/core.js?");
+module.exports = __webpack_require__(/*! /Users/hcarneiro/Repos/Fliplet/fliplet-widget-interactive-floorplan/js/libs/core.js */"./js/libs/core.js");
+
 
 /***/ })
 

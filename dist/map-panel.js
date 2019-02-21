@@ -93,7 +93,82 @@
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("Fliplet.InteractiveMap.component('map-panel', {\n  componentName: 'Map Panel',\n  props: {\n    id: {\n      type: String,\n      default: ''\n    },\n    name: {\n      type: String,\n      default: ''\n    },\n    image: {\n      type: Object,\n      default: undefined\n    },\n    type: {\n      type: String,\n      default: 'map-panel'\n    },\n    isFromNew: {\n      type: Boolean,\n      default: true\n    }\n  },\n  methods: {\n    onInputData: function onInputData(imageSaved) {\n      var componentData = _.pick(this, ['id', 'name', 'image', 'type', 'isFromNew']);\n\n      Fliplet.InteractiveMap.emit('map-panel-settings-changed', componentData);\n\n      if (imageSaved) {\n        Fliplet.InteractiveMap.emit('new-map-added');\n      }\n    },\n    openMapPicker: function openMapPicker() {\n      var _this = this;\n\n      var filePickerData = {\n        selectFiles: this.image ? [this.image] : [],\n        selectMultiple: false,\n        type: 'image',\n        fileExtension: ['JPG', 'JPEG', 'PNG', 'GIF', 'TIFF', 'SVG'],\n        autoSelectOnUpload: true\n      };\n      window.filePickerProvider = Fliplet.Widget.open('com.fliplet.file-picker', {\n        data: filePickerData,\n        onEvent: function onEvent(e, data) {\n          switch (e) {\n            case 'widget-set-info':\n              Fliplet.Studio.emit('widget-save-label-reset');\n              Fliplet.Studio.emit('widget-save-label-update', {\n                text: 'Select'\n              });\n              Fliplet.Widget.toggleSaveButton(!!data.length);\n              break;\n          }\n        }\n      });\n      window.filePickerProvider.then(function (result) {\n        _this.image = result.data[0];\n\n        _this.onInputData(true);\n\n        window.filePickerProvider = null;\n        Fliplet.Studio.emit('widget-save-label-reset');\n        return Promise.resolve();\n      });\n    }\n  },\n  created: function created() {\n    Fliplet.InteractiveMap.on('maps-save', this.onInputData);\n  },\n  destroyed: function destroyed() {\n    Fliplet.InteractiveMap.off('maps-save', this.onInputData);\n  }\n});\n\n//# sourceURL=webpack:///./js/interface/map-panel.js?");
+Fliplet.InteractiveMap.component('map-panel', {
+  componentName: 'Map Panel',
+  props: {
+    id: {
+      type: String,
+      default: ''
+    },
+    name: {
+      type: String,
+      default: ''
+    },
+    image: {
+      type: Object,
+      default: undefined
+    },
+    type: {
+      type: String,
+      default: 'map-panel'
+    },
+    isFromNew: {
+      type: Boolean,
+      default: true
+    }
+  },
+  methods: {
+    onInputData: function onInputData(imageSaved) {
+      var componentData = _.pick(this, ['id', 'name', 'image', 'type', 'isFromNew']);
+
+      Fliplet.InteractiveMap.emit('map-panel-settings-changed', componentData);
+
+      if (imageSaved) {
+        Fliplet.InteractiveMap.emit('new-map-added');
+      }
+    },
+    openMapPicker: function openMapPicker() {
+      var _this = this;
+
+      var filePickerData = {
+        selectFiles: this.image ? [this.image] : [],
+        selectMultiple: false,
+        type: 'image',
+        fileExtension: ['JPG', 'JPEG', 'PNG', 'GIF', 'TIFF', 'SVG'],
+        autoSelectOnUpload: true
+      };
+      window.filePickerProvider = Fliplet.Widget.open('com.fliplet.file-picker', {
+        data: filePickerData,
+        onEvent: function onEvent(e, data) {
+          switch (e) {
+            case 'widget-set-info':
+              Fliplet.Studio.emit('widget-save-label-reset');
+              Fliplet.Studio.emit('widget-save-label-update', {
+                text: 'Select'
+              });
+              Fliplet.Widget.toggleSaveButton(!!data.length);
+              break;
+          }
+        }
+      });
+      window.filePickerProvider.then(function (result) {
+        _this.image = result.data[0];
+
+        _this.onInputData(true);
+
+        window.filePickerProvider = null;
+        Fliplet.Studio.emit('widget-save-label-reset');
+        return Promise.resolve();
+      });
+    }
+  },
+  created: function created() {
+    Fliplet.InteractiveMap.on('maps-save', this.onInputData);
+  },
+  destroyed: function destroyed() {
+    Fliplet.InteractiveMap.off('maps-save', this.onInputData);
+  }
+});
 
 /***/ }),
 
@@ -104,7 +179,8 @@ eval("Fliplet.InteractiveMap.component('map-panel', {\n  componentName: 'Map Pan
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("module.exports = __webpack_require__(/*! /Users/hcarneiro/Repos/Fliplet/fliplet-widget-interactive-floorplan/js/interface/map-panel.js */\"./js/interface/map-panel.js\");\n\n\n//# sourceURL=webpack:///multi_./js/interface/map-panel.js?");
+module.exports = __webpack_require__(/*! /Users/hcarneiro/Repos/Fliplet/fliplet-widget-interactive-floorplan/js/interface/map-panel.js */"./js/interface/map-panel.js");
+
 
 /***/ })
 
