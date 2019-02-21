@@ -241,7 +241,7 @@ var app = new Vue({
         size: '24px'
       };
       this.markers.push(newItem);
-      this.saveData();
+      this.checkErrorStates();
     },
     openAddMarkers: function openAddMarkers() {
       if (!this.markers.length) {

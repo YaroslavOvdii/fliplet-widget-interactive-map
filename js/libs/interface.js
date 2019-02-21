@@ -123,7 +123,7 @@ const app = new Vue({
       }
 
       this.markers.push(newItem)
-      this.saveData()
+      this.checkErrorStates()
     },
     openAddMarkers() {
       if (!this.markers.length) {
