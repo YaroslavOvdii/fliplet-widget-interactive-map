@@ -85,32 +85,6 @@ const app = new Vue({
         this.maps.splice(index, 1)
       })
     },
-    onAddMarker() {
-      const newItem = {
-        id: Fliplet.guid(),
-        isFromNew: true,
-        name: `Marker ${this.markers.length + 1}`,
-        icon: 'fa fa-circle',
-        color: '#337ab7',
-        type: 'marker-panel',
-        size: '24px'
-      }
-
-      this.markers.push(newItem)
-      this.checkErrorStates()
-    },
-    deleteMarker(index) {
-      Fliplet.Modal.confirm({
-        title: 'Delete marker style',
-        message: '<p>You will have to manually update any marker that has this style applied.</p><p>Are you sure you want to delete this marker style?</p>'
-      }).then((result) => {
-        if (!result) {
-          return
-        }
-
-        this.markers.splice(index, 1)
-      })
-    },
     checkErrorStates() {
       if (this.maps.length) {
         this.hasErrorOnSave = false
@@ -133,23 +107,15 @@ const app = new Vue({
         }
       })
     },
-    onMarkerPanelSettingChanged(panelData) {
-      this.markers.forEach((panel, index) => {
-        if (panelData.name == panel.name && panelData.id !== panel.id) {
-          panelData.error = 'Marker styles must have different names'
-        }
-
-        if (panelData.id === panel.id) {
-          // To overcome the array change caveat
-          // https://vuejs.org/v2/guide/list.html#Caveats
-          Vue.set(this.markers, index, panelData)
-        }
-      })
-    },
     onAddMarkersSettingChanged(addMarkersData) {
       this.settings = _.assignIn(this.settings, addMarkersData)
+      this.prepareToSaveData(true)
     },
     openAddMarkers() {
+      if (!this.markers.length) {
+        this.onAddMarker()
+      }
+
       if (!this.maps.length || !this.markers.length) {
         this.hasError = true
         return
@@ -199,7 +165,7 @@ const app = new Vue({
       this.settings.savedData = true
 
       let promise = Promise.resolve()
-      if (this.settings.dataSourceToDelete) {
+      if (this.settings.dataSourceToDelete && !stopComplete) {
         promise = Fliplet.DataSources.delete(this.settings.dataSourceToDelete)
       }
 
@@ -225,7 +191,6 @@ const app = new Vue({
   async created() {
     Fliplet.InteractiveMap.on('map-panel-settings-changed', this.onPanelSettingChanged)
     Fliplet.InteractiveMap.on('new-map-added', this.saveMapSettings)
-    Fliplet.InteractiveMap.on('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
     Fliplet.InteractiveMap.on('add-markers-settings-changed', this.onAddMarkersSettingChanged)
 
     // Create data source on first time
@@ -268,7 +233,6 @@ const app = new Vue({
   destroyed() {
     Fliplet.InteractiveMap.off('map-panel-settings-changed', this.onPanelSettingChanged)
     Fliplet.InteractiveMap.off('new-map-added', this.saveMapSettings)
-    Fliplet.InteractiveMap.off('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
     Fliplet.InteractiveMap.off('add-markers-settings-changed', this.onAddMarkersSettingChanged)
   }
 });

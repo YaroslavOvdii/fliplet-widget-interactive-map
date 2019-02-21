@@ -73,7 +73,8 @@ Fliplet.InteractiveMap.component('add-markers', {
       tappedMarkerId: undefined,
       saveDebounced: _.debounce(this.saveToDataSource, 1000),
       dsConfigError: false,
-      dataSourceToDelete: undefined
+      dataSourceToDelete: undefined,
+      showEditMarkerOverlay: false
     }
   },
   computed: {
@@ -245,13 +246,57 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.savedData = true
       Fliplet.Studio.emit('widget-mode', 'full-screen')
     },
+    onMarkerPanelSettingChanged(panelData) {
+      this.widgetData.markers.forEach((panel, index) => {
+        if (panelData.name == panel.name && panelData.id !== panel.id) {
+          panelData.error = 'Marker styles must have different names'
+        }
+
+        if (panelData.id === panel.id) {
+          // To overcome the array change caveat
+          // https://vuejs.org/v2/guide/list.html#Caveats
+          Vue.set(this.widgetData.markers, index, panelData)
+        }
+      })
+
+      this.saveData()
+    },
+    onAddMarker() {
+      const newItem = {
+        id: Fliplet.guid(),
+        isFromNew: true,
+        name: `Marker ${this.widgetData.markers.length + 1}`,
+        icon: 'fa fa-circle',
+        color: '#337ab7',
+        type: 'marker-panel',
+        size: '24px'
+      }
+
+      this.widgetData.markers.push(newItem)
+      this.saveData()
+    },
+    deleteMarker(index) {
+      Fliplet.Modal.confirm({
+        title: 'Delete marker style',
+        message: '<p>You will have to manually update any marker that has this style applied.</p><p>Are you sure you want to delete this marker style?</p>'
+      }).then((result) => {
+        if (!result) {
+          return
+        }
+
+        this.widgetData.markers.splice(index, 1)
+      })
+    },
+    toggleEditMarkerOverlay() {
+      this.showEditMarkerOverlay = !!!this.showEditMarkerOverlay
+    },
     setupFlPanZoom() {
       if (!this.mappedMarkerData.length) {
         return
       }
 
       const mapName = this.mappedMarkerData[this.activeMarker].data.map
-      this.selectedMarkerData.marker = this.mappedMarkerData[this.activeMarker]
+      this.selectedMarkerData.marker = this.mappedMarkerData[this.activeMarker] || this.widgetData.markers[0].name
       this.selectedMarkerData.map = _.find(this.widgetData.maps, { name: mapName })
       // If the map doesn't exist anymore set the first one in the list
       if (!this.selectedMarkerData.map) {
@@ -293,6 +338,7 @@ Fliplet.InteractiveMap.component('add-markers', {
     },
     addMarkers(fromLoad, options) {
       let markerElem = undefined
+      const createdMarkers = []
       options = options || {}
 
       if (fromLoad) {
@@ -304,10 +350,12 @@ Fliplet.InteractiveMap.component('add-markers', {
             const markersLength = this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll().length
             markerElem = $("<div id='" + marker.id + "' class='marker' data-name='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + ";'></i></div></div>")
             this.markerElemHandler = new Hammer(markerElem.get(0))
-            this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, { x: marker.data.positionX, y: marker.data.positionY, name: marker.data.name, id: marker.id })])
             this.markerElemHandler.on('tap', this.onMarkerHandler)
+
+            createdMarkers.push(Fliplet.UI.PanZoom.Markers.create(markerElem, { x: marker.data.positionX, y: marker.data.positionY, name: marker.data.name, id: marker.id }))
           }
         })
+        this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.set(createdMarkers)
         return
       }
 
@@ -323,7 +371,10 @@ Fliplet.InteractiveMap.component('add-markers', {
         const markersLength = this.tappedMarkerId || this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll().length
         markerElem = $("<div id='" + this.selectedMarkerData.marker.id + "' class='marker' data-name='" + this.selectedMarkerData.marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + this.selectedMarkerData.marker.data.size + ";'><i class='" + this.selectedMarkerData.marker.data.icon + "' style='color: " + this.selectedMarkerData.marker.data.color + "; font-size: " + this.selectedMarkerData.marker.data.size + ";'></i><div class='active-state'><i class='" + this.selectedMarkerData.marker.data.icon + "' style='color: " + this.selectedMarkerData.marker.data.color + ";'></i></div></div>")
         this.markerElemHandler = new Hammer(markerElem.get(0))
-        this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.set([Fliplet.UI.PanZoom.Markers.create(markerElem, { x: options.x, y: options.y, name: this.selectedMarkerData.marker.data.name, id: this.selectedMarkerData.marker.id })])
+
+        createdMarkers.push(Fliplet.UI.PanZoom.Markers.create(markerElem, { x: options.x, y: options.y, name: this.selectedMarkerData.marker.data.name, id: this.selectedMarkerData.marker.id }))
+        this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.set(createdMarkers)
+
         $('#marker-' + markersLength).addClass('active')
         this.tappedMarkerId = undefined
       } else {
@@ -510,6 +561,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       markersData.markersDataSourceId = this.dataSourceId
       // Ref to know if the user changed data source
       markersData.changedDataSource = this.dataWasChanged
+      markersData.markers = this.widgetData.markers
 
       Fliplet.InteractiveMap.emit('add-markers-settings-changed', markersData)
     }
@@ -536,6 +588,7 @@ Fliplet.InteractiveMap.component('add-markers', {
     })
 
     Fliplet.InteractiveMap.on('add-markers-save', this.saveData)
+    Fliplet.InteractiveMap.on('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
   },
   mounted() {
     // vm.$nextTick is not enough
@@ -543,5 +596,6 @@ Fliplet.InteractiveMap.component('add-markers', {
   },
   destroyed() {
     Fliplet.InteractiveMap.off('add-markers-save', this.saveData)
+    Fliplet.InteractiveMap.off('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
   }
 });

@@ -129,7 +129,7 @@ body.fl-with-bottom-menu .interactive-map-component-wrapper {
 }
 
 .interactive-map-label-text {
-  padding: 10px 5px;
+  padding: 10px 0 10px 5px;
   width: calc(100% - 20px);
 }
 
@@ -235,7 +235,8 @@ body.fl-with-bottom-menu .interactive-map-component-wrapper {
 }
 
 .maps-button-text {
-  width: calc(100% - 44px);
+  width: calc(100% - 40px);
+  padding: 0 5px;
 }
 
 .maps-button-text p {
@@ -248,7 +249,7 @@ body.fl-with-bottom-menu .interactive-map-component-wrapper {
 }
 
 .maps-button .fa-map-o {
-  font-size: 0.8em;
+  font-size: 0.7em;
   margin-right: 5px;
   opacity: 0.8;
 }
