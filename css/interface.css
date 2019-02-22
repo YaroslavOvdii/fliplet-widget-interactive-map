@@ -530,7 +530,7 @@ header .title-holder p {
 }
 
 .markers-ui-wrapper {
-  height: calc(100% - 100px);
+  height: calc(100% - 80px);
 }
 
 .markers-ui-holder {
@@ -672,6 +672,10 @@ header .title-holder p {
 .marker-map-holder .btn .caret,
 .marker-icon-holder .btn .caret {
   opacity: 0.5;
+}
+
+.marker-map-holder .btn .caret {
+  margin-left: 5px;
 }
 
 .marker-map-holder .btn:hover,
@@ -885,7 +889,7 @@ header .title-holder p {
 
 .marker-overlay-content-header .marker-overlay-close a:hover,
 .marker-overlay-content-header .marker-overlay-close a:focus {
-  background-color: #e4e9eb;
+  background-color: #eae9ec;
   color: #333333;
 }
 

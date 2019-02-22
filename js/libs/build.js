@@ -96,10 +96,11 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
           this.imageLoaded = false
 
           this.flPanZoomInstances[this.selectedMapData.id] = Fliplet.UI.PanZoom.create(this.pzElement, {
-            maxZoom: 4,
+            maxZoom: 10,
             zoomStep: 0.25,
             doubleTapZoom: 3,
-            animDuration: 0.1
+            animDuration: 0.1,
+            allowMouseWheelZoom: false
           })
         } else {
           this.flPanZoomInstances[this.selectedMapData.id].markers.removeAll()
