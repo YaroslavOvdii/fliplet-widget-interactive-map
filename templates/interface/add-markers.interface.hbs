@@ -32,7 +32,7 @@
         <div class="col-xs-12">
           <template v-if="!savedData">
             <multiselect v-model="markersDataSource" :options="dataSources" :custom-label="nameWithId" placeholder="-- Select a data source" label="name" :show-labels="false" :allow-empty="false" :show-no-results="false"></multiselect>
-            <a v-if="markersDataSource" href="#" @click.prevent="editDataSource">Bulk upload data</a>
+            <a v-if="markersDataSource" href="#" @click.prevent="editDataSource">Edit data</a>
           </template>
           <template v-else>
             You are using the data source called <strong>\{{markersDataSource.name}}</strong>.<br>
