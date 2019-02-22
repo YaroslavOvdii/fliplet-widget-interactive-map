@@ -650,6 +650,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.mappedMarkerData.forEach(function (marker, index) {
         var newObj = {
           id: !marker.autoCreated ? marker.id : undefined,
+          order: index,
           data: {}
         };
         newObj.data[_this12.markerNameColumn] = marker.data.name;
