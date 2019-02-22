@@ -262,6 +262,7 @@ var app = new Vue({
     goBackToSettings: function goBackToSettings() {
       this.showAddMarkersUI = false;
       Fliplet.Studio.emit('widget-mode', 'normal');
+      this.prepareToSaveData(true, true);
     },
     saveMapSettings: function saveMapSettings() {
       this.prepareToSaveData(true, true);

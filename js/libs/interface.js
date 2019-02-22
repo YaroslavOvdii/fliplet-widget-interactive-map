@@ -144,6 +144,7 @@ const app = new Vue({
     goBackToSettings() {
       this.showAddMarkersUI = false
       Fliplet.Studio.emit('widget-mode', 'normal')
+      this.prepareToSaveData(true, true)
     },
     saveMapSettings() {
       this.prepareToSaveData(true, true)
