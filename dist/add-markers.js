@@ -708,7 +708,12 @@ Fliplet.InteractiveMap.component('add-markers', {
         iconSize: markerInfo.size,
         iconColor: markerInfo.color,
         singleMarker: true
-      });
+      }); // Scrolls to bottom
+
+      var scrollHeight = $('.markers-ui')[0].scrollHeight;
+      $('.markers-ui').animate({
+        scrollTop: scrollHeight
+      }, 250);
       this.prepareNewMarkerToSave(markerInfo);
     },
     prepareNewMarkerToSave: function prepareNewMarkerToSave(markerInfo, options, position) {

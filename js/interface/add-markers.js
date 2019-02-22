@@ -574,6 +574,10 @@ Fliplet.InteractiveMap.component('add-markers', {
         singleMarker: true
       })
 
+      // Scrolls to bottom
+      const scrollHeight = $('.markers-ui')[0].scrollHeight
+      $('.markers-ui').animate({ scrollTop: scrollHeight }, 250);
+
       this.prepareNewMarkerToSave(markerInfo)
     },
     prepareNewMarkerToSave(markerInfo, options, position) {
