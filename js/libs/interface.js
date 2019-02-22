@@ -59,11 +59,32 @@ const app = new Vue({
         this.settings.changedDataSource = false
       })
     },
+    checkMapName(name, increment) {
+      if (increment) {
+        name = `Marker ${this.maps.length + increment}`
+      }
+
+      return !!_.find(this.maps, { name: name })
+    },
+    generateMapName() {
+      let increment = 1
+      const name = `Marker ${this.maps.length + increment}`
+      let sameNameFound = this.checkMapName(name)
+
+      while (sameNameFound) {
+        increment++
+        sameNameFound = this.checkMapName(name, increment)
+      }
+
+      const finalName = `Marker ${this.maps.length + increment}`
+
+      return finalName
+    },
     onAddMap() {
       const newItem = {
         id: Fliplet.guid(),
         isFromNew: true,
-        name: `Map ${this.maps.length + 1}`,
+        name: this.generateMapName(),
         type: 'map-panel'
       }
 
@@ -144,6 +165,7 @@ const app = new Vue({
     goBackToSettings() {
       this.showAddMarkersUI = false
       Fliplet.Studio.emit('widget-mode', 'normal')
+      this.prepareToSaveData(true, true)
     },
     saveMapSettings() {
       this.prepareToSaveData(true, true)
