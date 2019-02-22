@@ -328,7 +328,7 @@ Fliplet.InteractiveMap.component('add-markers', {
         this.imageLoaded = false
 
         this.flPanZoomInstances[this.selectedMarkerData.map.id] = Fliplet.UI.PanZoom.create(this.pzElement, {
-          maxZoom: 4,
+          maxZoom: 10,
           zoomStep: 0.25,
           doubleTapZoom: 3,
           animDuration: 0.1,
