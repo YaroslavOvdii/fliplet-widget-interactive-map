@@ -382,11 +382,11 @@ Fliplet.InteractiveMap.component('add-markers', {
     generateName: function generateName(array) {
       var increment = 1;
       var name = "Marker ".concat(array.length + increment);
-      var sameNameFound = this.checkMarkerStyleName(array, name);
+      var sameNameFound = this.checkName(array, name);
 
       while (sameNameFound) {
         increment++;
-        sameNameFound = this.checkMarkerStyleName(array, name, increment);
+        sameNameFound = this.checkName(array, name, increment);
       }
 
       var finalName = "Marker ".concat(array.length + increment);

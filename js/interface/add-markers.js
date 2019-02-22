@@ -269,11 +269,11 @@ Fliplet.InteractiveMap.component('add-markers', {
     generateName(array) {
       let increment = 1
       const name = `Marker ${array.length + increment}`
-      let sameNameFound = this.checkMarkerStyleName(array, name)
+      let sameNameFound = this.checkName(array, name)
 
       while (sameNameFound) {
         increment++
-        sameNameFound = this.checkMarkerStyleName(array, name, increment)
+        sameNameFound = this.checkName(array, name, increment)
       }
 
       const finalName = `Marker ${array.length + increment}`
