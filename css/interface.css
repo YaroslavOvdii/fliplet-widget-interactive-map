@@ -674,6 +674,10 @@ header .title-holder p {
   opacity: 0.5;
 }
 
+.marker-map-holder .btn .caret {
+  margin-left: 5px;
+}
+
 .marker-map-holder .btn:hover,
 .marker-icon-holder .btn:hover,
 .marker-map-holder .btn:active:focus,
