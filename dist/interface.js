@@ -175,11 +175,33 @@ var app = new Vue({
         _this.settings.changedDataSource = false;
       });
     },
+    checkMapName: function checkMapName(name, increment) {
+      if (increment) {
+        name = "Marker ".concat(this.maps.length + increment);
+      }
+
+      return !!_.find(this.maps, {
+        name: name
+      });
+    },
+    generateMapName: function generateMapName() {
+      var increment = 1;
+      var name = "Marker ".concat(this.maps.length + increment);
+      var sameNameFound = this.checkMapName(name);
+
+      while (sameNameFound) {
+        increment++;
+        sameNameFound = this.checkMapName(name, increment);
+      }
+
+      var finalName = "Marker ".concat(this.maps.length + increment);
+      return finalName;
+    },
     onAddMap: function onAddMap() {
       var newItem = {
         id: Fliplet.guid(),
         isFromNew: true,
-        name: "Map ".concat(this.maps.length + 1),
+        name: this.generateMapName(),
         type: 'map-panel'
       };
       this.maps.push(newItem);

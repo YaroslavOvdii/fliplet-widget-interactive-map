@@ -259,11 +259,32 @@ Fliplet.InteractiveMap.component('add-markers', {
 
       this.saveData()
     },
+    checkName(array, name, increment) {
+      if (increment) {
+        name = `Marker ${array.length + increment}`
+      }
+
+      return !!_.find(array, { name: name })
+    },
+    generateName(array) {
+      let increment = 1
+      const name = `Marker ${array.length + increment}`
+      let sameNameFound = this.checkMarkerStyleName(array, name)
+
+      while (sameNameFound) {
+        increment++
+        sameNameFound = this.checkMarkerStyleName(array, name, increment)
+      }
+
+      const finalName = `Marker ${array.length + increment}`
+
+      return finalName
+    },
     onAddMarker() {
       const newItem = {
         id: Fliplet.guid(),
         isFromNew: true,
-        name: `Marker ${this.allMarkerStyles.length + 1}`,
+        name: this.generateName(this.allMarkerStyles),
         icon: 'fa fa-circle',
         color: '#337ab7',
         type: 'marker-panel',
@@ -507,7 +528,6 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.dataSourceConnection.commit(data)
     },
     addNewMarker(options) {
-      const markerLength = this.mappedMarkerData.length
       let mapName
       let mapId
 
@@ -529,7 +549,7 @@ Fliplet.InteractiveMap.component('add-markers', {
 
       const markerInfo = {
         id: Fliplet.guid(),
-        name: `New marker ${markerLength + 1}`,
+        name: this.generateName(this.mappedMarkerData),
         icon: this.allMarkerStyles.length ? this.allMarkerStyles[0].icon : '',
         size: this.allMarkerStyles.length ? this.allMarkerStyles[0].size : '',
         color: this.allMarkerStyles.length ? this.allMarkerStyles[0].color : '',
