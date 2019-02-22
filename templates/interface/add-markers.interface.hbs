@@ -180,7 +180,7 @@
             <div class="add-map-marker" @click.prevent="onAddMarker"><i class="fa fa-plus-circle"></i> Add a new marker style</div>
             <div class="panel-group" id="markers-accordion">
 
-              <div v-for="(marker, idx) in widgetData.markers" v-bind:key="marker.id" class="panel panel-default marker-panel" :data-id="marker.id">
+              <div v-for="(marker, idx) in allMarkerStyles" v-bind:key="marker.id" class="panel panel-default marker-panel" :data-id="marker.id">
                 <div class="panel-heading">
                   <h4 class="panel-title" v-bind:class="{ 'collapsed': !marker.isFromNew }" data-toggle="collapse" data-parent="#markers-accordion" :data-target="'#collapse-' + marker.id">
                     <span class="panel-title-text">\{{marker.name}}</span>

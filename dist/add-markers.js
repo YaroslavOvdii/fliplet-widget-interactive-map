@@ -169,6 +169,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       markerElemHandler: undefined,
       markersData: undefined,
       mappedMarkerData: [],
+      allMarkerStyles: this.widgetData.markers,
       imageLoaded: false,
       activeMarker: 0,
       selectedMarkerData: {
@@ -235,7 +236,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       var _this2 = this;
 
       var newMarkerData = this.markersData.map(function (marker) {
-        var markerData = _.find(_this2.widgetData.markers, {
+        var markerData = _.find(_this2.allMarkerStyles, {
           name: marker.data[_this2.markerTypeColumn]
         });
 
@@ -244,10 +245,10 @@ Fliplet.InteractiveMap.component('add-markers', {
           data: {
             name: marker.data[_this2.markerNameColumn] || 'Data source marker',
             map: marker.data[_this2.markerMapColumn] || _this2.widgetData.maps[0].name,
-            type: marker.data[_this2.markerTypeColumn] || _this2.widgetData.markers[0].name,
-            icon: markerData ? markerData.icon : _this2.widgetData.markers[0].icon,
-            color: markerData ? markerData.color : _this2.widgetData.markers[0].color,
-            size: markerData ? markerData.size : _this2.widgetData.markers[0].size,
+            type: marker.data[_this2.markerTypeColumn] || _this2.allMarkerStyles[0].name,
+            icon: markerData ? markerData.icon : _this2.allMarkerStyles[0].icon,
+            color: markerData ? markerData.color : _this2.allMarkerStyles[0].color,
+            size: markerData ? markerData.size : _this2.allMarkerStyles[0].size,
             positionX: marker.data[_this2.markerXPositionColumn] || '100',
             positionY: marker.data[_this2.markerYPositionColumn] || '100',
             updateName: false,
@@ -356,7 +357,7 @@ Fliplet.InteractiveMap.component('add-markers', {
     onMarkerPanelSettingChanged: function onMarkerPanelSettingChanged(panelData) {
       var _this4 = this;
 
-      this.widgetData.markers.forEach(function (panel, index) {
+      this.allMarkerStyles.forEach(function (panel, index) {
         if (panelData.name == panel.name && panelData.id !== panel.id) {
           panelData.error = 'Marker styles must have different names';
         }
@@ -364,7 +365,7 @@ Fliplet.InteractiveMap.component('add-markers', {
         if (panelData.id === panel.id) {
           // To overcome the array change caveat
           // https://vuejs.org/v2/guide/list.html#Caveats
-          Vue.set(_this4.widgetData.markers, index, panelData);
+          Vue.set(_this4.allMarkerStyles, index, panelData);
         }
       });
       this.saveData();
@@ -373,13 +374,13 @@ Fliplet.InteractiveMap.component('add-markers', {
       var newItem = {
         id: Fliplet.guid(),
         isFromNew: true,
-        name: "Marker ".concat(this.widgetData.markers.length + 1),
+        name: "Marker ".concat(this.allMarkerStyles.length + 1),
         icon: 'fa fa-circle',
         color: '#337ab7',
         type: 'marker-panel',
         size: '24px'
       };
-      this.widgetData.markers.push(newItem);
+      this.allMarkerStyles.push(newItem);
       this.saveData();
     },
     deleteMarkerStyle: function deleteMarkerStyle(index) {
@@ -393,7 +394,7 @@ Fliplet.InteractiveMap.component('add-markers', {
           return;
         }
 
-        _this5.widgetData.markers.splice(index, 1);
+        _this5.allMarkerStyles.splice(index, 1);
       });
     },
     toggleEditMarkerOverlay: function toggleEditMarkerOverlay() {
@@ -665,10 +666,10 @@ Fliplet.InteractiveMap.component('add-markers', {
       var markerInfo = {
         id: Fliplet.guid(),
         name: "New marker ".concat(markerLength + 1),
-        icon: this.widgetData.markers.length ? this.widgetData.markers[0].icon : '',
-        size: this.widgetData.markers.length ? this.widgetData.markers[0].size : '',
-        color: this.widgetData.markers.length ? this.widgetData.markers[0].color : '',
-        styleName: this.widgetData.markers.length ? this.widgetData.markers[0].name : '',
+        icon: this.allMarkerStyles.length ? this.allMarkerStyles[0].icon : '',
+        size: this.allMarkerStyles.length ? this.allMarkerStyles[0].size : '',
+        color: this.allMarkerStyles.length ? this.allMarkerStyles[0].color : '',
+        styleName: this.allMarkerStyles.length ? this.allMarkerStyles[0].name : '',
         mapId: mapId,
         mapName: mapName,
         x: options && _.hasIn(options, 'existingMarker') ? options.x : position.x,
@@ -722,7 +723,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       markersData.markersDataSourceId = this.dataSourceId; // Ref to know if the user changed data source
 
       markersData.changedDataSource = this.dataWasChanged;
-      markersData.markers = this.widgetData.markers;
+      markersData.markers = this.allMarkerStyles;
       Fliplet.InteractiveMap.emit('add-markers-settings-changed', markersData);
     }
   },
