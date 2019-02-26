@@ -129,7 +129,7 @@ body.fl-with-bottom-menu .interactive-map-component-wrapper {
 }
 
 .interactive-map-label-text {
-  padding: 10px 0 10px 5px;
+  padding: 10px 5px;
   width: calc(100% - 20px);
 }
 
@@ -143,24 +143,9 @@ body.fl-with-bottom-menu .interactive-map-component-wrapper {
   position: relative;
   line-height: 1.2em;
   max-height: 3.6em;
-  padding-right: 0.8em;
-}
-
-.interactive-map-label-text p:before {
-  content: '...';
-  position: absolute;
-  right: 0;
-  bottom: 0;
-}
-
-.interactive-map-label-text p:after {
-  content: '';
-  position: absolute;
-  right: 0;
-  width: 0.8em;
-  height: 1em;
-  margin-top: 0.2em;
-  background: #333333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .interactive-map-label-cancel {
@@ -266,6 +251,11 @@ body.fl-with-bottom-menu .interactive-map-component-wrapper {
 
 .interactive-map-component-wrapper.with-search .fl-zoom-out {
   bottom: 50px;
+}
+
+.fl-zoom-in.off,
+.fl-zoom-out.off {
+  opacity: 0.5;
 }
 
 .marker {

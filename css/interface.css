@@ -422,6 +422,11 @@ header .title-holder p {
   bottom: 15px;
 }
 
+.fl-zoom-in.off,
+.fl-zoom-out.off {
+  opacity: 0.5;
+}
+
 .maps-button {
   position: absolute;
   bottom: 15px;
