@@ -104,6 +104,7 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
           })
         } else {
           this.flPanZoomInstances[this.selectedMapData.id].markers.removeAll()
+          this.flPanZoomInstances[this.selectedMapData.id].zoom(0, 0)
         }
 
         this.flPanZoomInstances[this.selectedMapData.id].on('mapImageLoaded', () => {

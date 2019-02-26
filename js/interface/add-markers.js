@@ -339,6 +339,7 @@ Fliplet.InteractiveMap.component('add-markers', {
         this.attachEventHandler()
       } else {
         this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.removeAll()
+        this.flPanZoomInstances[this.selectedMarkerData.map.id].zoom(0, 0)
       }
 
       this.flPanZoomInstances[this.selectedMarkerData.map.id].on('mapImageLoaded', () => {
