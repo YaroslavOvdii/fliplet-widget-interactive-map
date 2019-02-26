@@ -61,14 +61,14 @@ const app = new Vue({
     },
     checkMapName(name, increment) {
       if (increment) {
-        name = `Marker ${this.maps.length + increment}`
+        name = `Map ${this.maps.length + increment}`
       }
 
       return !!_.find(this.maps, { name: name })
     },
     generateMapName() {
       let increment = 1
-      const name = `Marker ${this.maps.length + increment}`
+      const name = `Map ${this.maps.length + increment}`
       let sameNameFound = this.checkMapName(name)
 
       while (sameNameFound) {
@@ -76,7 +76,7 @@ const app = new Vue({
         sameNameFound = this.checkMapName(name, increment)
       }
 
-      const finalName = `Marker ${this.maps.length + increment}`
+      const finalName = `Map ${this.maps.length + increment}`
 
       return finalName
     },

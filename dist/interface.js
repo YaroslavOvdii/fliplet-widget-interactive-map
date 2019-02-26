@@ -177,7 +177,7 @@ var app = new Vue({
     },
     checkMapName: function checkMapName(name, increment) {
       if (increment) {
-        name = "Marker ".concat(this.maps.length + increment);
+        name = "Map ".concat(this.maps.length + increment);
       }
 
       return !!_.find(this.maps, {
@@ -186,7 +186,7 @@ var app = new Vue({
     },
     generateMapName: function generateMapName() {
       var increment = 1;
-      var name = "Marker ".concat(this.maps.length + increment);
+      var name = "Map ".concat(this.maps.length + increment);
       var sameNameFound = this.checkMapName(name);
 
       while (sameNameFound) {
@@ -194,7 +194,7 @@ var app = new Vue({
         sameNameFound = this.checkMapName(name, increment);
       }
 
-      var finalName = "Marker ".concat(this.maps.length + increment);
+      var finalName = "Map ".concat(this.maps.length + increment);
       return finalName;
     },
     onAddMap: function onAddMap() {
