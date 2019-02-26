@@ -359,6 +359,9 @@ Fliplet.InteractiveMap.component('add-markers', {
       options = options || {}
 
       if (fromLoad) {
+        // Manually removes markers
+        this.removeMarkers()
+
         this.mappedMarkerData.forEach((marker, index) => {
           if (marker.data.map === this.selectedMarkerData.map.name) {
             markerElem = $("<div id='" + marker.id + "' class='marker' data-name='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + ";'></i></div></div>")
