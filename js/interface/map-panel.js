@@ -55,6 +55,7 @@ Fliplet.InteractiveMap.component('map-panel', {
       })
 
       window.filePickerProvider.then((result) => {
+        result.data[0].url = result.data[0].url + '?size=large'
         this.image = result.data[0]
         this.onInputData(true)
         window.filePickerProvider = null
