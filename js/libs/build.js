@@ -317,7 +317,8 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
             config: this,
             id: widgetData.id,
             uuid: widgetData.uuid,
-            container: $(selector)
+            container: $(selector),
+            markers: this.mappedMarkerData
           })
         }).then(() => {
           this.searchMarkerData = _.cloneDeep(this.mappedMarkerData)
