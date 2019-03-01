@@ -153,15 +153,11 @@ Fliplet.InteractiveMap.component('map-panel', {
       });
       window.filePickerProvider.then(function (result) {
         var imageUrl = result.data[0].url;
+        var pattern = /[?&]size=/;
 
-        if (imageUrl.indexOf('?size=') === -1 && imageUrl.indexOf('&size=') === -1) {
+        if (!pattern.test(url)) {
           var params = imageUrl.substring(1).split('?');
-
-          if (params.length > 1) {
-            imageUrl = imageUrl + '&size=large';
-          } else {
-            imageUrl = imageUrl + '?size=large';
-          }
+          imageUrl += (params.length > 1 ? '&' : '?') + 'size=large';
         }
 
         result.data[0].url = imageUrl;
