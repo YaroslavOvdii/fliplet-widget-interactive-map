@@ -55,6 +55,15 @@ Fliplet.InteractiveMap.component('map-panel', {
       })
 
       window.filePickerProvider.then((result) => {
+        let imageUrl = result.data[0].url
+        const pattern = /[?&]size=/
+
+        if (!pattern.test(url)) {
+          const params = imageUrl.substring(1).split('?');
+          imageUrl += (params.length > 1 ? '&' : '?') + 'size=large'
+        }
+
+        result.data[0].url = imageUrl
         this.image = result.data[0]
         this.onInputData(true)
         window.filePickerProvider = null

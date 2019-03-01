@@ -152,6 +152,15 @@ Fliplet.InteractiveMap.component('map-panel', {
         }
       });
       window.filePickerProvider.then(function (result) {
+        var imageUrl = result.data[0].url;
+        var pattern = /[?&]size=/;
+
+        if (!pattern.test(url)) {
+          var params = imageUrl.substring(1).split('?');
+          imageUrl += (params.length > 1 ? '&' : '?') + 'size=large';
+        }
+
+        result.data[0].url = imageUrl;
         _this.image = result.data[0];
 
         _this.onInputData(true);
