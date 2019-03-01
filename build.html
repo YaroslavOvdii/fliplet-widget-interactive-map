@@ -19,10 +19,10 @@
       </div>
       <div class="interactive-map-label-cancel" @click.prevent="removeSelectedMarker"><i class="fa fa-times"></i></div>
     </div>
-    <div class="interactive-map-search-icon" v-bind:class="{ 'active': mappedMarkerData && mappedMarkerData.length, 'hidden': mappedMarkerData && !mappedMarkerData.length }" @click.prevent="toggleSearchOverlay">
+    <div v-if="mappedMarkerData && mappedMarkerData.length" class="interactive-map-search-icon active" @click.prevent="toggleSearchOverlay">
       <i class="fa fa-search"></i>
     </div>
-    <div class="maps-button" v-bind:class="{ 'active': selectedMapData && selectedMapData.name && maps.length > 1, 'hidden': maps.length <= 1 }" v-if="selectedMapData && selectedMapData.name" @click.prevent="toggleMapOverlay">
+    <div v-if="maps.length > 1" class="maps-button" v-bind:class="{ 'active': selectedMapData && selectedMapData.name }" v-if="selectedMapData && selectedMapData.name" @click.prevent="toggleMapOverlay">
       <i class="fa fa-map-o"></i>
       <div class="maps-button-text"><p>\{{ selectedMapData.name }}</p></div>
       <i class="fa fa-bars"></i>
