@@ -316,25 +316,18 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
         this.setActiveMap(mapIndex, true);
         this.setActiveMarker(markerIndex);
       },
-      selectMarkerOnStart: function selectMarkerOnStart() {
-        var _this6 = this;
-
+      selectMarkerOnStart: function selectMarkerOnStart(options) {
         var markerIndex = undefined;
 
-        if (!_.hasIn(this.startOnMarker, 'id') && !_.hasIn(this.startOnMarker, 'name')) {
-          this.$nextTick(this.setupFlPanZoom);
-          return;
-        }
-
-        if (_.hasIn(this.startOnMarker, 'id')) {
+        if (_.hasIn(options, 'markerId')) {
           markerIndex = _.findIndex(this.mappedMarkerData, function (o) {
-            return o.id == _this6.startOnMarker.id;
+            return o.id == options.markerId;
           });
         }
 
-        if (_.hasIn(this.startOnMarker, 'name')) {
+        if (_.hasIn(options, 'markerName')) {
           markerIndex = _.findIndex(this.mappedMarkerData, function (o) {
-            return o.data.name == _this6.startOnMarker.name;
+            return o.data.name == options.markerName;
           });
         }
 
@@ -347,29 +340,22 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
         this.setActiveMap(mapIndex, true);
         this.setActiveMarker(markerIndex);
       },
-      selectMapOnStart: function selectMapOnStart() {
-        var _this7 = this;
-
-        if (!_.hasIn(this.startOnMap, 'name')) {
-          this.$nextTick(this.setupFlPanZoom);
-          return;
-        }
-
+      selectMapOnStart: function selectMapOnStart(options) {
         var mapIndex = _.findIndex(this.maps, function (o) {
-          return o.name == _this7.startOnMap.name;
+          return o.name == options.mapName;
         });
 
         this.setActiveMap(mapIndex);
       },
       removeSelectedMarker: function removeSelectedMarker() {
-        var _this8 = this;
+        var _this6 = this;
 
         this.selectedMarkerToggle = false; // Wait for animation
 
         setTimeout(function () {
           // Remove any active marker
           $('.marker').removeClass('active');
-          _this8.selectedMarkerData = undefined;
+          _this6.selectedMarkerData = undefined;
         }, 250);
       },
       closeMapsOverlay: function closeMapsOverlay() {
@@ -397,18 +383,12 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
         $(selector).find('.interactive-maps-search-overlay')[forceOpen ? 'addClass' : 'removeClass']('overlay-open');
       },
       onLabelClick: function onLabelClick() {
-        var _this9 = this;
-
-        Fliplet.Hooks.run('flInteractiveMapOnLabelClick', {
+        Fliplet.Hooks.run('flInteractiveGraphicsLabelClick', {
           selectedMarker: this.selectedMarkerData,
           config: this,
           id: widgetData.id,
           uuid: widgetData.uuid,
           container: $(selector)
-        }).then(function () {
-          if (_this9.labelAction) {
-            _this9.labelAction();
-          }
         });
       },
       fetchData: function fetchData(options) {
@@ -429,49 +409,55 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
         });
       },
       init: function init() {
-        var _this10 = this;
+        var _this7 = this;
 
         var cache = {
           offline: true
         };
-        return Fliplet.Hooks.run('flInteractiveMapBeforeGetData', {
+        return Fliplet.Hooks.run('flInteractiveGraphicsBeforeGetData', {
           config: this,
           id: widgetData.id,
           uuid: widgetData.uuid,
           container: $(selector)
         }).then(function () {
-          if (_this10.getData) {
-            _this10.fetchData = _this10.getData;
+          if (_this7.getData) {
+            _this7.fetchData = _this7.getData;
 
-            if (_this10.hasOwnProperty('cache')) {
-              cache.offline = _this10.cache;
+            if (_this7.hasOwnProperty('cache')) {
+              cache.offline = _this7.cache;
             }
           }
 
-          return _this10.fetchData(cache);
+          return _this7.fetchData(cache);
         }).then(function (dsData) {
-          _this10.markersData = dsData; // Ordering and take into account numbers on the string
+          _this7.markersData = dsData; // Ordering and take into account numbers on the string
 
-          _this10.mappedMarkerData = _this10.mapMarkerData().slice().sort(function (a, b) {
+          _this7.mappedMarkerData = _this7.mapMarkerData().slice().sort(function (a, b) {
             return a.data.name.localeCompare(b.data.name, undefined, {
               numeric: true
             });
           });
-          return Fliplet.Hooks.run('flInteractiveMapBeforeRenderMap', {
-            config: _this10,
+          return Fliplet.Hooks.run('flInteractiveGraphicsBeforeRender', {
+            config: _this7,
             id: widgetData.id,
             uuid: widgetData.uuid,
-            container: $(selector)
+            container: $(selector),
+            markers: _this7.mappedMarkerData
           });
-        }).then(function () {
-          _this10.searchMarkerData = _.cloneDeep(_this10.mappedMarkerData); // Check if startOnMarker is set
+        }).then(function (response) {
+          _this7.searchMarkerData = _.cloneDeep(_this7.mappedMarkerData);
 
-          if (_this10.startOnMarker) {
-            _this10.selectMarkerOnStart();
-          } else if (_this10.startOnMap) {
-            _this10.selectMapOnStart();
-          } else {
-            _this10.$nextTick(_this10.setupFlPanZoom);
+          if (!_.hasIn(response[0], 'markerId') && !_.hasIn(response[0], 'markerName') && !_.hasIn(response[0], 'mapName')) {
+            _this7.$nextTick(_this7.setupFlPanZoom);
+
+            return;
+          } // Check if it should start with a specific marker selected or select a map
+
+
+          if (_.hasIn(response[0], 'markerId') || _.hasIn(response[0], 'markerName')) {
+            _this7.selectMarkerOnStart(response[0]);
+          } else if (_.hasIn(response[0], 'mapName')) {
+            _this7.selectMapOnStart(response[0]);
           }
         });
       }

@@ -191,20 +191,15 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
         this.setActiveMap(mapIndex, true)
         this.setActiveMarker(markerIndex)
       },
-      selectMarkerOnStart() {
+      selectMarkerOnStart(options) {
         let markerIndex = undefined
 
-        if (!_.hasIn(this.startOnMarker, 'id') && !_.hasIn(this.startOnMarker, 'name')) {
-          this.$nextTick(this.setupFlPanZoom)
-          return
+        if (_.hasIn(options, 'markerId')) {
+          markerIndex = _.findIndex(this.mappedMarkerData, (o) => { return o.id == options.markerId })
         }
 
-        if (_.hasIn(this.startOnMarker, 'id')) {
-          markerIndex = _.findIndex(this.mappedMarkerData, (o) => { return o.id == this.startOnMarker.id })
-        }
-
-        if (_.hasIn(this.startOnMarker, 'name')) {
-          markerIndex = _.findIndex(this.mappedMarkerData, (o) => { return o.data.name == this.startOnMarker.name })
+        if (_.hasIn(options, 'markerName')) {
+          markerIndex = _.findIndex(this.mappedMarkerData, (o) => { return o.data.name == options.markerName })
         }
 
         const mapName = this.mappedMarkerData[markerIndex].data.map
@@ -213,13 +208,8 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
         this.setActiveMap(mapIndex, true)
         this.setActiveMarker(markerIndex)
       },
-      selectMapOnStart() {
-        if (!_.hasIn(this.startOnMap, 'name')) {
-          this.$nextTick(this.setupFlPanZoom)
-          return
-        }
-
-        const mapIndex = _.findIndex(this.maps, (o) => { return o.name == this.startOnMap.name })
+      selectMapOnStart(options) {
+        const mapIndex = _.findIndex(this.maps, (o) => { return o.name == options.mapName })
         this.setActiveMap(mapIndex)
       },
       removeSelectedMarker() {
@@ -263,10 +253,6 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
           id: widgetData.id,
           uuid: widgetData.uuid,
           container: $(selector)
-        }).then(() => {
-          if (this.labelAction) {
-            this.labelAction()
-          }
         })
       },
       fetchData(options) {
@@ -320,16 +306,19 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
             container: $(selector),
             markers: this.mappedMarkerData
           })
-        }).then(() => {
+        }).then((response) => {
           this.searchMarkerData = _.cloneDeep(this.mappedMarkerData)
 
-          // Check if startOnMarker is set
-          if (this.startOnMarker) {
-            this.selectMarkerOnStart()
-          } else if (this.startOnMap) {
-            this.selectMapOnStart()
-          } else {
+          if (!_.hasIn(response[0], 'markerId') && !_.hasIn(response[0], 'markerName') && !_.hasIn(response[0], 'mapName')) {
             this.$nextTick(this.setupFlPanZoom)
+            return
+          }
+
+          // Check if it should start with a specific marker selected or select a map
+          if (_.hasIn(response[0], 'markerId') || _.hasIn(response[0], 'markerName')) {
+            this.selectMarkerOnStart(response[0])
+          } else if (_.hasIn(response[0], 'mapName')) {
+            this.selectMapOnStart(response[0])
           }
         })
       }
