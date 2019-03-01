@@ -257,7 +257,7 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
         $(selector).find('.interactive-maps-search-overlay')[forceOpen ? 'addClass' : 'removeClass']('overlay-open')
       },
       onLabelClick() {
-        Fliplet.Hooks.run('flInteractiveMapOnLabelClick', {
+        Fliplet.Hooks.run('flInteractiveGraphicsLabelClick', {
           selectedMarker: this.selectedMarkerData,
           config: this,
           id: widgetData.id,
@@ -293,7 +293,7 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
       init() {
         const cache = { offline: true }
 
-        return Fliplet.Hooks.run('flInteractiveMapBeforeGetData', {
+        return Fliplet.Hooks.run('flInteractiveGraphicsBeforeGetData', {
           config: this,
           id: widgetData.id,
           uuid: widgetData.uuid,
@@ -313,7 +313,7 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
           // Ordering and take into account numbers on the string
           this.mappedMarkerData = this.mapMarkerData().slice().sort((a,b) => a.data.name.localeCompare(b.data.name, undefined, { numeric: true }))
 
-          return Fliplet.Hooks.run('flInteractiveMapBeforeRenderMap', {
+          return Fliplet.Hooks.run('flInteractiveGraphicsBeforeRender', {
             config: this,
             id: widgetData.id,
             uuid: widgetData.uuid,
