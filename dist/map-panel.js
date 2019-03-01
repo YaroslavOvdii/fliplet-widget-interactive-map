@@ -152,7 +152,19 @@ Fliplet.InteractiveMap.component('map-panel', {
         }
       });
       window.filePickerProvider.then(function (result) {
-        result.data[0].url = result.data[0].url + '?size=large';
+        var imageUrl = result.data[0].url;
+
+        if (imageUrl.indexOf('?size=') === -1 && imageUrl.indexOf('&size=') === -1) {
+          var params = imageUrl.substring(1).split('?');
+
+          if (params.length > 1) {
+            imageUrl = imageUrl + '&size=large';
+          } else {
+            imageUrl = imageUrl + '?size=large';
+          }
+        }
+
+        result.data[0].url = imageUrl;
         _this.image = result.data[0];
 
         _this.onInputData(true);
