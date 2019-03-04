@@ -3,7 +3,7 @@
     <div class="map-wrapper-holder">
       <div class="map-wrapper" v-for="(map, index) in maps" v-bind:class="{ 'active': selectedMapData && map.id === selectedMapData.id && imageLoaded }">
         <div class="map-container" :id="'map-' + map.id">
-          <img v-if="map.image" class="map-image" :src="map.image.url"/>
+          <img v-show="map.image" class="map-image" :src="map.image.url"/>
         </div>
       </div>
     </div>
@@ -22,7 +22,7 @@
     <div v-if="mappedMarkerData && mappedMarkerData.length" class="interactive-map-search-icon active" @click.prevent="toggleSearchOverlay">
       <i class="fa fa-search"></i>
     </div>
-    <div v-if="maps.length > 1" class="maps-button" v-bind:class="{ 'active': selectedMapData && selectedMapData.name }" v-if="selectedMapData && selectedMapData.name" @click.prevent="toggleMapOverlay">
+    <div v-if="maps.length > 1 && selectedMapData && selectedMapData.name" class="maps-button" v-bind:class="{ 'active': selectedMapData && selectedMapData.name }" @click.prevent="toggleMapOverlay">
       <i class="fa fa-map-o"></i>
       <div class="maps-button-text"><p>\{{ selectedMapData.name }}</p></div>
       <i class="fa fa-bars"></i>

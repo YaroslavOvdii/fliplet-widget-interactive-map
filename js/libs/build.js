@@ -5,7 +5,7 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
     el: $(selector)[0],
     data() {
       return {
-        containsData: widgetData.maps && widgetData.maps.length,
+        containsData: !!(widgetData.maps && widgetData.maps.length),
         maps: widgetData.maps && widgetData.maps.length ? widgetData.maps : [],
         markerStyles: widgetData.markers && widgetData.markers.length ? widgetData.markers : [],
         markersDataSourceId: widgetData.markersDataSourceId || undefined,
@@ -309,7 +309,7 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
         }).then((response) => {
           this.searchMarkerData = _.cloneDeep(this.mappedMarkerData)
 
-          if (!_.hasIn(response[0], 'markerId') && !_.hasIn(response[0], 'markerName') && !_.hasIn(response[0], 'mapName')) {
+          if (!response.length) {
             this.$nextTick(this.setupFlPanZoom)
             return
           }
@@ -319,6 +319,8 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
             this.selectMarkerOnStart(response[0])
           } else if (_.hasIn(response[0], 'mapName')) {
             this.selectMapOnStart(response[0])
+          } else {
+            this.$nextTick(this.setupFlPanZoom)
           }
         })
       }
