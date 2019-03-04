@@ -155,7 +155,7 @@ Fliplet.InteractiveMap.component('map-panel', {
         var imageUrl = result.data[0].url;
         var pattern = /[?&]size=/;
 
-        if (!pattern.test(url)) {
+        if (!pattern.test(imageUrl)) {
           var params = imageUrl.substring(1).split('?');
           imageUrl += (params.length > 1 ? '&' : '?') + 'size=large';
         }
