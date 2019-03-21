@@ -481,9 +481,6 @@ Fliplet.InteractiveMap.component('add-markers', {
           if (marker.data.map === _this7.selectedMarkerData.map.name) {
             markerElem = $("<div id='" + marker.id + "' class='marker' data-name='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + ";'></i></div></div>");
             _this7.markerElemHandler = new Hammer(markerElem.get(0));
-
-            _this7.markerElemHandler.on('tap', _this7.onMarkerHandler);
-
             createdMarkers.push(Fliplet.UI.PanZoom.Markers.create(markerElem, {
               x: marker.data.positionX,
               y: marker.data.positionY,
@@ -511,7 +508,6 @@ Fliplet.InteractiveMap.component('add-markers', {
         var markersLength = this.flPanZoomInstances[options.mapId].markers.getAll().length;
         markerElem = $("<div id='" + options.id + "' class='marker' data-name='" + options.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + options.iconSize + ";'><i class='" + options.icon + "' style='color: " + options.iconColor + "; font-size: " + options.iconSize + ";'></i><div class='active-state'><i class='" + options.icon + "' style='color: " + options.iconColor + ";'></i></div></div>");
         this.markerElemHandler = new Hammer(markerElem.get(0));
-        this.markerElemHandler.on('tap', this.onMarkerHandler);
         createdMarkers.push(Fliplet.UI.PanZoom.Markers.create(markerElem, {
           x: options.x,
           y: options.y,
@@ -545,8 +541,6 @@ Fliplet.InteractiveMap.component('add-markers', {
           return _this7.addNewMarker(options);
         });
       }
-
-      this.markerElemHandler.on('tap', this.onMarkerHandler);
     },
     updateMarkerCoordinates: function updateMarkerCoordinates(coordinates) {
       var _this8 = this;
@@ -600,14 +594,6 @@ Fliplet.InteractiveMap.component('add-markers', {
           id: markerId,
           existingMarker: markerFound
         });
-      }
-    },
-    onMarkerHandler: function onMarkerHandler(e) {
-      var markers = this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll();
-      var markerId = $(e.target).attr('id');
-
-      if (markerId && markerId === this.selectedMarkerData.marker.id) {
-        this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.remove(markerId, true);
       }
     },
     selectPinchMarker: function selectPinchMarker() {
