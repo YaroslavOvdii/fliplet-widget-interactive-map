@@ -147,17 +147,31 @@ const app = new Vue({
       this.checkErrorStates()
     },
     openAddMarkers() {
+      this.hasError = false
+      this.hasErrorOnSave = false
+
+      // Error checking
+      if (!this.maps.length) {
+        this.hasError = {
+          message: 'You need to add at least one map before continuing.'
+        }
+        return
+      }
+      // Check if maps have images
+      const mapsWithoutImages = _.filter(this.maps, (map) => {
+        return typeof map.image === 'undefined'
+      })
+      if (mapsWithoutImages.length) {
+        this.hasError = {
+          message: 'You need to select an image for each map you have created before continuing.'
+        }
+        return
+      }
+
       if (!this.markers.length) {
         this.addMarker()
       }
 
-      if (!this.maps.length || !this.markers.length) {
-        this.hasError = true
-        return
-      }
-      
-      this.hasError = false
-      this.hasErrorOnSave = false
       this.prepareToSaveData(true)
       this.showAddMarkersUI = true
       Fliplet.Studio.emit('widget-mode', this.settings.savedData ? 'full-screen' : 'normal')
@@ -171,18 +185,38 @@ const app = new Vue({
       this.prepareToSaveData(true, true)
     },
     prepareToSaveData(stopComplete, imageSaved) {
+      this.hasError = false
+      this.hasErrorOnSave = false
+
       if (!stopComplete && !this.maps.length) {
-        this.hasErrorOnSave = true
+        this.hasErrorOnSave = {
+          message: 'You need to add at least one map to save and close.'
+        }
         return
       }
 
       if (stopComplete && !imageSaved && (!this.maps.length || !this.markers.length)) {
-        this.hasError = true
+        this.hasError = {
+          message: 'You need to add at least one map before continuing.'
+        }
         return
       }
 
-      this.hasError = false
-      this.hasErrorOnSave = false
+      // Check if maps have images
+      const mapsWithoutImages = _.filter(this.maps, (map) => {
+        return typeof map.image === 'undefined'
+      })
+      if (!stopComplete && mapsWithoutImages.length) {
+        this.hasErrorOnSave = {
+          message: 'You need to select an image for each map you have created to save and close.'
+        }
+        return
+      } else if (stopComplete && mapsWithoutImages.length) {
+        this.hasError = {
+          message: 'You need to select an image for each map you have created before continuing.'
+        }
+        return
+      }
 
       // Mark 'isFromNew' as false
       this.maps.forEach((map) => {

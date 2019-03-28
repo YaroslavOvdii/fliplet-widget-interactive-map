@@ -52,8 +52,6 @@
           </div>
           <div class="col-sm-8">
             <div class="btn btn-default" @click.prevent="openAddMarkers">Mark map(s)</div>
-            <p v-if="hasError" class="text-danger">You need to add at least one map before continuing.</p>
-            <p v-if="hasErrorOnSave" class="text-danger">You need to add at least one map to save and close.</p>
           </div>
         </div>
       </form>
@@ -80,4 +78,9 @@
       }"></component>
     </div>
   </main>
+
+  <div v-if="hasError || hasErrorOnSave" class="errors-holder">
+    <p v-if="hasError" class="text-danger">\{{ hasError.message }}</p>
+    <p v-if="hasErrorOnSave" class="text-danger">\{{ hasErrorOnSave.message }}</p>
+  </div>
 </div>
