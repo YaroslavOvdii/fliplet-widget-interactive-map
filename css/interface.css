@@ -917,3 +917,20 @@ header .title-holder p {
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
 }
+
+.errors-holder {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 15px;
+  background-color: #eae9ec;
+}
+
+.errors-holder p {
+  margin: 0;
+}
+
+.is-loading .errors-holder {
+  display: none;
+}
