@@ -237,6 +237,9 @@ var app = new Vue({
       var _this3 = this;
 
       this.maps.forEach(function (panel, index) {
+        panel.error = '';
+        Vue.set(_this3.maps, index, panel);
+
         if (panelData.name == panel.name && panelData.id !== panel.id) {
           panelData.error = 'Maps must have different names';
         }
@@ -284,6 +287,18 @@ var app = new Vue({
       if (mapsWithoutImages.length) {
         this.hasError = {
           message: 'You need to select an image for each map you have created before continuing.'
+        };
+        return;
+      } // Check if maps have same name
+
+
+      var mapsWithSameName = _.filter(this.maps, function (map) {
+        return typeof map.error !== 'undefined' && map.error !== '';
+      });
+
+      if (mapsWithSameName.length) {
+        this.hasError = {
+          message: 'Maps must have different names.'
         };
         return;
       }
