@@ -278,7 +278,7 @@ Fliplet.InteractiveMap.component('add-markers', {
         marker.data.size = marker.data.size == '' ? _this3.allMarkerStyles[0].size : marker.data.size;
         Vue.set(_this3.mappedMarkerData, index, marker);
 
-        _this3.updateMarker(marker.data, index);
+        _this3.updateMarker(marker.data, index, true);
       });
     },
     setActiveMarker: function setActiveMarker(index, forced) {
@@ -292,8 +292,8 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.saveDebounced();
       this.setupFlPanZoom();
     },
-    updateMarker: function updateMarker(marker, index) {
-      this.mappedMarkerData[index].data.type = marker.name;
+    updateMarker: function updateMarker(marker, index, fromCheckedData) {
+      this.mappedMarkerData[index].data.type = fromCheckedData ? marker.type : marker.name;
       this.mappedMarkerData[index].data.icon = marker.icon;
       this.mappedMarkerData[index].data.color = marker.color;
       this.mappedMarkerData[index].data.size = marker.size;
