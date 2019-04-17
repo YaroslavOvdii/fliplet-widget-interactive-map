@@ -43,7 +43,7 @@
           </template>
         </div>
       </div>
-      <div v-if="!savedData">
+      <template v-if="!savedData">
         <div class="form-group clearfix">
           <div class="col-xs-12 control-label">
             <label>Marker name field</label>
@@ -90,8 +90,8 @@
             <p v-if="dsConfigError" class="text-danger">You need to fill in all the above fields.</p>
           </div>
         </div>
-      </div>
-      <div v-else class="markers-ui-wrapper">
+      </template>
+      <template v-else>
         <div class="form-group clearfix markers-ui-holder">
           <div class="col-xs-12 control-label">
             <label>Configure the markers</label>
@@ -159,7 +159,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </template>
     </div>
     <div class="settings-buttons-wrapper" v-if="savedData">
       <div class="btn btn-secondary" @click.prevent="addNewMarker">Add new marker</div>
