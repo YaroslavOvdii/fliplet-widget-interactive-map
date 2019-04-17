@@ -131,15 +131,16 @@ Fliplet.InteractiveMap.component('add-markers', {
     mapMarkerData() {
       const newMarkerData = this.markersData.map((marker) => {
         const markerData = _.find(this.allMarkerStyles, { name: marker.data[this.markerTypeColumn] })
+        const mapData = _.find(this.widgetData.maps, { name: marker.data[this.markerMapColumn] })
         return {
           id: marker.id,
           data: {
             name: marker.data[this.markerNameColumn] || 'Data source marker',
-            map: marker.data[this.markerMapColumn] || this.widgetData.maps[0].name,
-            type: marker.data[this.markerTypeColumn] || this.allMarkerStyles[0].name,
-            icon: markerData ? markerData.icon : this.allMarkerStyles[0].icon,
-            color: markerData ? markerData.color : this.allMarkerStyles[0].color,
-            size: markerData ? markerData.size : this.allMarkerStyles[0].size,
+            map: mapData ? mapData.name : '',
+            type: markerData ? markerData.name : '',
+            icon: markerData ? markerData.icon : '',
+            color: markerData ? markerData.color : '',
+            size: markerData ? markerData.size : '',
             positionX: marker.data[this.markerXPositionColumn] || '100',
             positionY: marker.data[this.markerYPositionColumn] || '100',
             updateName: false,
@@ -149,6 +150,22 @@ Fliplet.InteractiveMap.component('add-markers', {
       })
 
       return newMarkerData
+    },
+    checkMappedData() {
+      this.mappedMarkerData.forEach((marker, index) => {
+        marker.data.map = marker.data.map == '' ? this.widgetData.maps[0].name : marker.data.map
+        Vue.set(this.mappedMarkerData, index, marker)
+        this.updateMap(marker.data.map, index)
+      })
+
+      this.mappedMarkerData.forEach((marker, index) => {
+        marker.data.type = marker.data.type == '' ? this.allMarkerStyles[0].name : marker.data.type
+        marker.data.icon = marker.data.icon == '' ? this.allMarkerStyles[0].icon : marker.data.icon
+        marker.data.color = marker.data.color == '' ? this.allMarkerStyles[0].color : marker.data.color
+        marker.data.size = marker.data.size == '' ? this.allMarkerStyles[0].size : marker.data.size
+        Vue.set(this.mappedMarkerData, index, marker)
+        this.updateMarker(marker.data, index)
+      })
     },
     setActiveMarker(index, forced) {
       if (this.activeMarker !== index || forced) {
@@ -622,7 +639,7 @@ Fliplet.InteractiveMap.component('add-markers', {
     this.markersData = await this.getMarkersData()
     this.isLoading = false
     this.mappedMarkerData = this.mapMarkerData()
-
+    
     Fliplet.Studio.onMessage((event) => {
       if (event.data && event.data.event === 'overlay-close' && event.data.data && event.data.data.dataSourceId) {
         this.reloadDataSources()
@@ -633,6 +650,7 @@ Fliplet.InteractiveMap.component('add-markers', {
           .then((data) => {
             this.markersData = data
             this.mappedMarkerData = this.mapMarkerData()
+            this.checkMappedData()
             this.saveDebounced()
             this.setupFlPanZoom()
           })
@@ -644,7 +662,10 @@ Fliplet.InteractiveMap.component('add-markers', {
   },
   mounted() {
     // vm.$nextTick is not enough
-    setTimeout(this.setupFlPanZoom, 1000)
+    setTimeout(() => {
+      this.setupFlPanZoom()
+      this.checkMappedData()
+    }, 1000)
   },
   destroyed() {
     Fliplet.InteractiveMap.off('add-markers-save', this.saveData)
