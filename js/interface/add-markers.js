@@ -439,6 +439,9 @@ Fliplet.InteractiveMap.component('add-markers', {
     onTapHandler(e) {
       const markers = this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll()
 
+      
+
+      // If user click somewhere on the map
       if (!$(e.target).hasClass('marker')) {
         // Find a marker
         let markerId = undefined
@@ -464,6 +467,13 @@ Fliplet.InteractiveMap.component('add-markers', {
           id: markerId,
           existingMarker: markerFound
         })
+      } else {
+        // If user clicks on a marker
+        const markerName = $(e.target).data('name')
+        const markerIndex = _.findIndex(this.mappedMarkerData, (marker) => {
+          return marker.data.name == markerName
+        })
+        this.setActiveMarker(markerIndex, true)
       }
     },
     selectPinchMarker() {

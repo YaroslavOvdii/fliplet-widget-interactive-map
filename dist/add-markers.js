@@ -566,7 +566,7 @@ Fliplet.InteractiveMap.component('add-markers', {
     onTapHandler: function onTapHandler(e) {
       var _this9 = this;
 
-      var markers = this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll();
+      var markers = this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll(); // If user click somewhere on the map
 
       if (!$(e.target).hasClass('marker')) {
         // Find a marker
@@ -594,6 +594,15 @@ Fliplet.InteractiveMap.component('add-markers', {
           id: markerId,
           existingMarker: markerFound
         });
+      } else {
+        // If user clicks on a marker
+        var markerName = $(e.target).data('name');
+
+        var _markerIndex = _.findIndex(this.mappedMarkerData, function (marker) {
+          return marker.data.name == markerName;
+        });
+
+        this.setActiveMarker(_markerIndex, true);
       }
     },
     selectPinchMarker: function selectPinchMarker() {
