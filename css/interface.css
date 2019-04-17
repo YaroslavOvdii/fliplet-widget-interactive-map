@@ -359,6 +359,8 @@ header .title-holder p {
 .marker-settings-wrapper {
   margin: 0 -15px;
   height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
 }
 
 .marker-settings-wrapper .button-wrapper .btn + .btn {
@@ -539,13 +541,14 @@ header .title-holder p {
 }
 
 .markers-ui-holder {
-  height: 100%;
+  display: flex;
+  flex-flow: column nowrap;
   margin: 0;
 }
 
 .markers-ui {
+  flex: 1;
   padding: 0;
-  height: calc(100% - 25px);
   overflow: auto;
 }
 
