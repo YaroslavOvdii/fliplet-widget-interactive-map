@@ -437,34 +437,42 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.pzHandler.off('tap', this.onTapHandler)
     },
     onTapHandler(e) {
-      const markers = this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll()
-
-      if (!$(e.target).hasClass('marker')) {
-        // Find a marker
-        let markerId = undefined
-        const markerIndex = _.findIndex(markers, (marker) => {
-          return marker.vars.id === this.selectedMarkerData.marker.id
+      if ($(e.target).hasClass('marker')) {
+        // If user clicks on a marker
+        const markerName = $(e.target).data('name')
+        const markerIndex = _.findIndex(this.mappedMarkerData, (marker) => {
+          return marker.data.name == markerName
         })
-        const markerFound = markers[markerIndex]
-
-        if (markerFound) {
-          markerId = markerFound.vars.id
-        }
-
-        const clientRect = this.pzElement.get(0).getBoundingClientRect()
-        const elemPosX = clientRect.left
-        const elemPosY = clientRect.top
-        const center = e.center
-        const x = (center.x - elemPosX) / (this.flPanZoomInstances[this.selectedMarkerData.map.id].getBaseZoom() * this.flPanZoomInstances[this.selectedMarkerData.map.id].getCurrentZoom())
-        const y = (center.y - elemPosY) / (this.flPanZoomInstances[this.selectedMarkerData.map.id].getBaseZoom() * this.flPanZoomInstances[this.selectedMarkerData.map.id].getCurrentZoom())
-
-        this.addMarkers(false, {
-          x: x,
-          y: y,
-          id: markerId,
-          existingMarker: markerFound
-        })
+        this.setActiveMarker(markerIndex, true)
+        return
       }
+
+      // If user click somewhere on the map
+      // Find a marker
+      const markers = this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll()
+      let markerId = undefined
+      const markerIndex = _.findIndex(markers, (marker) => {
+        return marker.vars.id === this.selectedMarkerData.marker.id
+      })
+      const markerFound = markers[markerIndex]
+
+      if (markerFound) {
+        markerId = markerFound.vars.id
+      }
+
+      const clientRect = this.pzElement.get(0).getBoundingClientRect()
+      const elemPosX = clientRect.left
+      const elemPosY = clientRect.top
+      const center = e.center
+      const x = (center.x - elemPosX) / (this.flPanZoomInstances[this.selectedMarkerData.map.id].getBaseZoom() * this.flPanZoomInstances[this.selectedMarkerData.map.id].getCurrentZoom())
+      const y = (center.y - elemPosY) / (this.flPanZoomInstances[this.selectedMarkerData.map.id].getBaseZoom() * this.flPanZoomInstances[this.selectedMarkerData.map.id].getCurrentZoom())
+
+      this.addMarkers(false, {
+        x: x,
+        y: y,
+        id: markerId,
+        existingMarker: markerFound
+      })
     },
     selectPinchMarker() {
       // Remove any active marker

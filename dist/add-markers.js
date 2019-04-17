@@ -566,35 +566,45 @@ Fliplet.InteractiveMap.component('add-markers', {
     onTapHandler: function onTapHandler(e) {
       var _this9 = this;
 
+      if ($(e.target).hasClass('marker')) {
+        // If user clicks on a marker
+        var markerName = $(e.target).data('name');
+
+        var _markerIndex = _.findIndex(this.mappedMarkerData, function (marker) {
+          return marker.data.name == markerName;
+        });
+
+        this.setActiveMarker(_markerIndex, true);
+        return;
+      } // If user click somewhere on the map
+      // Find a marker
+
+
       var markers = this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.getAll();
+      var markerId = undefined;
 
-      if (!$(e.target).hasClass('marker')) {
-        // Find a marker
-        var markerId = undefined;
+      var markerIndex = _.findIndex(markers, function (marker) {
+        return marker.vars.id === _this9.selectedMarkerData.marker.id;
+      });
 
-        var markerIndex = _.findIndex(markers, function (marker) {
-          return marker.vars.id === _this9.selectedMarkerData.marker.id;
-        });
+      var markerFound = markers[markerIndex];
 
-        var markerFound = markers[markerIndex];
-
-        if (markerFound) {
-          markerId = markerFound.vars.id;
-        }
-
-        var clientRect = this.pzElement.get(0).getBoundingClientRect();
-        var elemPosX = clientRect.left;
-        var elemPosY = clientRect.top;
-        var center = e.center;
-        var x = (center.x - elemPosX) / (this.flPanZoomInstances[this.selectedMarkerData.map.id].getBaseZoom() * this.flPanZoomInstances[this.selectedMarkerData.map.id].getCurrentZoom());
-        var y = (center.y - elemPosY) / (this.flPanZoomInstances[this.selectedMarkerData.map.id].getBaseZoom() * this.flPanZoomInstances[this.selectedMarkerData.map.id].getCurrentZoom());
-        this.addMarkers(false, {
-          x: x,
-          y: y,
-          id: markerId,
-          existingMarker: markerFound
-        });
+      if (markerFound) {
+        markerId = markerFound.vars.id;
       }
+
+      var clientRect = this.pzElement.get(0).getBoundingClientRect();
+      var elemPosX = clientRect.left;
+      var elemPosY = clientRect.top;
+      var center = e.center;
+      var x = (center.x - elemPosX) / (this.flPanZoomInstances[this.selectedMarkerData.map.id].getBaseZoom() * this.flPanZoomInstances[this.selectedMarkerData.map.id].getCurrentZoom());
+      var y = (center.y - elemPosY) / (this.flPanZoomInstances[this.selectedMarkerData.map.id].getBaseZoom() * this.flPanZoomInstances[this.selectedMarkerData.map.id].getCurrentZoom());
+      this.addMarkers(false, {
+        x: x,
+        y: y,
+        id: markerId,
+        existingMarker: markerFound
+      });
     },
     selectPinchMarker: function selectPinchMarker() {
       var _this10 = this;
