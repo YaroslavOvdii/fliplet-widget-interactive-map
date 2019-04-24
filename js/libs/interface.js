@@ -23,7 +23,6 @@ const app = new Vue({
       defaultColumns: flInteractiveMapColumns,
       autoDataSource: widgetData.autoDataSource || false,
       changedDataSource: widgetData.changedDataSource || false,
-      dataSources: [],
       filePickerProvider: null,
       settings: widgetData,
       maps: widgetData.maps || [],
@@ -34,14 +33,6 @@ const app = new Vue({
     }
   },
   methods: {
-    loadDataSources() {
-      return Fliplet.DataSources.get({
-        roles: 'publisher,editor',
-        type: null
-      }, {
-        cache: false
-      })
-    },
     createDataSource() {
       const name = `${this.appName} - Map Markers`
       return Fliplet.DataSources.create({
@@ -282,20 +273,8 @@ const app = new Vue({
       await this.createDataSource()
     }
 
-    // Gets the list of data sources
-    this.dataSources = await this.loadDataSources()
-
     // Switches UI to ready state
     $(selector).removeClass('is-loading')
-
-    Fliplet.Studio.onMessage((event) => {
-      if (event.data
-        && event.data.event === 'overlay-close'
-        && event.data.data
-        && event.data.data.dataSourceId) {
-        this.loadDataSources()
-      }
-    })
 
     Fliplet.Widget.onSaveRequest(() => {
       if (window.filePickerProvider) {
