@@ -139,7 +139,6 @@ var app = new Vue({
       defaultColumns: _config_default_table__WEBPACK_IMPORTED_MODULE_3__["default"],
       autoDataSource: widgetData.autoDataSource || false,
       changedDataSource: widgetData.changedDataSource || false,
-      dataSources: [],
       filePickerProvider: null,
       settings: widgetData,
       maps: widgetData.maps || [],
@@ -150,14 +149,6 @@ var app = new Vue({
     };
   },
   methods: {
-    loadDataSources: function loadDataSources() {
-      return Fliplet.DataSources.get({
-        roles: 'publisher,editor',
-        type: null
-      }, {
-        cache: false
-      });
-    },
     createDataSource: function createDataSource() {
       var _this = this;
 
@@ -416,18 +407,8 @@ var app = new Vue({
               return this.createDataSource();
 
             case 6:
-              _context.next = 8;
-              return this.loadDataSources();
-
-            case 8:
-              this.dataSources = _context.sent;
               // Switches UI to ready state
               $(selector).removeClass('is-loading');
-              Fliplet.Studio.onMessage(function (event) {
-                if (event.data && event.data.event === 'overlay-close' && event.data.data && event.data.data.dataSourceId) {
-                  _this5.loadDataSources();
-                }
-              });
               Fliplet.Widget.onSaveRequest(function () {
                 if (window.filePickerProvider) {
                   window.filePickerProvider.forwardSaveRequest();
@@ -446,7 +427,7 @@ var app = new Vue({
                 _this5.prepareToSaveData();
               });
 
-            case 12:
+            case 8:
             case "end":
               return _context.stop();
           }

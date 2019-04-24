@@ -35,10 +35,6 @@ Fliplet.InteractiveMap.component('add-markers', {
       type: String,
       default: ''
     },
-    dataSources: {
-      type: Array,
-      default: []
-    },
     changedDataSource: {
       type: Boolean,
       default: false
@@ -53,7 +49,8 @@ Fliplet.InteractiveMap.component('add-markers', {
       isLoading: true,
       manualSetSettings: false,
       savedData: this.widgetData.savedData,
-      markersDataSource: _.find(this.dataSources, { id: this.markersDataSourceId }),
+      markersDataSource: undefined,
+      dataSources: undefined,
       dataSourceId: this.markersDataSourceId,
       dataWasChanged: this.changedDataSource,
       dataSourceConnection: undefined,
@@ -75,7 +72,8 @@ Fliplet.InteractiveMap.component('add-markers', {
       saveDebounced: _.debounce(this.saveToDataSource, 1000),
       dsConfigError: false,
       dataSourceToDelete: undefined,
-      showEditMarkerOverlay: false
+      showEditMarkerOverlay: false,
+      fromLoad: false
     }
   },
   computed: {
@@ -86,7 +84,7 @@ Fliplet.InteractiveMap.component('add-markers', {
   watch: {
     markersDataSource(ds, oldDs) {
       // If the user is changes away from the data source the component creates
-      if (!ds || !oldDs || (ds.id !== this.dataSourceId && !this.dataWasChanged)) {
+      if ((!ds || !oldDs || (ds.id !== this.dataSourceId && !this.dataWasChanged)) && !this.fromLoad) {
         return Fliplet.Modal.confirm({
           title: 'Changing data source',
           message: '<p>If you change the data source, the one we created for you will be deleted.<br>Are you sure you want to continue?</p>'
@@ -109,25 +107,24 @@ Fliplet.InteractiveMap.component('add-markers', {
           })
 
           // Resets select fields
-          this.markerNameColumn = ''
-          this.markerMapColumn = ''
-          this.markerTypeColumn = ''
-          this.markerXPositionColumn = ''
-          this.markerYPositionColumn = ''
+          this.resetSelectFields()
         })
       }
 
       this.dataSourceId = ds.id
-
       // Resets select fields
+      this.resetSelectFields()
+      this.fromLoad = false
+    }
+  },
+  methods: {
+    resetSelectFields() {
       this.markerNameColumn = ''
       this.markerMapColumn = ''
       this.markerTypeColumn = ''
       this.markerXPositionColumn = ''
       this.markerYPositionColumn = ''
-    }
-  },
-  methods: {
+    },
     mapMarkerData() {
       const newMarkerData = this.markersData.map((marker) => {
         const markerData = _.find(this.allMarkerStyles, { name: marker.data[this.markerTypeColumn] })
@@ -220,12 +217,19 @@ Fliplet.InteractiveMap.component('add-markers', {
         }
       })
     },
-    reloadDataSources() {
+    reloadDataSources(fromLoad) {
       return Fliplet.DataSources.get({
         roles: 'publisher,editor',
         type: null
       }, {
         cache: false
+      })
+      .then((dataSources) => {
+        if (fromLoad) {
+          this.fromLoad = true
+        }
+
+        return dataSources
       })
     },
     useSettings() {
@@ -627,6 +631,11 @@ Fliplet.InteractiveMap.component('add-markers', {
     }
   },
   async created() {
+    if (!this.dataSources) {
+      this.dataSources = await this.reloadDataSources(true)
+      this.markersDataSource = _.find(this.dataSources, { id: this.markersDataSourceId })
+    }
+
     this.markersData = await this.getMarkersData()
     this.isLoading = false
     this.mappedMarkerData = this.mapMarkerData()
