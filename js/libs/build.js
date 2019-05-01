@@ -81,7 +81,38 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
           }
         })
 
+        // Check if markers have all the necessary info to be shown
+        const markersValidation = this.validateMarkers(newMarkerData)
+        if (!markersValidation) {
+          Fliplet.UI.Toast({
+            message: 'Some markers have missing information and they may not be shown.'
+          })
+        }
+
         return newMarkerData
+      },
+      validateMarkers(markersData) {
+        if (!markersData && !markersData.length) {
+          return false
+        }
+
+        const missingInfo = markersData.some((marker) => {
+          const results = []
+          for (const key in marker.data) {
+            if (!marker.data[key] || marker.data == '') {
+              results.push(false)
+              continue
+            }
+          }
+
+          if (results.length) {
+            return false
+          }
+
+          return true
+        })
+
+        return missingInfo
       },
       setupFlPanZoom() {
         this.selectedMapData = this.maps[this.activeMap]
@@ -89,6 +120,13 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
           ? this.mappedMarkerData[this.activeMarker].data
           : undefined
         this.selectedMarkerToggle = !!this.selectedMarkerData
+
+        // Check if there is a map to initialize
+        if (!this.selectedMapData && !this.selectedMapData.id) {
+          return Fliplet.UI.Toast({
+            message: 'The map couldn\'t be found. Please make sure the maps are configured correctly.'
+          })
+        }
 
         this.pzElement = $('#map-' + this.selectedMapData.id)
 
