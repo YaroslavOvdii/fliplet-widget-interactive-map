@@ -221,13 +221,13 @@ Fliplet.InteractiveMap.component('add-markers', {
     }
   },
   methods: {
-    resetSelectFields: function resetSelectFields(columns) {
-      if (columns && columns.length) {
-        this.markerNameColumn = columns[0] || 'Name';
-        this.markerMapColumn = columns[1] || 'Map name';
-        this.markerTypeColumn = columns[2] || 'Marker style';
-        this.markerXPositionColumn = columns[3] || 'Position X';
-        this.markerYPositionColumn = columns[4] || 'Position Y';
+    resetSelectFields: function resetSelectFields(fromCreate) {
+      if (fromCreate) {
+        this.markerNameColumn = 'Name';
+        this.markerMapColumn = 'Map name';
+        this.markerTypeColumn = 'Marker style';
+        this.markerXPositionColumn = 'Position X';
+        this.markerYPositionColumn = 'Position Y';
         return;
       }
 
@@ -790,7 +790,7 @@ Fliplet.InteractiveMap.component('add-markers', {
                 id: this.markersDataSourceId
               });
               this.$nextTick(function () {
-                _this14.resetSelectFields(_this14.markersDataSource.columns);
+                _this14.resetSelectFields(true);
               });
 
             case 6:

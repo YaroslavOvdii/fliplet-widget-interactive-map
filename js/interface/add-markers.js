@@ -118,13 +118,13 @@ Fliplet.InteractiveMap.component('add-markers', {
     }
   },
   methods: {
-    resetSelectFields(columns) {
-      if (columns && columns.length) {
-        this.markerNameColumn = columns[0] || 'Name'
-        this.markerMapColumn = columns[1] || 'Map name'
-        this.markerTypeColumn = columns[2] || 'Marker style'
-        this.markerXPositionColumn = columns[3] || 'Position X'
-        this.markerYPositionColumn = columns[4] || 'Position Y'
+    resetSelectFields(fromCreate) {
+      if (fromCreate) {
+        this.markerNameColumn = 'Name'
+        this.markerMapColumn = 'Map name'
+        this.markerTypeColumn = 'Marker style'
+        this.markerXPositionColumn = 'Position X'
+        this.markerYPositionColumn = 'Position Y'
         return
       }
 
@@ -644,7 +644,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.dataSources = await this.reloadDataSources(true)
       this.markersDataSource = _.find(this.dataSources, { id: this.markersDataSourceId })
       this.$nextTick(() => {
-        this.resetSelectFields(this.markersDataSource.columns)
+        this.resetSelectFields(true)
       })
     }
 
