@@ -223,11 +223,11 @@ Fliplet.InteractiveMap.component('add-markers', {
   methods: {
     resetSelectFields: function resetSelectFields(columns) {
       if (columns && columns.length) {
-        this.markerNameColumn = columns[0];
-        this.markerMapColumn = columns[1];
-        this.markerTypeColumn = columns[2];
-        this.markerXPositionColumn = columns[3];
-        this.markerYPositionColumn = columns[4];
+        this.markerNameColumn = columns[0] || 'Name';
+        this.markerMapColumn = columns[1] || 'Map name';
+        this.markerTypeColumn = columns[2] || 'Marker style';
+        this.markerXPositionColumn = columns[3] || 'Position X';
+        this.markerYPositionColumn = columns[4] || 'Position Y';
         return;
       }
 
