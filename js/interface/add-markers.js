@@ -118,7 +118,16 @@ Fliplet.InteractiveMap.component('add-markers', {
     }
   },
   methods: {
-    resetSelectFields() {
+    resetSelectFields(fromCreate) {
+      if (fromCreate) {
+        this.markerNameColumn = 'Name'
+        this.markerMapColumn = 'Map name'
+        this.markerTypeColumn = 'Marker style'
+        this.markerXPositionColumn = 'Position X'
+        this.markerYPositionColumn = 'Position Y'
+        return
+      }
+
       this.markerNameColumn = ''
       this.markerMapColumn = ''
       this.markerTypeColumn = ''
@@ -369,7 +378,7 @@ Fliplet.InteractiveMap.component('add-markers', {
 
         this.mappedMarkerData.forEach((marker, index) => {
           if (marker.data.map === this.selectedMarkerData.map.name) {
-            markerElem = $("<div id='" + marker.id + "' class='marker' data-name='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + ";'></i></div></div>")
+            markerElem = $("<div id='" + marker.id + "' class='marker' data-id='" + marker.id + "' data-name='" + marker.data.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + marker.data.size + ";'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + "; font-size: " + marker.data.size + ";'></i><div class='active-state'><i class='" + marker.data.icon + "' style='color: " + marker.data.color + ";'></i></div></div>")
             this.markerElemHandler = new Hammer(markerElem.get(0))
 
             createdMarkers.push(Fliplet.UI.PanZoom.Markers.create(markerElem, { x: marker.data.positionX, y: marker.data.positionY, name: marker.data.name, id: marker.id }))
@@ -389,7 +398,7 @@ Fliplet.InteractiveMap.component('add-markers', {
         })
       } else if (options.singleMarker) {
         const markersLength = this.flPanZoomInstances[options.mapId].markers.getAll().length
-        markerElem = $("<div id='" + options.id + "' class='marker' data-name='" + options.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + options.iconSize + ";'><i class='" + options.icon + "' style='color: " + options.iconColor + "; font-size: " + options.iconSize + ";'></i><div class='active-state'><i class='" + options.icon + "' style='color: " + options.iconColor + ";'></i></div></div>")
+        markerElem = $("<div id='" + options.id + "' class='marker' data-id='" + options.id + "' data-name='" + options.name + "' style='left: -15px; top: -15px; position: absolute; font-size: " + options.iconSize + ";'><i class='" + options.icon + "' style='color: " + options.iconColor + "; font-size: " + options.iconSize + ";'></i><div class='active-state'><i class='" + options.icon + "' style='color: " + options.iconColor + ";'></i></div></div>")
         this.markerElemHandler = new Hammer(markerElem.get(0))
 
         createdMarkers.push(Fliplet.UI.PanZoom.Markers.create(markerElem, { x: options.x, y: options.y, name: options.name, id: options.id }))
@@ -443,9 +452,9 @@ Fliplet.InteractiveMap.component('add-markers', {
     onTapHandler(e) {
       if ($(e.target).hasClass('marker')) {
         // If user clicks on a marker
-        const markerName = $(e.target).data('name')
+        const markerId = $(e.target).data('id')
         const markerIndex = _.findIndex(this.mappedMarkerData, (marker) => {
-          return marker.data.name == markerName
+          return marker.id == markerId
         })
         this.setActiveMarker(markerIndex, true)
         return
@@ -634,6 +643,9 @@ Fliplet.InteractiveMap.component('add-markers', {
     if (!this.dataSources) {
       this.dataSources = await this.reloadDataSources(true)
       this.markersDataSource = _.find(this.dataSources, { id: this.markersDataSourceId })
+      this.$nextTick(() => {
+        this.resetSelectFields(true)
+      })
     }
 
     this.markersData = await this.getMarkersData()
