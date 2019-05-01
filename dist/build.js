@@ -472,18 +472,28 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                if (!this.containsData) {
-                  _context.next = 3;
+                if (!(!this.markersDataSourceId || !this.markerNameColumn || !this.markerMapColumn || !this.markerTypeColumn || !this.markerXPositionColumn || !this.markerYPositionColumn)) {
+                  _context.next = 2;
                   break;
                 }
 
-                _context.next = 3;
+                return _context.abrupt("return", Fliplet.UI.Toast({
+                  message: 'The data source or data source columns are misconfigured.'
+                }));
+
+              case 2:
+                if (!this.containsData) {
+                  _context.next = 5;
+                  break;
+                }
+
+                _context.next = 5;
                 return this.init();
 
-              case 3:
+              case 5:
                 $(selector).removeClass('is-loading');
 
-              case 4:
+              case 6:
               case "end":
                 return _context.stop();
             }
