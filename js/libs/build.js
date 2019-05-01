@@ -82,8 +82,7 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
         })
 
         // Check if markers have all the necessary info to be shown
-        const markersValidation = this.validateMarkers(newMarkerData)
-        if (!markersValidation) {
+        if (!this.validateMarkers(newMarkerData)) {
           Fliplet.UI.Toast({
             message: 'Some markers have missing information and they may not be shown.'
           })
