@@ -189,15 +189,52 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
               positionY: marker.data[_this2.markerYPositionColumn]
             }
           };
-        });
+        }); // Check if markers have all the necessary info to be shown
+
+        if (!this.validateMarkers(newMarkerData)) {
+          Fliplet.UI.Toast({
+            message: 'Some markers have missing information and they may not be shown.'
+          });
+        }
+
         return newMarkerData;
+      },
+      validateMarkers: function validateMarkers(markersData) {
+        if (!markersData && !markersData.length) {
+          return false;
+        }
+
+        var missingInfo = markersData.some(function (marker) {
+          var results = [];
+
+          for (var key in marker.data) {
+            if (!marker.data[key] || marker.data == '') {
+              results.push(false);
+              continue;
+            }
+          }
+
+          if (results.length) {
+            return false;
+          }
+
+          return true;
+        });
+        return missingInfo;
       },
       setupFlPanZoom: function setupFlPanZoom() {
         var _this3 = this;
 
         this.selectedMapData = this.maps[this.activeMap];
         this.selectedMarkerData = this.mappedMarkerData[this.activeMarker] ? this.mappedMarkerData[this.activeMarker].data : undefined;
-        this.selectedMarkerToggle = !!this.selectedMarkerData;
+        this.selectedMarkerToggle = !!this.selectedMarkerData; // Check if there is a map to initialize
+
+        if (!this.selectedMapData && !this.selectedMapData.id) {
+          return Fliplet.UI.Toast({
+            message: 'The map couldn\'t be found. Please make sure the maps are configured correctly.'
+          });
+        }
+
         this.pzElement = $('#map-' + this.selectedMapData.id);
 
         if (_.isEmpty(this.flPanZoomInstances) || !this.flPanZoomInstances[this.selectedMapData.id]) {
@@ -472,18 +509,28 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                if (!this.containsData) {
-                  _context.next = 3;
+                if (!(!this.markersDataSourceId || !this.markerNameColumn || !this.markerMapColumn || !this.markerTypeColumn || !this.markerXPositionColumn || !this.markerYPositionColumn)) {
+                  _context.next = 2;
                   break;
                 }
 
-                _context.next = 3;
+                return _context.abrupt("return", Fliplet.UI.Toast({
+                  message: 'The data source or data source columns are misconfigured.'
+                }));
+
+              case 2:
+                if (!this.containsData) {
+                  _context.next = 5;
+                  break;
+                }
+
+                _context.next = 5;
                 return this.init();
 
-              case 3:
+              case 5:
                 $(selector).removeClass('is-loading');
 
-              case 4:
+              case 6:
               case "end":
                 return _context.stop();
             }

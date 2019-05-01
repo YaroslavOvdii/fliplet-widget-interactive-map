@@ -345,6 +345,22 @@ var app = new Vue({
           message: 'You need to select an image for each map you have created before continuing.'
         };
         return;
+      } // Check if DS info missing
+
+
+      if (!this.settings.markerMapColumn || !this.settings.markerNameColumn || !this.settings.markerTypeColumn || !this.settings.markerXPositionColumn || !this.settings.markerYPositionColumn) {
+        this.hasErrorOnSave = {
+          message: 'Your data source columns are misconfigured. Please make sure you selected a column for each field.'
+        };
+        return;
+      } // Check if DS info missing
+
+
+      if (!this.settings.markersDataSourceId) {
+        this.hasErrorOnSave = {
+          message: 'Your data source is misconfigured. Please make sure you selected and configured one.'
+        };
+        return;
       } // Mark 'isFromNew' as false
 
 
