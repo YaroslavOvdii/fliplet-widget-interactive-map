@@ -229,7 +229,7 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
         this.selectedMarkerData = this.mappedMarkerData[this.activeMarker] ? this.mappedMarkerData[this.activeMarker].data : undefined;
         this.selectedMarkerToggle = !!this.selectedMarkerData; // Check if there is a map to initialize
 
-        if (!this.selectedMapData && !this.selectedMapData.id) {
+        if (!this.selectedMapData || !this.selectedMapData.id) {
           return Fliplet.UI.Toast({
             message: 'The map couldn\'t be found. Please make sure the maps are configured correctly.'
           });

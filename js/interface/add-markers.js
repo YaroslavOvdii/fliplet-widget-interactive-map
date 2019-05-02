@@ -73,7 +73,8 @@ Fliplet.InteractiveMap.component('add-markers', {
       dsConfigError: false,
       dataSourceToDelete: undefined,
       showEditMarkerOverlay: false,
-      fromLoad: false
+      fromLoad: false,
+      interval: null
     }
   },
   computed: {
@@ -112,22 +113,15 @@ Fliplet.InteractiveMap.component('add-markers', {
       }
 
       this.dataSourceId = ds.id
-      // Resets select fields
-      this.resetSelectFields()
+      if (!this.fromLoad) {
+        // Resets select fields
+        this.resetSelectFields()
+      }
       this.fromLoad = false
     }
   },
   methods: {
-    resetSelectFields(fromCreate) {
-      if (fromCreate) {
-        this.markerNameColumn = 'Name'
-        this.markerMapColumn = 'Map name'
-        this.markerTypeColumn = 'Marker style'
-        this.markerXPositionColumn = 'Position X'
-        this.markerYPositionColumn = 'Position Y'
-        return
-      }
-
+    resetSelectFields() {
       this.markerNameColumn = ''
       this.markerMapColumn = ''
       this.markerTypeColumn = ''
@@ -637,20 +631,25 @@ Fliplet.InteractiveMap.component('add-markers', {
       markersData.markers = this.allMarkerStyles
 
       Fliplet.InteractiveMap.emit('add-markers-settings-changed', markersData)
+    },
+    checkReady() {
+      if (!this.isLoading) {
+        this.setupFlPanZoom()
+        clearInterval(this.interval)
+        this.interval = null
+      }
     }
   },
   async created() {
     if (!this.dataSources) {
       this.dataSources = await this.reloadDataSources(true)
       this.markersDataSource = _.find(this.dataSources, { id: this.markersDataSourceId })
-      this.$nextTick(() => {
-        this.resetSelectFields(true)
-      })
     }
 
     this.markersData = await this.getMarkersData()
-    this.isLoading = false
     this.mappedMarkerData = this.mapMarkerData()
+
+    this.isLoading = false
 
     Fliplet.Studio.onMessage((event) => {
       if (event.data && event.data.event === 'overlay-close' && event.data.data && event.data.data.dataSourceId) {
@@ -672,8 +671,11 @@ Fliplet.InteractiveMap.component('add-markers', {
     Fliplet.InteractiveMap.on('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
   },
   mounted() {
-    // vm.$nextTick is not enough
-    setTimeout(this.setupFlPanZoom, 1000)
+    if (!this.isLoading) {
+      this.setupFlPanZoom()
+    } else {
+      this.interval = setInterval(this.checkReady, 500)
+    }
   },
   destroyed() {
     Fliplet.InteractiveMap.off('add-markers-save', this.saveData)
