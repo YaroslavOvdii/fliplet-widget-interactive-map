@@ -200,8 +200,8 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
         return newMarkerData;
       },
       validateMarkers: function validateMarkers(markersData) {
-        if (!markersData && !markersData.length) {
-          return false;
+        if (!markersData || !markersData.length) {
+          return true;
         }
 
         var missingInfo = markersData.some(function (marker) {
@@ -509,8 +509,13 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
+                if (!this.containsData) {
+                  _context.next = 5;
+                  break;
+                }
+
                 if (!(!this.markersDataSourceId || !this.markerNameColumn || !this.markerMapColumn || !this.markerTypeColumn || !this.markerXPositionColumn || !this.markerYPositionColumn)) {
-                  _context.next = 2;
+                  _context.next = 3;
                   break;
                 }
 
@@ -518,12 +523,7 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
                   message: 'The data source or data source columns are misconfigured.'
                 }));
 
-              case 2:
-                if (!this.containsData) {
-                  _context.next = 5;
-                  break;
-                }
-
+              case 3:
                 _context.next = 5;
                 return this.init();
 

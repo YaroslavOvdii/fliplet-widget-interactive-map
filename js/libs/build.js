@@ -91,8 +91,8 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
         return newMarkerData
       },
       validateMarkers(markersData) {
-        if (!markersData && !markersData.length) {
-          return false
+        if (!markersData || !markersData.length) {
+          return true
         }
 
         const missingInfo = markersData.some((marker) => {
@@ -363,18 +363,18 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
       }
     },
     async mounted() {
-      if (!this.markersDataSourceId
+      if (this.containsData) {
+        if (!this.markersDataSourceId
         || !this.markerNameColumn
         || !this.markerMapColumn
         || !this.markerTypeColumn
         || !this.markerXPositionColumn
         || !this.markerYPositionColumn) {
-        return Fliplet.UI.Toast({
-          message: 'The data source or data source columns are misconfigured.'
-        })
-      }
+          return Fliplet.UI.Toast({
+            message: 'The data source or data source columns are misconfigured.'
+          })
+        }
 
-      if (this.containsData) {
         await this.init()
       }
 
