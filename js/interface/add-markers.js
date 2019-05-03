@@ -170,6 +170,14 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.setupFlPanZoom()
     },
     toUpdateName(index, currentName) {
+      // Confirm the marker name if one is still being edited
+      this.mappedMarkerData.forEach((marker, index) => {
+        if (marker.data.updateName) {
+          this.confirmName(index)
+        }
+      })
+
+      // Highlight the new marker name field
       this.mappedMarkerData[index].data.updateName = !this.mappedMarkerData[index].data.updateName
       this.mappedMarkerData[index].data.copyOfName = currentName
       this.$nextTick(() => this.$refs['changename-' + index][0].focus())

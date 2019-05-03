@@ -281,6 +281,13 @@ Fliplet.InteractiveMap.component('add-markers', {
     toUpdateName: function toUpdateName(index, currentName) {
       var _this3 = this;
 
+      // Confirm the marker name if one is still being edited
+      this.mappedMarkerData.forEach(function (marker, index) {
+        if (marker.data.updateName) {
+          _this3.confirmName(index);
+        }
+      }); // Highlight the new marker name field
+
       this.mappedMarkerData[index].data.updateName = !this.mappedMarkerData[index].data.updateName;
       this.mappedMarkerData[index].data.copyOfName = currentName;
       this.$nextTick(function () {
