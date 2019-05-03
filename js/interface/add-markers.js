@@ -170,6 +170,14 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.setupFlPanZoom()
     },
     toUpdateName(index, currentName) {
+      // Confirm the marker name if one is still being edited
+      this.mappedMarkerData.forEach((marker, index) => {
+        if (marker.data.updateName) {
+          this.confirmName(index)
+        }
+      })
+
+      // Highlight the new marker name field
       this.mappedMarkerData[index].data.updateName = !this.mappedMarkerData[index].data.updateName
       this.mappedMarkerData[index].data.copyOfName = currentName
       this.$nextTick(() => this.$refs['changename-' + index][0].focus())
@@ -201,7 +209,7 @@ Fliplet.InteractiveMap.component('add-markers', {
     nameWithId({ name, id }) {
       return `${name} — [${id}]`
     },
-    chooseExistingData() {
+    configureDataSources() {
       this.savedData = false
       Fliplet.Studio.emit('widget-mode', 'normal')
     },
@@ -248,8 +256,11 @@ Fliplet.InteractiveMap.component('add-markers', {
       }
 
       this.dataSourceId = this.markersDataSource.id
-      this.savedData = true
-      Fliplet.Studio.emit('widget-mode', 'full-screen')
+      this.reloadData()
+        .then(() => {
+          this.savedData = true
+          Fliplet.Studio.emit('widget-mode', 'full-screen')
+        })
     },
     onMarkerPanelSettingChanged(panelData) {
       this.allMarkerStyles.forEach((panel, index) => {
@@ -435,6 +446,7 @@ Fliplet.InteractiveMap.component('add-markers', {
           this.mappedMarkerData[index].data.positionY = coordinates.y
         }
       })
+
       this.saveDebounced()
     },
     attachEventHandler() {
@@ -632,6 +644,35 @@ Fliplet.InteractiveMap.component('add-markers', {
 
       Fliplet.InteractiveMap.emit('add-markers-settings-changed', markersData)
     },
+    reloadData() {
+      return this.getMarkersData()
+        .then((data) => {
+          this.fromLoad = true
+          this.markersData = data
+          this.mappedMarkerData = this.mapMarkerData()
+          this.saveDebounced()
+          this.setupFlPanZoom()
+          return
+        })
+    },
+    isColumnMissing() {
+      const results = []
+      const savedColumnNames = [
+        this.markerNameColumn,
+        this.markerMapColumn,
+        this.markerTypeColumn,
+        this.markerXPositionColumn,
+        this.markerYPositionColumn
+      ]
+
+      const columnMissing = savedColumnNames.some((name) => {
+        if (this.markersDataSource.columns.indexOf(name) == -1) {
+          return true
+        }
+      })
+
+      return columnMissing
+    },
     checkReady() {
       if (!this.isLoading) {
         this.setupFlPanZoom()
@@ -656,13 +697,18 @@ Fliplet.InteractiveMap.component('add-markers', {
         this.reloadDataSources()
           .then((dataSources) => {
             this.dataSources = dataSources
-            return this.getMarkersData()
+            this.markersDataSource = _.find(this.dataSources, { id: this.markersDataSourceId })
+            const columnsMissing = this.isColumnMissing()
+            if (columnsMissing) {
+              return Promise.reject('columns-changed')
+            }
+
+            return this.reloadData()
           })
-          .then((data) => {
-            this.markersData = data
-            this.mappedMarkerData = this.mapMarkerData()
-            this.saveDebounced()
-            this.setupFlPanZoom()
+          .catch((error) => {
+            if (error == 'columns-changed') {
+              this.configureDataSources()
+            }
           })
       }
     })
