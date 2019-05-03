@@ -209,7 +209,7 @@ Fliplet.InteractiveMap.component('add-markers', {
     nameWithId({ name, id }) {
       return `${name} — [${id}]`
     },
-    configureDs() {
+    configureDataSources() {
       this.savedData = false
       Fliplet.Studio.emit('widget-mode', 'normal')
     },
@@ -707,7 +707,7 @@ Fliplet.InteractiveMap.component('add-markers', {
           })
           .catch((error) => {
             if (error == 'columns-changed') {
-              this.configureDs()
+              this.configureDataSources()
             }
           })
       }

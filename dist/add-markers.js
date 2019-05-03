@@ -325,7 +325,7 @@ Fliplet.InteractiveMap.component('add-markers', {
           id = _ref.id;
       return "".concat(name, " \u2014 [").concat(id, "]");
     },
-    configureDs: function configureDs() {
+    configureDataSources: function configureDataSources() {
       this.savedData = false;
       Fliplet.Studio.emit('widget-mode', 'normal');
     },
@@ -856,7 +856,7 @@ Fliplet.InteractiveMap.component('add-markers', {
                     return _this17.reloadData();
                   }).catch(function (error) {
                     if (error == 'columns-changed') {
-                      _this17.configureDs();
+                      _this17.configureDataSources();
                     }
                   });
                 }
