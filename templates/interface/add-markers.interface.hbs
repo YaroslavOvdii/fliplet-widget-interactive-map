@@ -7,10 +7,10 @@
       </div>
     </div>
     <div v-else class="maps-container" v-bind:class="{ 'empty-state': !mappedMarkerData.length }">
-      <div v-show="mappedMarkerData.length || widgetData.maps.length" class="map-wrapper-holder">
+      <div class="map-wrapper-holder">
         <div v-for="(map, index) in widgetData.maps" class="map-wrapper" v-bind:class="{ 'active': selectedMarkerData.map && map.id === selectedMarkerData.map.id && imageLoaded }">
           <div class="map-container" :id="'map-' + map.id">
-            <img v-if="map.image" class="map-image" :src="map.image.url"/>
+            <img v-show="map.image" class="map-image" :src="map.image.url"/>
           </div>
         </div>
       </div>
@@ -24,7 +24,7 @@
     </div>
   </div>
   <div class="settings-holder" v-bind:class="{ 'col-xs-12 less-bottom-padding': !savedData, 'col-xs-4 with-border': savedData }">
-    <div v-if="!isLoading" class="marker-settings-wrapper">
+    <div class="marker-settings-wrapper">
       <div class="form-group clearfix">
         <div class="col-xs-12 control-label">
           <label>Markers data source</label>
