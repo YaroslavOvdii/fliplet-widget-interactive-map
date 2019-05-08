@@ -154,7 +154,7 @@ Fliplet.InteractiveMap.component('add-markers', {
   data: function data() {
     return {
       selector: '#interactive-map-app',
-      isLoading: false,
+      isLoading: true,
       manualSetSettings: false,
       savedData: this.widgetData.savedData,
       markersDataSource: _.find(this.dataSources, {
