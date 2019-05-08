@@ -309,10 +309,7 @@ const app = new Vue({
     $(selector).removeClass('is-loading')
 
     Fliplet.Studio.onMessage((event) => {
-      if (event.data
-        && event.data.event === 'overlay-close'
-        && event.data.data
-        && event.data.data.dataSourceId) {
+      if (_.get(event, 'data.event') === 'overlay-close' && _.get(event.data, 'data.dataSourceId')) {
         this.loadDataSources()
       }
     })

@@ -791,7 +791,7 @@ Fliplet.InteractiveMap.component('add-markers', {
     var _this16 = this;
 
     Fliplet.Studio.onMessage(function (event) {
-      if (event.data && event.data.event === 'overlay-close' && event.data.data && event.data.data.dataSourceId) {
+      if (_.get(event, 'data.event') === 'overlay-close' && _.get(event.data, 'data.dataSourceId')) {
         _this16.reloadDataSources().then(function (dataSources) {
           _this16.dataSources = dataSources;
           _this16.markersDataSource = _.find(_this16.dataSources, {

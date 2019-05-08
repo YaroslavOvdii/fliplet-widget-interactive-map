@@ -664,10 +664,7 @@ Fliplet.InteractiveMap.component('add-markers', {
   },
   created() {
     Fliplet.Studio.onMessage((event) => {
-      if (event.data
-        && event.data.event === 'overlay-close'
-        && event.data.data
-        && event.data.data.dataSourceId) {
+      if (_.get(event, 'data.event') === 'overlay-close' && _.get(event.data, 'data.dataSourceId')) {
         this.reloadDataSources()
           .then((dataSources) => {
             this.dataSources = dataSources

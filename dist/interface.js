@@ -440,7 +440,7 @@ var app = new Vue({
               // Switches UI to ready state
               $(selector).removeClass('is-loading');
               Fliplet.Studio.onMessage(function (event) {
-                if (event.data && event.data.event === 'overlay-close' && event.data.data && event.data.data.dataSourceId) {
+                if (_.get(event, 'data.event') === 'overlay-close' && _.get(event.data, 'data.dataSourceId')) {
                   _this5.loadDataSources();
                 }
               });
