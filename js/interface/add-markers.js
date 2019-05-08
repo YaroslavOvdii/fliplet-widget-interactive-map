@@ -35,6 +35,10 @@ Fliplet.InteractiveMap.component('add-markers', {
       type: String,
       default: ''
     },
+    dataSources: {
+      type: Array,
+      default: []
+    },
     changedDataSource: {
       type: Boolean,
       default: false
@@ -46,11 +50,10 @@ Fliplet.InteractiveMap.component('add-markers', {
   data() {
     return {
       selector: '#interactive-map-app',
-      isLoading: true,
+      isLoading: false,
       manualSetSettings: false,
       savedData: this.widgetData.savedData,
-      markersDataSource: undefined,
-      dataSources: undefined,
+      markersDataSource: _.find(this.dataSources, { id: this.markersDataSourceId }),
       dataSourceId: this.markersDataSourceId,
       dataWasChanged: this.changedDataSource,
       dataSourceConnection: undefined,
@@ -72,9 +75,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       saveDebounced: _.debounce(this.saveToDataSource, 1000),
       dsConfigError: false,
       dataSourceToDelete: undefined,
-      showEditMarkerOverlay: false,
-      fromLoad: false,
-      interval: null
+      showEditMarkerOverlay: false
     }
   },
   computed: {
@@ -85,7 +86,7 @@ Fliplet.InteractiveMap.component('add-markers', {
   watch: {
     markersDataSource(ds, oldDs) {
       // If the user is changes away from the data source the component creates
-      if ((!ds || !oldDs || (ds.id !== this.dataSourceId && !this.dataWasChanged)) && !this.fromLoad) {
+      if (!ds || !oldDs || (ds.id !== this.dataSourceId && !this.dataWasChanged)) {
         return Fliplet.Modal.confirm({
           title: 'Changing data source',
           message: '<p>If you change the data source, the one we created for you will be deleted.<br>Are you sure you want to continue?</p>'
@@ -113,11 +114,6 @@ Fliplet.InteractiveMap.component('add-markers', {
       }
 
       this.dataSourceId = ds.id
-      if (!this.fromLoad) {
-        // Resets select fields
-        this.resetSelectFields()
-      }
-      this.fromLoad = false
     }
   },
   methods: {
@@ -228,19 +224,12 @@ Fliplet.InteractiveMap.component('add-markers', {
         }
       })
     },
-    reloadDataSources(fromLoad) {
+    reloadDataSources() {
       return Fliplet.DataSources.get({
         roles: 'publisher,editor',
         type: null
       }, {
         cache: false
-      })
-      .then((dataSources) => {
-        if (fromLoad) {
-          this.fromLoad = true
-        }
-
-        return dataSources
       })
     },
     useSettings() {
@@ -647,7 +636,6 @@ Fliplet.InteractiveMap.component('add-markers', {
     reloadData() {
       return this.getMarkersData()
         .then((data) => {
-          this.fromLoad = true
           this.markersData = data
           this.mappedMarkerData = this.mapMarkerData()
           this.saveDebounced()
@@ -672,28 +660,14 @@ Fliplet.InteractiveMap.component('add-markers', {
       })
 
       return columnMissing
-    },
-    checkReady() {
-      if (!this.isLoading) {
-        this.setupFlPanZoom()
-        clearInterval(this.interval)
-        this.interval = null
-      }
     }
   },
-  async created() {
-    if (!this.dataSources) {
-      this.dataSources = await this.reloadDataSources(true)
-      this.markersDataSource = _.find(this.dataSources, { id: this.markersDataSourceId })
-    }
-
-    this.markersData = await this.getMarkersData()
-    this.mappedMarkerData = this.mapMarkerData()
-
-    this.isLoading = false
-
+  created() {
     Fliplet.Studio.onMessage((event) => {
-      if (event.data && event.data.event === 'overlay-close' && event.data.data && event.data.data.dataSourceId) {
+      if (event.data
+        && event.data.event === 'overlay-close'
+        && event.data.data
+        && event.data.data.dataSourceId) {
         this.reloadDataSources()
           .then((dataSources) => {
             this.dataSources = dataSources
@@ -716,12 +690,12 @@ Fliplet.InteractiveMap.component('add-markers', {
     Fliplet.InteractiveMap.on('add-markers-save', this.saveData)
     Fliplet.InteractiveMap.on('marker-panel-settings-changed', this.onMarkerPanelSettingChanged)
   },
-  mounted() {
-    if (!this.isLoading) {
-      this.setupFlPanZoom()
-    } else {
-      this.interval = setInterval(this.checkReady, 500)
-    }
+  async mounted() {
+    this.markersData = await this.getMarkersData()
+    this.mappedMarkerData = this.mapMarkerData()
+
+    this.isLoading = false
+    this.$nextTick(this.setupFlPanZoom)
   },
   destroyed() {
     Fliplet.InteractiveMap.off('add-markers-save', this.saveData)
