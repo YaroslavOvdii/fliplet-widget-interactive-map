@@ -95,7 +95,7 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-var flInteractiveMapColumns = ['Name', 'Floor name', 'Marker style', 'Position X', 'Position Y'];
+var flInteractiveMapColumns = ['Name', 'Map name', 'Marker style', 'Position X', 'Position Y'];
 /* harmony default export */ __webpack_exports__["default"] = (flInteractiveMapColumns);
 
 /***/ }),
