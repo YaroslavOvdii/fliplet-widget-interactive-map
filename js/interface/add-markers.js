@@ -534,6 +534,10 @@ Fliplet.InteractiveMap.component('add-markers', {
     },
     saveToDataSource() {
       const data = this.cleanData()
+      if (!data || !data.length) {
+        return
+      }
+
       this.dataSourceConnection.commit(data)
     },
     addNewMarker(options) {
@@ -638,9 +642,7 @@ Fliplet.InteractiveMap.component('add-markers', {
         .then((data) => {
           this.markersData = data
           this.mappedMarkerData = this.mapMarkerData()
-          if (this.mappedMarkerData && this.mappedMarkerData.length) {
-            this.saveDebounced()
-          }
+          this.saveDebounced()
           this.setupFlPanZoom()
           return
         })
