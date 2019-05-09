@@ -1,6 +1,6 @@
 const flInteractiveMapColumns = [
   'Name',
-  'Floor name',
+  'Map name',
   'Marker style',
   'Position X',
   'Position Y'
