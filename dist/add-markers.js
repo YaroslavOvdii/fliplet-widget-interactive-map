@@ -671,6 +671,11 @@ Fliplet.InteractiveMap.component('add-markers', {
     },
     saveToDataSource: function saveToDataSource() {
       var data = this.cleanData();
+
+      if (!data || !data.length) {
+        return;
+      }
+
       this.dataSourceConnection.commit(data);
     },
     addNewMarker: function addNewMarker(options) {
