@@ -429,6 +429,7 @@ body.fl-with-bottom-menu .interactive-map-component-wrapper {
 }
 
 .interactive-map-overlay-search-holder .form-control {
+  color: #ffffff;
   border-radius: 40px;
   box-shadow: none;
   padding-right: 55px;
