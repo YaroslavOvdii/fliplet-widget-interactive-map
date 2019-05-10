@@ -719,10 +719,18 @@ header .title-holder p {
 
 .marker-map-holder .dropdown-menu,
 .marker-icon-holder .dropdown-menu {
+  max-width: 250px;
   top: 85%;
   border-radius: 0;
   border: none;
   box-shadow: 0px 6px 20px 0px rgba(0, 0, 0, 0.1);
+}
+
+.marker-map-holder .dropdown-menu > li > a,
+.marker-icon-holder .dropdown-menu > li > a {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .marker-delete-holder {
