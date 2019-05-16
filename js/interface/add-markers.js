@@ -533,12 +533,9 @@ Fliplet.InteractiveMap.component('add-markers', {
       return newData
     },
     saveToDataSource() {
-      const data = this.cleanData()
-      if (!data || !data.length) {
-        return
-      }
-
-      this.dataSourceConnection.commit(data)
+      const entries = this.cleanData()
+      const columns = this.markersDataSource.columns
+      this.dataSourceConnection.commit(entries, columns)
     },
     addNewMarker(options) {
       let mapName
