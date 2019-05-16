@@ -670,13 +670,9 @@ Fliplet.InteractiveMap.component('add-markers', {
       return newData;
     },
     saveToDataSource: function saveToDataSource() {
-      var data = this.cleanData();
-
-      if (!data || !data.length) {
-        return;
-      }
-
-      this.dataSourceConnection.commit(data);
+      var entries = this.cleanData();
+      var columns = this.markersDataSource.columns;
+      this.dataSourceConnection.commit(entries, columns);
     },
     addNewMarker: function addNewMarker(options) {
       var mapName;
