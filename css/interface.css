@@ -402,8 +402,6 @@ header .title-holder p {
 }
 
 .map-image {
-  max-width: none;
-  width: 100%;
   position: absolute;
   left: 0px;
   top: 0px;
