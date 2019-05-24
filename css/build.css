@@ -83,8 +83,6 @@ body.fl-with-bottom-menu .interactive-map-component-wrapper {
 }
 
 .map-container img {
-  max-width: none;
-  width: 100%;
   position: absolute;
   left: 0px;
   top: 0px;

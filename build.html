@@ -3,7 +3,7 @@
     <div class="map-wrapper-holder">
       <div class="map-wrapper" v-for="(map, index) in maps" v-bind:class="{ 'active': selectedMapData && map.id === selectedMapData.id && imageLoaded }">
         <div class="map-container" :id="'map-' + map.id">
-          <img v-show="map.image" class="map-image" :src="map.image.url"/>
+          <img v-show="map.image" class="map-image" :src="map.image.url" :width="map.image.size ? map.image.size[0] : ''" :height="map.image.size ? map.image.size[1] : ''"/>
         </div>
       </div>
     </div>
