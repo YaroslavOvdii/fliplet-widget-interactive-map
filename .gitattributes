@@ -1,0 +1,6 @@
+dist/*.js       -diff -merge
+dist/*.js       linguist-generated=true
+dist/*.css    -diff -merge
+dist/*.css    linguist-generated=true
+dist/*.map    -diff -merge
+dist/*.map    linguist-generated=true
