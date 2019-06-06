@@ -48,6 +48,7 @@
     ]
   },
   "references": [
-    "markersDataSourceId:dataSource"
+    "markersDataSourceId:dataSource",
+    "maps.$.image.id:mediaFile"
   ]
 }
