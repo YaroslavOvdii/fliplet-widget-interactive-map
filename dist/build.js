@@ -528,9 +528,14 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
                 return this.init();
 
               case 5:
+                Fliplet.Hooks.on('appearanceChanged', function () {
+                  // The PanZoom library is listening to the window resize
+                  // to calculate the new position of the map
+                  $(window).resize();
+                });
                 $(selector).removeClass('is-loading');
 
-              case 6:
+              case 7:
               case "end":
                 return _context.stop();
             }
