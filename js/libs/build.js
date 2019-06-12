@@ -379,8 +379,6 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
       }
 
       Fliplet.Hooks.on('appearanceChanged', () => {
-        // The PanZoom library is listening to the window resize
-        // to calculate the new position of the map
         this.flPanZoomInstances[this.selectedMapData.id].refresh()
       })
 
