@@ -505,6 +505,8 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
       var _mounted = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var _this8 = this;
+
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -529,9 +531,7 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
 
               case 5:
                 Fliplet.Hooks.on('appearanceChanged', function () {
-                  // The PanZoom library is listening to the window resize
-                  // to calculate the new position of the map
-                  $(window).resize();
+                  _this8.flPanZoomInstances[_this8.selectedMapData.id].refresh();
                 });
                 $(selector).removeClass('is-loading');
 
