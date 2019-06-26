@@ -47,7 +47,8 @@ const app = new Vue({
       return Fliplet.DataSources.create({
         name: name,
         organizationId: this.organizationId,
-        columns: this.defaultColumns
+        columns: this.defaultColumns,
+        bundle: true
       }).then((ds) => {
         this.settings.markersDataSourceId = ds.id
         this.settings.markerNameColumn = 'Name'
