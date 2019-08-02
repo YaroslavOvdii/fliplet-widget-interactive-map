@@ -118,19 +118,26 @@ const app = new Vue({
     },
     onPanelSettingChanged(panelData) {
       this.maps.forEach((panel, index) => {
+        // Reset error messages
         panel.error = ''
+        panelData.error = ''
         Vue.set(this.maps, index, panel)
 
-        if (panelData.name == panel.name && panelData.id !== panel.id) {
-          panelData.error = 'Maps must have different names'
-        }
-
+        // If exists update panel with new data
         if (panelData.id === panel.id) {
           // To overcome the array change caveat
           // https://vuejs.org/v2/guide/list.html#Caveats
           Vue.set(this.maps, index, panelData)
         }
       })
+
+      // Find panels with same names
+      var result = _.difference(this.maps, _.uniqBy(this.maps, 'name'))
+      if (result.length) {
+        result.forEach((panel) => {
+          panel.error = 'Maps must have different names'
+        })
+      }
     },
     onAddMarkersSettingChanged(addMarkersData) {
       this.settings = _.assignIn(this.settings, addMarkersData)
