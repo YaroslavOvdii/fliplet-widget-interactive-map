@@ -240,6 +240,17 @@ const app = new Vue({
         return
       }
 
+      // Check if maps have same name
+      const mapsWithSameName = _.filter(this.maps, (map) => {
+        return typeof map.error !== 'undefined' && map.error !== ''
+      })
+      if (mapsWithSameName.length) {
+        this.hasError = {
+          message: 'Maps must have different names.'
+        }
+        return
+      }
+
       // Check if DS info missing
       if (!this.settings.markerMapColumn
         || !this.settings.markerNameColumn
