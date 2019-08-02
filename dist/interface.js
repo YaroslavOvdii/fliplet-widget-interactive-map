@@ -361,6 +361,18 @@ var app = new Vue({
           message: 'You need to select an image for each map you have created before continuing.'
         };
         return;
+      } // Check if maps have same name
+
+
+      var mapsWithSameName = _.filter(this.maps, function (map) {
+        return typeof map.error !== 'undefined' && map.error !== '';
+      });
+
+      if (mapsWithSameName.length) {
+        this.hasError = {
+          message: 'Maps must have different names.'
+        };
+        return;
       } // Check if DS info missing
 
 
