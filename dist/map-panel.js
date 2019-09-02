@@ -130,6 +130,7 @@ Fliplet.InteractiveMap.component('map-panel', {
     openMapPicker: function openMapPicker() {
       var _this = this;
 
+      Fliplet.Widget.toggleCancelButton(false);
       var filePickerData = {
         selectFiles: this.image ? [this.image] : [],
         selectMultiple: false,
@@ -152,6 +153,7 @@ Fliplet.InteractiveMap.component('map-panel', {
         }
       });
       window.filePickerProvider.then(function (result) {
+        Fliplet.Widget.toggleCancelButton(true);
         var imageUrl = result.data[0].url;
         var pattern = /[?&]size=/;
 
@@ -178,6 +180,24 @@ Fliplet.InteractiveMap.component('map-panel', {
     Fliplet.InteractiveMap.off('maps-save', this.onInputData);
   }
 });
+
+Fliplet.Widget.onCancelRequest(function () {
+  var providersNames = [
+    'filePickerProvider',
+    'iconPickerProvider'
+  ];
+
+  _.each(providersNames, function (providerName) {
+    if (window[providerName]) {
+      window[providerName].close();
+      window[providerName] = null;
+    }
+  });
+
+  Fliplet.Widget.toggleSaveButton(true);
+  Fliplet.Widget.toggleCancelButton(true);
+  Fliplet.Studio.emit('widget-save-label-reset');
+})
 
 /***/ }),
 
