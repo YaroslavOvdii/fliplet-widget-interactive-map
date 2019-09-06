@@ -937,6 +937,7 @@ header .title-holder p {
   right: 0;
   padding: 15px;
   background-color: #eae9ec;
+  z-index: 2;
 }
 
 .errors-holder p {
