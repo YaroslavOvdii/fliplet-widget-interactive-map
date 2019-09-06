@@ -19,6 +19,9 @@
       </div>
       <div v-if="icon" class="icon-holder">
         <div class="icon-wrapper">Selected icon: <i :class="'selected-icon ' + icon"></i></div>
+        <div v-if="emptyIconNotification" class="text-danger icon-notification">
+          <p>No icon was selected. The icon will be set to the one previously selected.</p>
+        </div>
       </div>
     </div>
   </div>

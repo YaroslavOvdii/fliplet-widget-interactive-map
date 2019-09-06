@@ -264,13 +264,19 @@ header .title-holder p {
 }
 
 .icon-holder {
-  height: 44px;
   display: flex;
-  align-items: center;
+  height: 44px;
+  align-items: flex-start;
+  flex-direction: column;
+  margin-top: 10px
 }
 
 .icon-wrapper {
   float: left;
+}
+
+.icon-notification {
+  font-size: 12px;
 }
 
 .markers-form-group,
