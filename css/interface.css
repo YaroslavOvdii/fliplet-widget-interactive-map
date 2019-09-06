@@ -946,3 +946,22 @@ header .title-holder p {
 .is-loading .errors-holder {
   display: none;
 }
+
+@media screen and (-ms-high-contrast: none) {
+  .panel-chevron {
+    top: 11px;
+  }
+
+  .collapsed .panel-chevron {
+    top: -11px;
+  }
+  
+  .edit-marker-overlay-content {
+    left: 50%;
+    transform: translate(-50%, 0%);
+  }
+
+  .marker .active-state {
+    transform-origin: 80% 50%;
+  }
+}
