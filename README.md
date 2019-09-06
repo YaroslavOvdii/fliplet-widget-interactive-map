@@ -34,3 +34,5 @@ $ npm install
 ```
 $ npm run watch
 ```
+
+Note: this component requires `com.fliplet.interactive-map` to be the suffix of the widget.json `package` name, e.g. when making changes to it just add a suffix like `com.fliplet.interactive-map.foo-bar`.
