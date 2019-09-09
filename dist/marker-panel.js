@@ -123,6 +123,10 @@ Fliplet.InteractiveMap.component('marker-panel', {
     isFromNew: {
       type: Boolean,
       "default": true
+    },
+    emptyIconNotification: {
+      type: Boolean,
+      "default": false
     }
   },
   methods: {
@@ -152,8 +156,11 @@ Fliplet.InteractiveMap.component('marker-panel', {
       });
       window.iconPickerProvider.then(function (data) {
         Fliplet.Widget.toggleCancelButton(true);
-        if (data.data) {
+        if (!data.data.icon) {
+          _this.emptyIconNotification = true;
+        } else {
           _this.icon = data.data.icon;
+          _this.emptyIconNotification = false;
         }
 
         _this.onInputData();

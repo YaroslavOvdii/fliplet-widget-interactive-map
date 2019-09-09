@@ -5,10 +5,6 @@ body,
   overflow: hidden;
 }
 
-.fl-widget-provider {
-  padding: 15px;
-}
-
 main {
   padding: 15px;
   height: 100%;
@@ -268,13 +264,19 @@ header .title-holder p {
 }
 
 .icon-holder {
-  height: 44px;
   display: flex;
-  align-items: center;
+  height: 44px;
+  align-items: flex-start;
+  flex-direction: column;
+  margin-top: 10px
 }
 
 .icon-wrapper {
   float: left;
+}
+
+.icon-notification {
+  font-size: 12px;
 }
 
 .markers-form-group,
@@ -935,6 +937,7 @@ header .title-holder p {
   right: 0;
   padding: 15px;
   background-color: #eae9ec;
+  z-index: 2;
 }
 
 .errors-holder p {
@@ -943,4 +946,23 @@ header .title-holder p {
 
 .is-loading .errors-holder {
   display: none;
+}
+
+@media screen and (-ms-high-contrast: none) {
+  .panel-chevron {
+    top: 11px;
+  }
+
+  .collapsed .panel-chevron {
+    top: -11px;
+  }
+  
+  .edit-marker-overlay-content {
+    left: 50%;
+    transform: translate(-50%, 0%);
+  }
+
+  .marker .active-state {
+    transform-origin: 80% 50%;
+  }
 }
