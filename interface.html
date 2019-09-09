@@ -2,6 +2,7 @@
   <main v-if="!showAddMarkersUI">
     <header>
       <p>Configure your interactive map</p>
+      <a href="https://help.fliplet.com/article/201-interactive-graphics-component">Need help?</a>
     </header>
     <div class="loading-message">
       <div class="spinner-holder animated">
@@ -19,7 +20,7 @@
             <div class="map-panels-holder">
               <div class="add-map-panel" @click.prevent="onAddMap"><i class="fa fa-plus-circle"></i> Add a new map</div>
               <div class="panel-group" id="map-accordion" v-sortable="{ handle: '.panel-heading', group: { name: 'mapPanels', pull: false }, scrollSensitivity: 116, scrollSpeed: 10, onUpdate: onSortMaps }">
-                
+
                 <div v-for="(map, idx) in maps" v-bind:key="map.id" class="panel panel-default map-panel" :data-id="map.id">
                   <div class="panel-heading grabbable">
                     <h4 class="panel-title" v-bind:class="{ 'collapsed': !map.isFromNew }" data-toggle="collapse" data-parent="#map-accordion" :data-target="'#collapse-' + map.id">
