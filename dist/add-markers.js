@@ -428,7 +428,8 @@ Fliplet.InteractiveMap.component('add-markers', {
       });
     },
     toggleEditMarkerOverlay: function toggleEditMarkerOverlay() {
-      this.showEditMarkerOverlay = !!!this.showEditMarkerOverlay;
+      this.showEditMarkerOverlay = !this.showEditMarkerOverlay;
+      this.reloadData();
     },
     setupFlPanZoom: function setupFlPanZoom() {
       var _this7 = this;
