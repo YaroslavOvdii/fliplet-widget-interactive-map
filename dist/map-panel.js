@@ -108,6 +108,10 @@ Fliplet.InteractiveMap.component('map-panel', {
       type: Object,
       "default": undefined
     },
+    error: {
+      type: String,
+      "default": ''
+    },
     type: {
       type: String,
       "default": 'map-panel'

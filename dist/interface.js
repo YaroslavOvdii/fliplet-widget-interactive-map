@@ -375,6 +375,19 @@ var app = new Vue({
         return;
       } // Check if DS info missing
 
+      var emptyNameIndex = _.findIndex(this.maps, function(map) {
+        return map.name === '';
+      });
+
+      if (emptyNameIndex !== -1) {
+        this.maps[emptyNameIndex].error = "Map name shouldn't be empty";
+        if (!stopComplete) {
+          Fliplet.Modal.alert({
+            message:"One of your maps doesn't have a valid name. Please input a valid name to save the configuration."
+          })
+        }
+        return;
+      }
 
       if (!this.settings.markerMapColumn || !this.settings.markerNameColumn || !this.settings.markerTypeColumn || !this.settings.markerXPositionColumn || !this.settings.markerYPositionColumn) {
         this.hasErrorOnSave = {
