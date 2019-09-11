@@ -104,6 +104,10 @@ Fliplet.InteractiveMap.component('marker-panel', {
       type: String,
       "default": ''
     },
+    error: {
+      type: String,
+      "default": ''
+    },
     icon: {
       type: String,
       "default": 'fa fa-circle'

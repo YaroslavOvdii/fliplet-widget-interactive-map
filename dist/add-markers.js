@@ -170,6 +170,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       markersData: undefined,
       mappedMarkerData: [],
       allMarkerStyles: this.widgetData.markers,
+      hasError: false,
       imageLoaded: false,
       activeMarker: 0,
       selectedMarkerData: {
@@ -291,6 +292,9 @@ Fliplet.InteractiveMap.component('add-markers', {
       });
     },
     confirmName: function confirmName(index, fromCancel) {
+      if (!this.mappedMarkerData[index].data.name.trim()) {
+        return;
+      }
       this.mappedMarkerData[index].data.updateName = !this.mappedMarkerData[index].data.updateName;
 
       if (!fromCancel) {
@@ -370,12 +374,25 @@ Fliplet.InteractiveMap.component('add-markers', {
           panelData.error = 'Marker styles must have different names';
         }
 
+        if (!panelData.name) {
+          panelData.error = 'Marker style name should not be empty';          
+        }
+
         if (panelData.id === panel.id) {
           // To overcome the array change caveat
           // https://vuejs.org/v2/guide/list.html#Caveats
           Vue.set(_this5.allMarkerStyles, index, panelData);
         }
       });
+
+      Fliplet.Widget.toggleSaveButton(!panelData.error);
+      _this5.hasError = !!panelData.error;
+      if (_this5.hasError) {
+              return;
+      }
+      
+      _this5.hasError = false;
+
       this.saveData();
     },
     checkName: function checkName(array, name, increment) {
@@ -428,6 +445,11 @@ Fliplet.InteractiveMap.component('add-markers', {
       });
     },
     toggleEditMarkerOverlay: function toggleEditMarkerOverlay() {
+
+      if (this.hasError) {
+        return;
+      }
+
       this.showEditMarkerOverlay = !!!this.showEditMarkerOverlay;
     },
     setupFlPanZoom: function setupFlPanZoom() {

@@ -109,7 +109,7 @@
             <div v-else v-for="(markerInfo, index) in mappedMarkerData" class="marker-holder" v-bind:class="{ 'active': activeMarker === index }" @click.prevent="setActiveMarker(index)">
               <div class="marker-wrapper">
                 <div v-if="markerInfo.data.updateName" class="marker-name-edit-holder">
-                  <input v-model="markerInfo.data.name" :ref="'changename-' + index" class="form-control" @keyup.enter="confirmName(index)" @keyup.esc="cancelNameUpdate(index)"/> <i class="fa fa-check-circle" @click.prevent="confirmName(index)"></i> <i class="fa fa-ban" @click.prevent="cancelNameUpdate(index)"></i>
+                  <input v-bind:class="{ 'marker-error' : !markerInfo.data.name.trim() }" v-model="markerInfo.data.name" :ref="'changename-' + index" class="form-control" @keyup.enter="confirmName(index)" @keyup.esc="cancelNameUpdate(index)"/> <i class="fa fa-check-circle" @click.prevent="confirmName(index)"></i> <i class="fa fa-ban" @click.prevent="cancelNameUpdate(index)"></i>
                 </div>
                 <div v-else class="marker-name-holder">
                   <span>\{{markerInfo.data.name}}</span> <i class="fa fa-pencil" @click.prevent="toUpdateName(index, markerInfo.data.name)"></i>
@@ -180,7 +180,7 @@
             <div class="add-map-marker" @click.prevent="onAddMarker"><i class="fa fa-plus-circle"></i> Add a new marker style</div>
             <div class="panel-group" id="markers-accordion">
 
-              <div v-for="(marker, idx) in allMarkerStyles" v-bind:key="marker.id" class="panel panel-default marker-panel" :data-id="marker.id">
+              <div v-for="(marker, idx) in allMarkerStyles" v-bind:key="marker.id" v-bind:class="[marker.error ? 'panel-danger' : 'panel-default']" class="panel marker-panel" :data-id="marker.id">
                 <div class="panel-heading">
                   <h4 class="panel-title" v-bind:class="{ 'collapsed': !marker.isFromNew }" data-toggle="collapse" data-parent="#markers-accordion" :data-target="'#collapse-' + marker.id">
                     <span class="panel-title-text">\{{marker.name}}</span>
@@ -190,7 +190,6 @@
                 </div>
                 <div :id="'collapse-' + marker.id" class="panel-collapse collapse" v-bind:class="{ in: marker.isFromNew }">
                   <div class="panel-body">
-                    <div class="error-holder" v-if="marker.error">\{{marker.error}}</div>
 
                     <component :is="marker.type" v-bind="marker"></component>
 
