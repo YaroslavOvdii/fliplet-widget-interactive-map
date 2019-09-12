@@ -15,7 +15,7 @@ Fliplet.InteractiveMap.component('map-panel', {
     },
     error: {
       type: String,
-      "default": ''
+      default: ''
     },
     type: {
       type: String,

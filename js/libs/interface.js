@@ -132,7 +132,7 @@ const app = new Vue({
       })
 
       // Find panels with same names
-      var result = _.difference(this.maps, _.uniqBy(this.maps, 'name'))
+      let result = _.difference(this.maps, _.uniqBy(this.maps, 'name'))
       if (result.length) {
         result.forEach((panel) => {
           panel.error = 'Maps must have different names'
@@ -251,7 +251,7 @@ const app = new Vue({
         return
       }
 
-      var emptyNameIndex = _.findIndex(this.maps, function(map) {
+      let emptyNameIndex = _.findIndex(this.maps, function(map) {
         return map.name === '';
       });
 
