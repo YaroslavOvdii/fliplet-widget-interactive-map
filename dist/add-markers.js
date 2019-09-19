@@ -1670,7 +1670,7 @@ try {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/hcarneiro/Repos/Fliplet/fliplet-widget-interactive-floorplan/js/interface/add-markers.js */"./js/interface/add-markers.js");
+module.exports = __webpack_require__(/*! /Users/maksym/Desktop/Upplabs/Fliplet/interactive graphics/fliplet-widget-interactive-map/js/interface/add-markers.js */"./js/interface/add-markers.js");
 
 
 /***/ })
