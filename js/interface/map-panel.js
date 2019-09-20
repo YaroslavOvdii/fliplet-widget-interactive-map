@@ -57,7 +57,7 @@ Fliplet.InteractiveMap.component('map-panel', {
       })
 
       window.filePickerProvider.then((result) => {
-        Fliplet.Widget.toggleCancelButton(true);
+        Fliplet.Widget.toggleCancelButton(true)
         let imageUrl = result.data[0].url
         const pattern = /[?&]size=/
 
@@ -87,16 +87,16 @@ Fliplet.Widget.onCancelRequest(function () {
   var providersNames = [
     'filePickerProvider',
     'iconPickerProvider'
-  ];
+  ]
 
   _.each(providersNames, function (providerName) {
     if (window[providerName]) {
-      window[providerName].close();
-      window[providerName] = null;
+      window[providerName].close()
+      window[providerName] = null
     }
-  });
+  })
 
-  Fliplet.Widget.toggleSaveButton(true);
-  Fliplet.Widget.toggleCancelButton(true);
-  Fliplet.Studio.emit('widget-save-label-reset');
+  Fliplet.Widget.toggleSaveButton(true)
+  Fliplet.Widget.toggleCancelButton(true)
+  Fliplet.Studio.emit('widget-save-label-reset')
 })

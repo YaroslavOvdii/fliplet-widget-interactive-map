@@ -61,18 +61,18 @@ Fliplet.InteractiveMap.component('marker-panel', {
       })
 
       window.iconPickerProvider.then((data) => {
-        Fliplet.Widget.toggleCancelButton(true);
+        Fliplet.Widget.toggleCancelButton(true)
         if (!data.data.icon) {
-          this.emptyIconNotification = true;
+          this.emptyIconNotification = true
         } else {
-          this.icon = data.data.icon;
-          this.emptyIconNotification = false;
+          this.icon = data.data.icon
+          this.emptyIconNotification = false
         }
 
         this.onInputData();
-        window.iconPickerProvider = null;
-        Fliplet.Studio.emit('widget-save-label-reset');
-        return Promise.resolve();
+        window.iconPickerProvider = null
+        Fliplet.Studio.emit('widget-save-label-reset')
+        return Promise.resolve()
       });
     }
   },
