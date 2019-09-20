@@ -504,7 +504,7 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
       var _mounted = _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default()(
       /*#__PURE__*/
       _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var _this8 = this;
+        var _this9 = this;
 
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
@@ -530,7 +530,7 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
 
               case 5:
                 Fliplet.Hooks.on('appearanceChanged', function () {
-                  _this8.flPanZoomInstances[_this8.selectedMapData.id].refresh();
+                  _this9.flPanZoomInstances[_this9.selectedMapData.id].refresh();
                 });
                 $(selector).removeClass('is-loading');
 
@@ -1362,7 +1362,7 @@ try {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/maksym/Desktop/Upplabs/Fliplet/interactive graphics/fliplet-widget-interactive-map/js/libs/build.js */"./js/libs/build.js");
+module.exports = __webpack_require__(/*! C:\Users\Yaroslav\Desktop\project\fliplet-widget-interactive-map\js\libs\build.js */"./js/libs/build.js");
 
 
 /***/ })
