@@ -193,7 +193,7 @@ Fliplet.InteractiveMap.component('add-markers', {
     },
     deleteMarker(index) {
       const markerId = this.mappedMarkerData[index].id
-        
+
       if (markerId) {
         this.flPanZoomInstances[this.selectedMarkerData.map.id].markers.remove(markerId, { keepInDom: false })
       }
@@ -314,7 +314,8 @@ Fliplet.InteractiveMap.component('add-markers', {
       })
     },
     toggleEditMarkerOverlay() {
-      this.showEditMarkerOverlay = !!!this.showEditMarkerOverlay
+      this.showEditMarkerOverlay = !this.showEditMarkerOverlay;
+      this.reloadData();
     },
     setupFlPanZoom() {
       const mapName = this.mappedMarkerData.length

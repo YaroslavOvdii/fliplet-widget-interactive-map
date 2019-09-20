@@ -428,7 +428,8 @@ Fliplet.InteractiveMap.component('add-markers', {
       });
     },
     toggleEditMarkerOverlay: function toggleEditMarkerOverlay() {
-      this.showEditMarkerOverlay = !!!this.showEditMarkerOverlay;
+      this.showEditMarkerOverlay = !this.showEditMarkerOverlay;
+      this.reloadData();
     },
     setupFlPanZoom: function setupFlPanZoom() {
       var _this7 = this;
@@ -1669,7 +1670,7 @@ try {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/hcarneiro/Repos/Fliplet/fliplet-widget-interactive-floorplan/js/interface/add-markers.js */"./js/interface/add-markers.js");
+module.exports = __webpack_require__(/*! /Users/maksym/Desktop/Upplabs/Fliplet/interactive graphics/fliplet-widget-interactive-map/js/interface/add-markers.js */"./js/interface/add-markers.js");
 
 
 /***/ })
