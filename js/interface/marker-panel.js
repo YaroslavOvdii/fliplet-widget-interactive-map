@@ -28,6 +28,10 @@ Fliplet.InteractiveMap.component('marker-panel', {
     isFromNew: {
       type: Boolean,
       default: true
+    },
+    emptyIconNotification: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
@@ -66,14 +70,18 @@ Fliplet.InteractiveMap.component('marker-panel', {
       })
 
       window.iconPickerProvider.then((data) => {
-        if (data.data) {
-          this.icon = data.data.icon
+        if (!data.data.icon) {
+          this.emptyIconNotification = true;
+        } else {
+          this.icon = data.data.icon;
+          this.emptyIconNotification = false;
         }
-        this.onInputData()
-        window.iconPickerProvider = null
-        Fliplet.Studio.emit('widget-save-label-reset')
-        return Promise.resolve()
-      })
+
+        this.onInputData();
+        window.iconPickerProvider = null;
+        Fliplet.Studio.emit('widget-save-label-reset');
+        return Promise.resolve();
+      });
     }
   },
   created() {

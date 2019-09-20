@@ -130,7 +130,6 @@ Fliplet.InteractiveMap.component('map-panel', {
     openMapPicker: function openMapPicker() {
       var _this = this;
 
-      Fliplet.Widget.toggleCancelButton(false);
       var filePickerData = {
         selectFiles: this.image ? [this.image] : [],
         selectMultiple: false,
@@ -153,7 +152,6 @@ Fliplet.InteractiveMap.component('map-panel', {
         }
       });
       window.filePickerProvider.then(function (result) {
-        Fliplet.Widget.toggleCancelButton(true);
         var imageUrl = result.data[0].url;
         var pattern = /[?&]size=/;
 
@@ -181,24 +179,6 @@ Fliplet.InteractiveMap.component('map-panel', {
   }
 });
 
-Fliplet.Widget.onCancelRequest(function () {
-  var providersNames = [
-    'filePickerProvider',
-    'iconPickerProvider'
-  ];
-
-  _.each(providersNames, function (providerName) {
-    if (window[providerName]) {
-      window[providerName].close();
-      window[providerName] = null;
-    }
-  });
-
-  Fliplet.Widget.toggleSaveButton(true);
-  Fliplet.Widget.toggleCancelButton(true);
-  Fliplet.Studio.emit('widget-save-label-reset');
-})
-
 /***/ }),
 
 /***/ 4:
@@ -208,7 +188,7 @@ Fliplet.Widget.onCancelRequest(function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/hcarneiro/Repos/Fliplet/fliplet-widget-interactive-floorplan/js/interface/map-panel.js */"./js/interface/map-panel.js");
+module.exports = __webpack_require__(/*! /Users/maksym/Desktop/Upplabs/Fliplet/interactive graphics/fliplet-widget-interactive-map/js/interface/map-panel.js */"./js/interface/map-panel.js");
 
 
 /***/ })

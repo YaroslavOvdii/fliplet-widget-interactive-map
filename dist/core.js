@@ -133,7 +133,7 @@ Fliplet.InteractiveMap = function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/hcarneiro/Repos/Fliplet/fliplet-widget-interactive-floorplan/js/libs/core.js */"./js/libs/core.js");
+module.exports = __webpack_require__(/*! /Users/maksym/Desktop/Upplabs/Fliplet/interactive graphics/fliplet-widget-interactive-map/js/libs/core.js */"./js/libs/core.js");
 
 
 /***/ })
