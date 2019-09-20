@@ -354,7 +354,9 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
         this.setActiveMarker(markerIndex);
       },
       selectMarkerOnStart: function selectMarkerOnStart(options) {
-        var markerIndex = undefined;
+        var _this6 = this;
+
+        var markerIndex = -1;
 
         if (_.hasIn(options, 'markerId')) {
           markerIndex = _.findIndex(this.mappedMarkerData, function (o) {
@@ -368,14 +370,11 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
           });
         }
 
-        var mapName = this.mappedMarkerData[markerIndex].data.map;
-
-        var mapIndex = _.findIndex(this.maps, function (o) {
-          return o.name == mapName;
-        });
-
+        var mapIndex = markerIndex > -1 ? _.findIndex(this.maps, function (o) {
+          return o.name == _this6.mappedMarkerData[markerIndex].data.map;
+        }) : 0;
         this.setActiveMap(mapIndex, true);
-        this.setActiveMarker(markerIndex);
+        this.setActiveMarker(markerIndex > -1 ? markerIndex : 0);
       },
       selectMapOnStart: function selectMapOnStart(options) {
         var mapIndex = _.findIndex(this.maps, function (o) {
@@ -385,14 +384,14 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
         this.setActiveMap(mapIndex);
       },
       removeSelectedMarker: function removeSelectedMarker() {
-        var _this6 = this;
+        var _this7 = this;
 
         this.selectedMarkerToggle = false; // Wait for animation
 
         setTimeout(function () {
           // Remove any active marker
           $('.marker').removeClass('active');
-          _this6.selectedMarkerData = undefined;
+          _this7.selectedMarkerData = undefined;
         }, 250);
       },
       closeMapsOverlay: function closeMapsOverlay() {
@@ -446,7 +445,7 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
         });
       },
       init: function init() {
-        var _this7 = this;
+        var _this8 = this;
 
         var cache = {
           offline: true
@@ -457,46 +456,46 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
           uuid: widgetData.uuid,
           container: $(selector)
         }).then(function () {
-          if (_this7.getData) {
-            _this7.fetchData = _this7.getData;
+          if (_this8.getData) {
+            _this8.fetchData = _this8.getData;
 
-            if (_this7.hasOwnProperty('cache')) {
-              cache.offline = _this7.cache;
+            if (_this8.hasOwnProperty('cache')) {
+              cache.offline = _this8.cache;
             }
           }
 
-          return _this7.fetchData(cache);
+          return _this8.fetchData(cache);
         }).then(function (dsData) {
-          _this7.markersData = dsData; // Ordering and take into account numbers on the string
+          _this8.markersData = dsData; // Ordering and take into account numbers on the string
 
-          _this7.mappedMarkerData = _this7.mapMarkerData().slice().sort(function (a, b) {
+          _this8.mappedMarkerData = _this8.mapMarkerData().slice().sort(function (a, b) {
             return a.data.name.localeCompare(b.data.name, undefined, {
               numeric: true
             });
           });
           return Fliplet.Hooks.run('flInteractiveGraphicsBeforeRender', {
-            config: _this7,
+            config: _this8,
             id: widgetData.id,
             uuid: widgetData.uuid,
             container: $(selector),
-            markers: _this7.mappedMarkerData
+            markers: _this8.mappedMarkerData
           });
         }).then(function (response) {
-          _this7.searchMarkerData = _.cloneDeep(_this7.mappedMarkerData);
+          _this8.searchMarkerData = _.cloneDeep(_this8.mappedMarkerData);
 
           if (!response.length) {
-            _this7.$nextTick(_this7.setupFlPanZoom);
+            _this8.$nextTick(_this8.setupFlPanZoom);
 
             return;
           } // Check if it should start with a specific marker selected or select a map
 
 
-          if (_.hasIn(response[0], 'markerId') || _.hasIn(response[0], 'markerName')) {
-            _this7.selectMarkerOnStart(response[0]);
+          if (_.get(response[0], 'markerId') || _.get(response[0], 'markerName')) {
+            _this8.selectMarkerOnStart(response[0]);
           } else if (_.hasIn(response[0], 'mapName')) {
-            _this7.selectMapOnStart(response[0]);
+            _this8.selectMapOnStart(response[0]);
           } else {
-            _this7.$nextTick(_this7.setupFlPanZoom);
+            _this8.$nextTick(_this8.setupFlPanZoom);
           }
         });
       }
