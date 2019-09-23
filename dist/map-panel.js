@@ -98,23 +98,23 @@ Fliplet.InteractiveMap.component('map-panel', {
   props: {
     id: {
       type: String,
-      "default": ''
+      default: ''
     },
     name: {
       type: String,
-      "default": ''
+      default: ''
     },
     image: {
       type: Object,
-      "default": undefined
+      default: undefined
     },
     type: {
       type: String,
-      "default": 'map-panel'
+      default: 'map-panel'
     },
     isFromNew: {
       type: Boolean,
-      "default": true
+      default: true
     }
   },
   methods: {
@@ -188,7 +188,7 @@ Fliplet.InteractiveMap.component('map-panel', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/maksym/Desktop/Upplabs/Fliplet/interactive graphics/fliplet-widget-interactive-map/js/interface/map-panel.js */"./js/interface/map-panel.js");
+module.exports = __webpack_require__(/*! /Users/twu/Sites/fliplet/widgets/fliplet-widget-interactive-map/js/interface/map-panel.js */"./js/interface/map-panel.js");
 
 
 /***/ })
