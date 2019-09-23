@@ -230,13 +230,22 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
       },
       selectMarkerOnStart(options) {
         let markerIndex = -1
+        let markerSelector = ''
 
-        if (_.hasIn(options, 'markerId')) {
+        if (_.get(options, 'markerId')) {
           markerIndex = _.findIndex(this.mappedMarkerData, (o) => { return o.id == options.markerId })
+          markerSelector = options.markerId
         }
 
-        if (_.hasIn(options, 'markerName')) {
+        if (_.get(options, 'markerName')) {
           markerIndex = _.findIndex(this.mappedMarkerData, (o) => { return o.data.name == options.markerName })
+          markerSelector = options.markerName
+        }
+
+        if (markerIndex === -1) {
+          Fliplet.UI.Toast({
+            message: 'Map marker' + (markerSelector ? ' "' + markerSelector + '"' : '') ' not found'
+          })
         }
 
         const mapIndex = markerIndex > -1
@@ -250,7 +259,14 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
       },
       selectMapOnStart(options) {
         const mapIndex = _.findIndex(this.maps, (o) => { return o.name == options.mapName })
-        this.setActiveMap(mapIndex)
+
+        if (mapIndex === -1) {
+          Fliplet.UI.Toast({
+            message: 'Map' + (options.mapName ? ' "' + options.mapName + '"' : '') ' not found'
+          })
+        }
+
+        this.setActiveMap(mapIndex > -1 ? mapIndex : 0)
       },
       removeSelectedMarker() {
         this.selectedMarkerToggle = false
@@ -357,7 +373,7 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
           // Check if it should start with a specific marker selected or select a map
           if (_.get(response[0], 'markerId') || _.get(response[0], 'markerName')) {
             this.selectMarkerOnStart(response[0])
-          } else if (_.hasIn(response[0], 'mapName')) {
+          } else if (_.get(response[0], 'mapName')) {
             this.selectMapOnStart(response[0])
           } else {
             this.$nextTick(this.setupFlPanZoom)
