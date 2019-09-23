@@ -42,7 +42,7 @@ Fliplet.InteractiveMap.component('marker-panel', {
     openIconPicker() {
       this.icon = this.icon || ''
 
-      Fliplet.Widget.toggleCancelButton(false);
+      Fliplet.Widget.toggleCancelButton(false)
 
       window.iconPickerProvider = Fliplet.Widget.open('com.fliplet.icon-selector', {
         // Also send the data I have locally, so that

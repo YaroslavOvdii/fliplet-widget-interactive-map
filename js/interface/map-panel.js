@@ -31,7 +31,7 @@ Fliplet.InteractiveMap.component('map-panel', {
       }
     },
     openMapPicker() {
-      Fliplet.Widget.toggleCancelButton(false);
+      Fliplet.Widget.toggleCancelButton(false)
 
       const filePickerData = {
         selectFiles: this.image ? [this.image] : [],
@@ -81,7 +81,7 @@ Fliplet.InteractiveMap.component('map-panel', {
   destroyed() {
     Fliplet.InteractiveMap.off('maps-save', this.onInputData)
   }
-});
+})
 
 Fliplet.Widget.onCancelRequest(function () {
   var providersNames = [
