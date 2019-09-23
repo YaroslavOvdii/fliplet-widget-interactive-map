@@ -234,17 +234,17 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
 
         if (_.get(options, 'markerId')) {
           markerIndex = _.findIndex(this.mappedMarkerData, (o) => { return o.id == options.markerId })
-          markerSelector = options.markerId
+          markerSelector = ' ' + options.markerId
         }
 
         if (_.get(options, 'markerName')) {
           markerIndex = _.findIndex(this.mappedMarkerData, (o) => { return o.data.name == options.markerName })
-          markerSelector = options.markerName
+          markerSelector = ' "' + options.markerName + '"'
         }
 
         if (markerIndex === -1) {
           Fliplet.UI.Toast({
-            message: 'Map marker' + (markerSelector ? ' "' + markerSelector + '"' : '') ' not found'
+            message: 'Map marker' + markerSelector + ' not found'
           })
         }
 
@@ -262,7 +262,7 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
 
         if (mapIndex === -1) {
           Fliplet.UI.Toast({
-            message: 'Map' + (options.mapName ? ' "' + options.mapName + '"' : '') ' not found'
+            message: 'Map' + (options.mapName ? ' "' + options.mapName + '"' : '') + ' not found'
           })
         }
 

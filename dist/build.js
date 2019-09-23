@@ -357,22 +357,25 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
         var _this6 = this;
 
         var markerIndex = -1;
+        var markerSelector = '';
 
-        if (_.hasIn(options, 'markerId')) {
+        if (_.get(options, 'markerId')) {
           markerIndex = _.findIndex(this.mappedMarkerData, function (o) {
             return o.id == options.markerId;
           });
+          markerSelector = ' ' + options.markerId;
         }
 
-        if (_.hasIn(options, 'markerName')) {
+        if (_.get(options, 'markerName')) {
           markerIndex = _.findIndex(this.mappedMarkerData, function (o) {
             return o.data.name == options.markerName;
           });
+          markerSelector = ' "' + options.markerName + '"';
         }
 
         if (markerIndex === -1) {
           Fliplet.UI.Toast({
-            message: 'The map marker couldn\'t be found. Please make sure the maps are configured correctly.'
+            message: 'Map marker' + markerSelector + ' not found'
           });
         }
 
@@ -389,7 +392,7 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
 
         if (mapIndex === -1) {
           Fliplet.UI.Toast({
-            message: 'The map couldn\'t be found. Please make sure the maps are configured correctly.'
+            message: 'Map' + (options.mapName ? ' "' + options.mapName + '"' : '') + ' not found'
           });
         }
 
@@ -504,7 +507,7 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
 
           if (_.get(response[0], 'markerId') || _.get(response[0], 'markerName')) {
             _this8.selectMarkerOnStart(response[0]);
-          } else if (_.hasIn(response[0], 'mapName')) {
+          } else if (_.get(response[0], 'mapName')) {
             _this8.selectMapOnStart(response[0]);
           } else {
             _this8.$nextTick(_this8.setupFlPanZoom);
