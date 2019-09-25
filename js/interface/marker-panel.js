@@ -42,6 +42,8 @@ Fliplet.InteractiveMap.component('marker-panel', {
     openIconPicker() {
       this.icon = this.icon || ''
 
+      Fliplet.Widget.toggleCancelButton(false)
+
       window.iconPickerProvider = Fliplet.Widget.open('com.fliplet.icon-selector', {
         // Also send the data I have locally, so that
         // the interface gets repopulated with the same stuff
@@ -54,33 +56,23 @@ Fliplet.InteractiveMap.component('marker-panel', {
         }
       })
 
-      window.addEventListener('message', (event) => {
-        if (event.data === 'cancel-button-pressed') {
-          window.iconPickerProvider.close()
-          window.iconPickerProvider = null
-
-          Fliplet.Studio.emit('widget-save-label-update', {
-            text: 'Save'
-          })
-        }
-      })
-
       Fliplet.Studio.emit('widget-save-label-update', {
         text: 'Select & Save'
       })
 
       window.iconPickerProvider.then((data) => {
+        Fliplet.Widget.toggleCancelButton(true)
         if (!data.data.icon) {
-          this.emptyIconNotification = true;
+          this.emptyIconNotification = true
         } else {
-          this.icon = data.data.icon;
-          this.emptyIconNotification = false;
+          this.icon = data.data.icon
+          this.emptyIconNotification = false
         }
 
         this.onInputData();
-        window.iconPickerProvider = null;
-        Fliplet.Studio.emit('widget-save-label-reset');
-        return Promise.resolve();
+        window.iconPickerProvider = null
+        Fliplet.Studio.emit('widget-save-label-reset')
+        return Promise.resolve()
       });
     }
   },
