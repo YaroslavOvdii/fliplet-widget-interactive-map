@@ -253,7 +253,7 @@ const app = new Vue({
 
     let emptyNameIndex = _.findIndex(this.maps, function(map) {
       return map.name === ''
-    });
+    })
 
     if (emptyNameIndex !== -1) {
       this.maps[emptyNameIndex].error = "Map name shouldn't be empty"
