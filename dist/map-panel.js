@@ -98,23 +98,27 @@ Fliplet.InteractiveMap.component('map-panel', {
   props: {
     id: {
       type: String,
-      default: ''
+      "default": ''
     },
     name: {
       type: String,
-      default: ''
+      "default": ''
     },
     image: {
       type: Object,
-      default: undefined
+      "default": undefined
+    },
+    error: {
+      type: String,
+      "default": ''
     },
     type: {
       type: String,
-      default: 'map-panel'
+      "default": 'map-panel'
     },
     isFromNew: {
       type: Boolean,
-      default: true
+      "default": true
     }
   },
   methods: {
@@ -204,7 +208,8 @@ Fliplet.Widget.onCancelRequest(function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/twu/Sites/fliplet/widgets/fliplet-widget-interactive-map/js/interface/map-panel.js */"./js/interface/map-panel.js");
+module.exports = __webpack_require__(/*! C:\Users\Yaroslav\Desktop\project\fliplet-widget-interactive-map\js\interface\map-panel.js */"./js/interface/map-panel.js");
+
 
 /***/ })
 
