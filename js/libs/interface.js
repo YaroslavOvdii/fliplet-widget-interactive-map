@@ -264,7 +264,7 @@ const app = new Vue({
         })
       }
       
-      return;
+      return
     }
 
       // Check if DS info missing
