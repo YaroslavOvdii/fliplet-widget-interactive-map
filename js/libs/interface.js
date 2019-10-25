@@ -251,6 +251,22 @@ const app = new Vue({
         return
       }
 
+    let emptyNameIndex = _.findIndex(this.maps, function(map) {
+      return map.name === ''
+    })
+
+    if (emptyNameIndex !== -1) {
+      this.maps[emptyNameIndex].error = "Map name shouldn't be empty"
+
+      if (!stopComplete) {
+        Fliplet.Modal.alert({
+          message:"One of your maps doesn't have a valid name. Please input a valid name to save the configuration."
+        })
+      }
+      
+      return
+    }
+
       // Check if DS info missing
       if (!this.settings.markerMapColumn
         || !this.settings.markerNameColumn
