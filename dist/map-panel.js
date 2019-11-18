@@ -192,34 +192,36 @@ Fliplet.InteractiveMap.component('map-panel', {
         connection.find({
           where: _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()({}, 'Map name', _this2.name)
         }).then(function (records) {
-          if (records.length) {
-            Fliplet.Modal.confirm({
-              title: 'Change image',
-              message: 'Do you want to keep the existing markers?',
-              buttons: {
-                confirm: {
-                  label: 'Keep the markers',
-                  className: 'btn-success'
-                },
-                cancel: {
-                  label: 'Delete the markers',
-                  className: 'btn-danger'
-                }
-              }
-            }).then(function (result) {
-              if (result) {
-                _this2.imageWidth = _this2.image.size[0];
-                _this2.imageHeight = _this2.image.size[1];
-                _this2.shouldKeepMarkers = true;
-                return;
-              }
-
-              records.forEach(function (elem) {
-                _this2.dataSourceConnection.removeById(elem.id);
-              });
-              Fliplet.Studio.emit('reload-widget-instance', _this2.widgetInstanceId);
-            });
+          if (!records.length) {
+            return;
           }
+
+          Fliplet.Modal.confirm({
+            title: 'Change image',
+            message: 'Do you want to keep the existing markers?',
+            buttons: {
+              confirm: {
+                label: 'Keep the markers',
+                className: 'btn-success'
+              },
+              cancel: {
+                label: 'Delete the markers',
+                className: 'btn-danger'
+              }
+            }
+          }).then(function (result) {
+            if (result) {
+              _this2.imageWidth = _this2.image.size[0];
+              _this2.imageHeight = _this2.image.size[1];
+              _this2.shouldKeepMarkers = true;
+              return;
+            }
+
+            records.forEach(function (elem) {
+              _this2.dataSourceConnection.removeById(elem.id);
+            });
+            Fliplet.Studio.emit('reload-widget-instance', _this2.widgetInstanceId);
+          });
         });
       });
       Fliplet.Widget.toggleCancelButton(false);

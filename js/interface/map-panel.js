@@ -56,12 +56,14 @@ Fliplet.InteractiveMap.component('map-panel', {
          if (!records.length) {
            return
          }
+
          this.dataSourceConnection.find().then(records => {
             records.forEach((elem, index, array) => {
               if (elem.data['Map name'] === this.oldMapName) {
                 array[index].data['Map name'] = this.name
               }
             })
+
             this.entries = records
             this.columns = _.keys(records[0].data)
             this.saveToDataSource()
@@ -80,35 +82,37 @@ Fliplet.InteractiveMap.component('map-panel', {
       Fliplet.DataSources.connect(this.dataSourceId).then(connection => {
         this.dataSourceConnection = connection
         connection.find({where: {['Map name']: this.name}}).then(records => {
-          if (records.length) {
-            Fliplet.Modal.confirm({
-              title: 'Change image',
-              message: 'Do you want to keep the existing markers?',
-              buttons: {
-                confirm: {
-                  label: 'Keep the markers',
-                  className: 'btn-success'
-                },
-                cancel: {
-                  label: 'Delete the markers',
-                  className: 'btn-danger'
-                }
+          if (!records.length) {
+            return
+          }
+
+          Fliplet.Modal.confirm({
+            title: 'Change image',
+            message: 'Do you want to keep the existing markers?',
+            buttons: {
+              confirm: {
+                label: 'Keep the markers',
+                className: 'btn-success'
+              },
+              cancel: {
+                label: 'Delete the markers',
+                className: 'btn-danger'
               }
-            }).then(result => {
-              if (result) {
-                this.imageWidth = this.image.size[0]
-               this.imageHeight = this.image.size[1]
-               this.shouldKeepMarkers = true
-               return
-             }
-             records.forEach(elem => {
-               this.dataSourceConnection.removeById(elem.id)
-             })
-             Fliplet.Studio.emit('reload-widget-instance', this.widgetInstanceId)
-           })
-         }
-       })
-     })
+            }
+          }).then(result => {
+            if (result) {
+              this.imageWidth = this.image.size[0]
+              this.imageHeight = this.image.size[1]
+              this.shouldKeepMarkers = true
+              return
+            }
+            records.forEach(elem => {
+              this.dataSourceConnection.removeById(elem.id)
+            })
+            Fliplet.Studio.emit('reload-widget-instance', this.widgetInstanceId)
+          })
+        })
+      })
       Fliplet.Widget.toggleCancelButton(false)
 
       const filePickerData = {
@@ -153,10 +157,10 @@ Fliplet.InteractiveMap.component('map-panel', {
               this.entries = records
               this.columns = _.keys(records[0].data)
               this.saveToDataSource()
-           })
-         }
-       }
-       
+            })
+          }
+        }
+
         Fliplet.Widget.toggleCancelButton(true)
         let imageUrl = result.data[0].url
         const pattern = /[?&]size=/
