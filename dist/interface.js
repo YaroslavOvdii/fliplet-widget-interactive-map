@@ -134,6 +134,7 @@ var app = new Vue({
   el: selector,
   data: function data() {
     return {
+	  appId: Fliplet.Env.get('appId'),
       appName: Fliplet.Env.get('appName'),
       organizationId: Fliplet.Env.get('organizationId'),
       defaultColumns: _config_default_table__WEBPACK_IMPORTED_MODULE_3__["default"],
@@ -164,7 +165,8 @@ var app = new Vue({
       var name = "".concat(this.appName, " - Map Markers");
       return Fliplet.DataSources.create({
         name: name,
-        organizationId: this.organizationId,
+		organizationId: this.organizationId,
+		appId: this.appId,
         columns: this.defaultColumns,
         bundle: true
       }).then(function (ds) {
