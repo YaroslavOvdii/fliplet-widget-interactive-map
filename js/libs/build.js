@@ -1,3 +1,11 @@
+Vue.filter('auth', function (value) {
+  if (!Fliplet || !Fliplet.Media || typeof Fliplet.Media.authenticate !== 'function') {
+    return value
+  }
+
+  return Fliplet.Media.authenticate(value)
+})
+
 Fliplet.Widget.instance('interactive-map', function(widgetData) {
   var selector = '[data-interactive-map-id="' + widgetData.id + '"]';
 
