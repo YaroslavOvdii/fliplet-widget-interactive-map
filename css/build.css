@@ -37,6 +37,10 @@ body.fl-with-bottom-menu [data-widget-package^="com.fliplet.interactive-map"] {
 }
 
 .widget-not-configured {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
   padding: 20px;
   text-align: center;
   background: rgba(51,51,51,0.1);

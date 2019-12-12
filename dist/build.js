@@ -101,6 +101,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_asyncToGenerator__WEBPACK_IMPORTED_MODULE_1__);
 
 
+Vue.filter('auth', function (value) {
+  if (!Fliplet || !Fliplet.Media || typeof Fliplet.Media.authenticate !== 'function') {
+    return value;
+  }
+
+  return Fliplet.Media.authenticate(value);
+});
 Fliplet.Widget.instance('interactive-map', function (widgetData) {
   var selector = '[data-interactive-map-id="' + widgetData.id + '"]';
   var $interactiveMap = new Vue({
@@ -445,7 +452,7 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
       fetchData: function fetchData(options) {
         return Fliplet.DataSources.connect(this.markersDataSourceId, options).then(function (connection) {
           return connection.find();
-        })["catch"](function (error) {
+        }).catch(function (error) {
           Fliplet.UI.Toast({
             message: 'Error loading data',
             actions: [{
@@ -628,15 +635,15 @@ module.exports = _asyncToGenerator;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! regenerator-runtime */ "./node_modules/regenerator-runtime/runtime.js");
+module.exports = __webpack_require__(/*! regenerator-runtime */ "./node_modules/regenerator-runtime/runtime-module.js");
 
 
 /***/ }),
 
-/***/ "./node_modules/regenerator-runtime/runtime.js":
-/*!*****************************************************!*\
-  !*** ./node_modules/regenerator-runtime/runtime.js ***!
-  \*****************************************************/
+/***/ "./node_modules/regenerator-runtime/runtime-module.js":
+/*!************************************************************!*\
+  !*** ./node_modules/regenerator-runtime/runtime-module.js ***!
+  \************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -647,7 +654,55 @@ module.exports = __webpack_require__(/*! regenerator-runtime */ "./node_modules/
  * LICENSE file in the root directory of this source tree.
  */
 
-var runtime = (function (exports) {
+// This method of obtaining a reference to the global object needs to be
+// kept identical to the way it is obtained in runtime.js
+var g = (function() {
+  return this || (typeof self === "object" && self);
+})() || Function("return this")();
+
+// Use `getOwnPropertyNames` because not all browsers support calling
+// `hasOwnProperty` on the global `self` object in a worker. See #183.
+var hadRuntime = g.regeneratorRuntime &&
+  Object.getOwnPropertyNames(g).indexOf("regeneratorRuntime") >= 0;
+
+// Save the old regeneratorRuntime in case it needs to be restored later.
+var oldRuntime = hadRuntime && g.regeneratorRuntime;
+
+// Force reevalutation of runtime.js.
+g.regeneratorRuntime = undefined;
+
+module.exports = __webpack_require__(/*! ./runtime */ "./node_modules/regenerator-runtime/runtime.js");
+
+if (hadRuntime) {
+  // Restore the original runtime.
+  g.regeneratorRuntime = oldRuntime;
+} else {
+  // Remove the global property added by runtime.js.
+  try {
+    delete g.regeneratorRuntime;
+  } catch(e) {
+    g.regeneratorRuntime = undefined;
+  }
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/regenerator-runtime/runtime.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/regenerator-runtime/runtime.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/**
+ * Copyright (c) 2014-present, Facebook, Inc.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+!(function(global) {
   "use strict";
 
   var Op = Object.prototype;
@@ -657,6 +712,23 @@ var runtime = (function (exports) {
   var iteratorSymbol = $Symbol.iterator || "@@iterator";
   var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
   var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
+
+  var inModule = typeof module === "object";
+  var runtime = global.regeneratorRuntime;
+  if (runtime) {
+    if (inModule) {
+      // If regeneratorRuntime is defined globally and we're in a module,
+      // make the exports object identical to regeneratorRuntime.
+      module.exports = runtime;
+    }
+    // Don't bother evaluating the rest of this file if the runtime was
+    // already defined globally.
+    return;
+  }
+
+  // Define the runtime globally (as expected by generated code) as either
+  // module.exports (if we're in a module) or a new, empty object.
+  runtime = global.regeneratorRuntime = inModule ? module.exports : {};
 
   function wrap(innerFn, outerFn, self, tryLocsList) {
     // If outerFn provided and outerFn.prototype is a Generator, then outerFn.prototype instanceof Generator.
@@ -670,7 +742,7 @@ var runtime = (function (exports) {
 
     return generator;
   }
-  exports.wrap = wrap;
+  runtime.wrap = wrap;
 
   // Try/catch helper to minimize deoptimizations. Returns a completion
   // record like context.tryEntries[i].completion. This interface could
@@ -741,7 +813,7 @@ var runtime = (function (exports) {
     });
   }
 
-  exports.isGeneratorFunction = function(genFun) {
+  runtime.isGeneratorFunction = function(genFun) {
     var ctor = typeof genFun === "function" && genFun.constructor;
     return ctor
       ? ctor === GeneratorFunction ||
@@ -751,7 +823,7 @@ var runtime = (function (exports) {
       : false;
   };
 
-  exports.mark = function(genFun) {
+  runtime.mark = function(genFun) {
     if (Object.setPrototypeOf) {
       Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
     } else {
@@ -768,7 +840,7 @@ var runtime = (function (exports) {
   // `yield regeneratorRuntime.awrap(x)`, so that the runtime can test
   // `hasOwn.call(value, "__await")` to determine if the yielded value is
   // meant to be awaited.
-  exports.awrap = function(arg) {
+  runtime.awrap = function(arg) {
     return { __await: arg };
   };
 
@@ -843,17 +915,17 @@ var runtime = (function (exports) {
   AsyncIterator.prototype[asyncIteratorSymbol] = function () {
     return this;
   };
-  exports.AsyncIterator = AsyncIterator;
+  runtime.AsyncIterator = AsyncIterator;
 
   // Note that simple async functions are implemented on top of
   // AsyncIterator objects; they just return a Promise for the value of
   // the final result produced by the iterator.
-  exports.async = function(innerFn, outerFn, self, tryLocsList) {
+  runtime.async = function(innerFn, outerFn, self, tryLocsList) {
     var iter = new AsyncIterator(
       wrap(innerFn, outerFn, self, tryLocsList)
     );
 
-    return exports.isGeneratorFunction(outerFn)
+    return runtime.isGeneratorFunction(outerFn)
       ? iter // If outerFn is a generator, return the full iterator.
       : iter.next().then(function(result) {
           return result.done ? result.value : iter.next();
@@ -950,8 +1022,7 @@ var runtime = (function (exports) {
       context.delegate = null;
 
       if (context.method === "throw") {
-        // Note: ["return"] must be used for ES3 parsing compatibility.
-        if (delegate.iterator["return"]) {
+        if (delegate.iterator.return) {
           // If the delegate iterator has a return method, give it a
           // chance to clean up.
           context.method = "return";
@@ -1071,7 +1142,7 @@ var runtime = (function (exports) {
     this.reset(true);
   }
 
-  exports.keys = function(object) {
+  runtime.keys = function(object) {
     var keys = [];
     for (var key in object) {
       keys.push(key);
@@ -1132,7 +1203,7 @@ var runtime = (function (exports) {
     // Return an iterator with no values.
     return { next: doneResult };
   }
-  exports.values = values;
+  runtime.values = values;
 
   function doneResult() {
     return { value: undefined, done: true };
@@ -1337,35 +1408,14 @@ var runtime = (function (exports) {
       return ContinueSentinel;
     }
   };
-
-  // Regardless of whether this script is executing as a CommonJS module
-  // or not, return the runtime object so that we can declare the variable
-  // regeneratorRuntime in the outer scope, which allows this module to be
-  // injected easily by `bin/regenerator --include-runtime script.js`.
-  return exports;
-
-}(
-  // If this script is executing as a CommonJS module, use module.exports
-  // as the regeneratorRuntime namespace. Otherwise create a new empty
-  // object. Either way, the resulting object will be used to initialize
-  // the regeneratorRuntime variable at the top of this file.
-   true ? module.exports : undefined
-));
-
-try {
-  regeneratorRuntime = runtime;
-} catch (accidentalStrictMode) {
-  // This module should not be running in strict mode, so the above
-  // assignment should always work unless something is misconfigured. Just
-  // in case runtime.js accidentally runs in strict mode, we can escape
-  // strict mode using a global Function call. This could conceivably fail
-  // if a Content Security Policy forbids using Function, but in that case
-  // the proper solution is to fix the accidental strict mode problem. If
-  // you've misconfigured your bundler to force strict mode and applied a
-  // CSP to forbid Function, and you're not willing to fix either of those
-  // problems, please detail your unique predicament in a GitHub issue.
-  Function("r", "regeneratorRuntime = r")(runtime);
-}
+})(
+  // In sloppy mode, unbound `this` refers to the global object, fallback to
+  // Function constructor if we're in global strict mode. That is sadly a form
+  // of indirect eval which violates Content Security Policy.
+  (function() {
+    return this || (typeof self === "object" && self);
+  })() || Function("return this")()
+);
 
 
 /***/ }),
@@ -1377,7 +1427,8 @@ try {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/maksym/Desktop/Upplabs/Fliplet/interactive graphics/fliplet-widget-interactive-map/js/libs/build.js */"./js/libs/build.js");
+module.exports = __webpack_require__(/*! /Users/twu/Sites/fliplet/widgets/fliplet-widget-interactive-map/js/libs/build.js */"./js/libs/build.js");
+
 
 
 /***/ })
