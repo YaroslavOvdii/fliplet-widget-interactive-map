@@ -98,35 +98,39 @@ Fliplet.InteractiveMap.component('marker-panel', {
   props: {
     id: {
       type: String,
-      default: ''
+      "default": ''
     },
     name: {
       type: String,
-      default: ''
+      "default": ''
     },
     icon: {
       type: String,
-      default: 'fa fa-circle'
+      "default": 'fa fa-circle'
     },
     color: {
       type: String,
-      default: '#337ab7'
+      "default": '#337ab7'
     },
     size: {
       type: String,
-      default: '24px'
+      "default": '24px'
     },
     type: {
       type: String,
-      default: 'marker-panel'
+      "default": 'marker-panel'
     },
     isFromNew: {
       type: Boolean,
-      default: true
+      "default": true
+    },
+    error: {
+      type: String,
+      "default": ''
     },
     emptyIconNotification: {
       type: Boolean,
-      default: false
+      "default": false
     }
   },
   methods: {
@@ -221,9 +225,7 @@ Fliplet.InteractiveMap.component('marker-panel', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
-module.exports = __webpack_require__(/*! /Users/twu/Sites/fliplet/widgets/fliplet-widget-interactive-map/js/interface/marker-panel.js */"./js/interface/marker-panel.js");
-
+module.exports = __webpack_require__(/*! C:\Users\Yaroslav\Desktop\project\fliplet-widget-interactive-map\js\interface\marker-panel.js */"./js/interface/marker-panel.js");
 
 
 /***/ })

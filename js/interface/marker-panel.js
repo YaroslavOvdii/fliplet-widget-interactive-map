@@ -29,6 +29,10 @@ Fliplet.InteractiveMap.component('marker-panel', {
       type: Boolean,
       default: true
     },
+    error: {
+      type: String,
+      default: ''
+    },
     emptyIconNotification: {
       type: Boolean,
       default: false
