@@ -340,6 +340,9 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
             })
           })
       },
+      refreshInstance() {
+        this.flPanZoomInstances[this.selectedMapData.id].refresh()
+      },
       init() {
         const cache = { offline: true }
 
@@ -405,9 +408,8 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
         await this.init()
       }
 
-      Fliplet.Hooks.on('appearanceChanged', () => {
-        this.flPanZoomInstances[this.selectedMapData.id].refresh()
-      })
+      Fliplet.Hooks.on('appearanceChanged', this.refreshInstance)
+      Fliplet.Hooks.on('appearanceFileChanged', this.refreshInstance)
 
       $(selector).removeClass('is-loading')
     },
