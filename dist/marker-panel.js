@@ -124,6 +124,10 @@ Fliplet.InteractiveMap.component('marker-panel', {
       type: Boolean,
       "default": true
     },
+    error: {
+      type: String,
+      "default": ''
+    },
     emptyIconNotification: {
       type: Boolean,
       "default": false
@@ -221,7 +225,7 @@ Fliplet.InteractiveMap.component('marker-panel', {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\hugoc\Documents\GitHub\Fliplet\fliplet-widget-interactive-map\js\interface\marker-panel.js */"./js/interface/marker-panel.js");
+module.exports = __webpack_require__(/*! C:\Users\Yaroslav\Desktop\project\fliplet-widget-interactive-map\js\interface\marker-panel.js */"./js/interface/marker-panel.js");
 
 
 /***/ })
