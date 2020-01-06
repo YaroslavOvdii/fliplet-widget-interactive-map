@@ -972,4 +972,8 @@ header .title-holder p {
   .marker .active-state {
     transform-origin: 80% 50%;
   }
+
+  #interactive-map-app header p {
+    flex: none !important;
+  }
 }
