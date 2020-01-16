@@ -347,7 +347,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       if (this.showEditMarkerOverlay) {
         $('.marker-overlay-saving').removeClass('hidden')
 
-        for (var i = 0; i < this.styleNames.length; i++) {
+        for (let i = 0; i < this.styleNames.length; i++) {
           this.styleNames[i].newStyleName = this.allMarkerStyles[i].name
         }
 
@@ -360,7 +360,7 @@ Fliplet.InteractiveMap.component('add-markers', {
             }
 
             records.forEach(elem => {
-              var matchedStyleName = _.find(this.styleNames, function(style) {
+              let matchedStyleName = _.find(this.styleNames, function(style) {
                 return style.oldStyleName === elem.data['Marker style'];
               });
 
@@ -369,7 +369,7 @@ Fliplet.InteractiveMap.component('add-markers', {
               }
             })
 
-            let columns = _.keys(records[0].data)
+            const columns = _.keys(records[0].data)
 
             this.styleNames = []
             this.markersData = records
