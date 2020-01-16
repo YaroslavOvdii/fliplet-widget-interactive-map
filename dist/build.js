@@ -275,12 +275,12 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
 
         var markers = this.flPanZoomInstances[this.selectedMapData.id].markers.getAll();
 
-        if (!markers.length) {
+        if (!markers.length || _.isUndefined(this.mappedMarkerData[this.activeMarker])) {
           return;
         } // Store first marker
 
 
-        var marker = markers[0]; // Find the new selected marker from flPanZoomInstance
+        var firstMarker = markers[0]; // Find the new selected marker from flPanZoomInstance
 
         this.selectedPinchMarker = _.find(markers, function (marker) {
           return marker.vars.id === _this4.mappedMarkerData[_this4.activeMarker].id;
@@ -290,10 +290,10 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
           $(this.selectedPinchMarker.getElement().get(0)).addClass('active');
         } else {
           this.activeMarker = _.findIndex(this.mappedMarkerData, function (o) {
-            return o.id == marker.vars.id;
+            return o.id == firstMarker.vars.id;
           });
           this.selectedMarkerData = this.mappedMarkerData[this.activeMarker].data;
-          $(markers[0].getElement().get(0)).addClass('active');
+          $(firstMarker.getElement().get(0)).addClass('active');
         }
       },
       addMarkers: function addMarkers(fromLoad, options) {
@@ -519,6 +519,9 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
             _this8.selectMarkerOnStart(response[0]);
           } else if (_.get(response[0], 'mapName')) {
             _this8.selectMapOnStart(response[0]);
+          } else if (_.get(response[0], 'selectMarker') === false) {
+            // Ensure no marker is selected
+            _this8.setActiveMarker(-1);
           } else {
             _this8.$nextTick(_this8.setupFlPanZoom);
           }
@@ -1384,7 +1387,7 @@ try {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\Yaroslav\Desktop\project\fliplet-widget-interactive-map\js\libs\build.js */"./js/libs/build.js");
+module.exports = __webpack_require__(/*! /Users/twu/Sites/fliplet/widgets/fliplet-widget-interactive-map/js/libs/build.js */"./js/libs/build.js");
 
 
 /***/ })
