@@ -545,7 +545,7 @@ header .title-holder p {
 .markers-ui-holder {
   display: flex;
   flex-flow: column nowrap;
-  height: 100%;
+  min-height: 44px;
   margin: 0;
 }
 
@@ -963,7 +963,7 @@ header .title-holder p {
   .collapsed .panel-chevron {
     top: -11px;
   }
-  
+
   .edit-marker-overlay-content {
     left: 50%;
     transform: translate(-50%, 0%);
