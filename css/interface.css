@@ -876,6 +876,13 @@ header .title-holder p {
   content: '\00d7';
 }
 
+.marker-overlay-content-header .marker-overlay-saving {
+  color: #999999;
+  position: absolute;
+  right: 75px;
+  top: 5px;
+}
+
 .marker-overlay-content-header .marker-overlay-close {
   position: absolute;
   top: 0;

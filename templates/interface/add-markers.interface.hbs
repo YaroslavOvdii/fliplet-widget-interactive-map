@@ -37,7 +37,7 @@
           <template v-else>
             You are using the data source called <strong>\{{markersDataSource.name}}</strong>.<br>
             <span>
-              <a href="#" @click.prevent="editDataSource">Bulk upload data</a> | 
+              <a href="#" @click.prevent="editDataSource">Bulk upload data</a> |
               <a href="#" @click.prevent="configureDataSources">Switch to another data source</a>
             </span>
           </template>
@@ -170,6 +170,7 @@
       <div class="edit-marker-overlay-content">
         <div class="marker-overlay-content-header">
           <h3 class="marker-overlay-title">Marker styles</h3>
+          <span class="marker-overlay-saving hidden">Saving...</span>
           <div class="marker-overlay-close" @click.prevent="toggleEditMarkerOverlay">
             <a href="#"><i class="fa fa-times-thin fa-2x"></i></a>
           </div>
