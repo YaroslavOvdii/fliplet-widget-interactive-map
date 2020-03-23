@@ -544,6 +544,7 @@ header .title-holder p {
 
 .markers-ui-holder {
   display: flex;
+  flex: 1;
   flex-flow: column nowrap;
   min-height: 44px;
   margin: 0;
