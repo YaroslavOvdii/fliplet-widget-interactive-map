@@ -342,7 +342,13 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
           })
       },
       refreshInstance() {
-        this.flPanZoomInstances[this.selectedMapData.id].refresh()
+        // We should refresh ZoomInstance only if we have selectedMapData
+        // If there is no selectedMapData it means that PanZoom doesn't inited
+        if (this.selectedMapData) {
+          this.flPanZoomInstances[this.selectedMapData.id].refresh()
+        } else {
+          this.setupFlPanZoom()
+        }
       },
       init() {
         const cache = { offline: true }
