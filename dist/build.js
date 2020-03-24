@@ -1387,9 +1387,7 @@ try {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
-module.exports = __webpack_require__(/*! /Users/twu/Sites/fliplet/widgets/fliplet-widget-interactive-map/js/libs/build.js */"./js/libs/build.js");
-
+module.exports = __webpack_require__(/*! C:\Max\Upplabs\Fliplet\interactive graphics\fliplet-widget-interactive-map\js\libs\build.js */"./js/libs/build.js");
 
 
 /***/ })

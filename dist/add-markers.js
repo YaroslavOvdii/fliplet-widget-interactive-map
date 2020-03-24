@@ -431,7 +431,7 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.allMarkerStyles.push(newItem);
       this.saveData();
     },
-    deleteMarkerStyle: function deleteMarkerStyle(index) {
+    deleteMarkerStyle: function deleteMarkerStyle(index, marker) {
       var _this6 = this;
 
       Fliplet.Modal.confirm({
@@ -440,9 +440,23 @@ Fliplet.InteractiveMap.component('add-markers', {
       }).then(function (result) {
         if (!result) {
           return;
-        }
+        } // This is used to remove error from a deleting marker style
+
+
+        if (marker.error) {
+          var markerToDelete = _this6.allMarkerStyles[index];
+          markerToDelete.name = 'delete';
+          markerToDelete.error = '';
+
+          _this6.onMarkerPanelSettingChanged(markerToDelete);
+        } // Remove deleting marker style from marker style arrays
+
 
         _this6.allMarkerStyles.splice(index, 1);
+
+        _.remove(_this6.styleNames, function (elem) {
+          return elem.id === marker.id;
+        });
       });
     },
     toggleEditMarkerOverlay: function toggleEditMarkerOverlay() {
@@ -456,7 +470,8 @@ Fliplet.InteractiveMap.component('add-markers', {
         this.allMarkerStyles.forEach(function (elem) {
           _this7.styleNames.push({
             'oldStyleName': elem.name,
-            'newStyleName': undefined
+            'newStyleName': undefined,
+            'id': elem.id
           });
         });
         Fliplet.Widget.toggleSaveButton(false);
@@ -1743,7 +1758,7 @@ try {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /Users/twu/Sites/fliplet/widgets/fliplet-widget-interactive-map/js/interface/add-markers.js */"./js/interface/add-markers.js");
+module.exports = __webpack_require__(/*! C:\Max\Upplabs\Fliplet\interactive graphics\fliplet-widget-interactive-map\js\interface\add-markers.js */"./js/interface/add-markers.js");
 
 
 /***/ })
