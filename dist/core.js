@@ -133,7 +133,9 @@ Fliplet.InteractiveMap = function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+
 module.exports = __webpack_require__(/*! C:\Max\Upplabs\Fliplet\interactive graphics\fliplet-widget-interactive-map\js\libs\core.js */"./js/libs/core.js");
+
 
 
 /***/ })

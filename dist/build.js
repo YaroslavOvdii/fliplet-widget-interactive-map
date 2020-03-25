@@ -467,7 +467,13 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
         });
       },
       refreshInstance: function refreshInstance() {
-        this.flPanZoomInstances[this.selectedMapData.id].refresh();
+        // We should refresh ZoomInstance only if we have selectedMapData
+        // If there is no selectedMapData it means that PanZoom doesn't inited
+        if (this.selectedMapData) {
+          this.flPanZoomInstances[this.selectedMapData.id].refresh();
+        } else {
+          this.setupFlPanZoom();
+        }
       },
       init: function init() {
         var _this8 = this;
@@ -1388,6 +1394,7 @@ try {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(/*! C:\Max\Upplabs\Fliplet\interactive graphics\fliplet-widget-interactive-map\js\libs\build.js */"./js/libs/build.js");
+
 
 
 /***/ })
