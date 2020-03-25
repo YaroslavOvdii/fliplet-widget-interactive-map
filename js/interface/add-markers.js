@@ -320,9 +320,10 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.allMarkerStyles.push(newItem)
       this.saveData()
     },
-    deleteMarkerStyle(marker) {
-      var index = marker.index
-      
+    deleteMarkerStyle(options) {
+      var option = options || {}
+      var index = option.index
+
       Fliplet.Modal.confirm({
         title: 'Delete marker style',
         message: '<p>You will have to manually update any marker that has this style applied.</p><p>Are you sure you want to delete this marker style?</p>'
@@ -332,7 +333,7 @@ Fliplet.InteractiveMap.component('add-markers', {
         }
 
         // This is used to remove error from a deleting marker style
-        if (marker.marker.error) {
+        if (option.marker.error) {
           var markerToDelete = this.allMarkerStyles[index]
 
           markerToDelete.name = 'delete'
@@ -343,7 +344,7 @@ Fliplet.InteractiveMap.component('add-markers', {
         // Remove deleting marker style from marker style arrays
         this.allMarkerStyles.splice(index, 1)
         _.remove(this.styleNames, elem => {
-          return elem.id === marker.marker.id
+          return elem.id === option.marker.id
         })
       })
     },
