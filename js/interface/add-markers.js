@@ -320,16 +320,32 @@ Fliplet.InteractiveMap.component('add-markers', {
       this.allMarkerStyles.push(newItem)
       this.saveData()
     },
-    deleteMarkerStyle(index) {
+    deleteMarkerStyle(options) {
+      var option = options || {}
+      var index = option.index
+
       Fliplet.Modal.confirm({
         title: 'Delete marker style',
         message: '<p>You will have to manually update any marker that has this style applied.</p><p>Are you sure you want to delete this marker style?</p>'
-      }).then((result) => {
+      }).then(result => {
         if (!result) {
           return
         }
 
+        // This is used to remove error from a deleting marker style
+        if (option.marker.error) {
+          var markerToDelete = this.allMarkerStyles[index]
+
+          markerToDelete.name = 'delete'
+          markerToDelete.error = ''
+          this.onMarkerPanelSettingChanged(markerToDelete)
+        }
+
+        // Remove deleting marker style from marker style arrays
         this.allMarkerStyles.splice(index, 1)
+        _.remove(this.styleNames, elem => {
+          return elem.id === option.marker.id
+        })
       })
     },
     toggleEditMarkerOverlay() {
@@ -339,7 +355,7 @@ Fliplet.InteractiveMap.component('add-markers', {
 
       if (!this.showEditMarkerOverlay) {
         this.allMarkerStyles.forEach(elem => {
-          this.styleNames.push({'oldStyleName' : elem.name, 'newStyleName' : undefined})
+          this.styleNames.push({'oldStyleName' : elem.name, 'newStyleName' : undefined, 'id' : elem.id})
         })
         Fliplet.Widget.toggleSaveButton(false)
       }
