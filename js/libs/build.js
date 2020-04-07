@@ -29,7 +29,7 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
         pzElement: undefined,
         markerElemHandler: undefined,
         activeMap: 0,
-        activeMarker: 0,
+        activeMarker: undefined,
         imageLoaded: false,
         selectedMapData: undefined,
         selectedMarkerData: undefined,
