@@ -197,10 +197,11 @@ Fliplet.Widget.onCancelRequest(function () {
     if (window[providerName]) {
       window[providerName].close()
       window[providerName] = null
+
+      Fliplet.Widget.toggleSaveButton(providerName !== 'iconPickerProvider')
     }
   })
 
-  Fliplet.Widget.toggleSaveButton(true)
   Fliplet.Widget.toggleCancelButton(true)
   Fliplet.Studio.emit('widget-save-label-reset')
 })

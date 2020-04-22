@@ -304,10 +304,10 @@ Fliplet.Widget.onCancelRequest(function () {
     if (window[providerName]) {
       window[providerName].close();
       window[providerName] = null;
+      Fliplet.Widget.toggleSaveButton(providerName !== 'iconPickerProvider');
     }
   });
 
-  Fliplet.Widget.toggleSaveButton(true);
   Fliplet.Widget.toggleCancelButton(true);
   Fliplet.Studio.emit('widget-save-label-reset');
 });
@@ -347,9 +347,7 @@ module.exports = _defineProperty;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
-module.exports = __webpack_require__(/*! C:\Max\Upplabs\Fliplet\interactive graphics\fliplet-widget-interactive-map\js\interface\map-panel.js */"./js/interface/map-panel.js");
-
+module.exports = __webpack_require__(/*! C:\Users\Yaroslav\Desktop\Fliplet\fliplet-widget-interactive-map\js\interface\map-panel.js */"./js/interface/map-panel.js");
 
 
 /***/ })

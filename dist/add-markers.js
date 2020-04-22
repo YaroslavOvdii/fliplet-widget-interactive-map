@@ -1760,9 +1760,7 @@ try {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
-module.exports = __webpack_require__(/*! C:\Max\Upplabs\Fliplet\interactive graphics\fliplet-widget-interactive-map\js\interface\add-markers.js */"./js/interface/add-markers.js");
-
+module.exports = __webpack_require__(/*! C:\Users\Yaroslav\Desktop\Fliplet\fliplet-widget-interactive-map\js\interface\add-markers.js */"./js/interface/add-markers.js");
 
 
 /***/ })
