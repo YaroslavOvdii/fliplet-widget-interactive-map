@@ -130,7 +130,7 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
         pzElement: undefined,
         markerElemHandler: undefined,
         activeMap: 0,
-        activeMarker: 0,
+        activeMarker: undefined,
         imageLoaded: false,
         selectedMapData: undefined,
         selectedMarkerData: undefined,
@@ -1394,7 +1394,6 @@ try {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(/*! C:\Users\Yaroslav\Desktop\Fliplet\fliplet-widget-interactive-map\js\libs\build.js */"./js/libs/build.js");
-
 
 /***/ })
 

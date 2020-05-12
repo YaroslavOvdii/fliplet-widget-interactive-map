@@ -2876,7 +2876,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/**!
 
 module.exports = __webpack_require__(/*! C:\Users\Yaroslav\Desktop\Fliplet\fliplet-widget-interactive-map\js\libs\interface.js */"./js/libs/interface.js");
 
-
 /***/ })
 
 /******/ });
