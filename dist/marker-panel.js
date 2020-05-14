@@ -150,8 +150,17 @@ Fliplet.InteractiveMap.component('marker-panel', {
         data: this.icon,
         // Events fired from the provider
         onEvent: function onEvent(event, data) {
-          if (event === 'interface-validate') {
-            Fliplet.Widget.toggleSaveButton(data.isValid === true);
+          switch (event) {
+            case 'interface-validate':
+              Fliplet.Widget.toggleSaveButton(data.isValid === true);
+              break;
+
+            case 'icon-clicked':
+              Fliplet.Widget.toggleSaveButton(data.isSelected);
+              break;
+
+            default:
+              break;
           }
         }
       });
@@ -172,6 +181,7 @@ Fliplet.InteractiveMap.component('marker-panel', {
 
         window.iconPickerProvider = null;
         Fliplet.Studio.emit('widget-save-label-reset');
+        Fliplet.Widget.toggleSaveButton(false);
         return Promise.resolve();
       });
     }

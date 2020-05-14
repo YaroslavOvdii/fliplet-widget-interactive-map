@@ -1762,7 +1762,6 @@ try {
 
 module.exports = __webpack_require__(/*! C:\Max\Upplabs\Fliplet\interactive graphics\fliplet-widget-interactive-map\js\interface\add-markers.js */"./js/interface/add-markers.js");
 
-
 /***/ })
 
 /******/ });
