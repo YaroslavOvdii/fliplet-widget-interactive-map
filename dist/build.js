@@ -459,7 +459,7 @@ Fliplet.Widget.instance('interactive-map', function (widgetData) {
               label: 'Details',
               action: function action() {
                 Fliplet.UI.Toast({
-                  html: error.message || error
+                  html: error.message || Fliplet.parseError(error)
                 });
               }
             }]
@@ -1394,6 +1394,7 @@ try {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__(/*! C:\Users\Yaroslav\Desktop\Fliplet\fliplet-widget-interactive-map\js\libs\build.js */"./js/libs/build.js");
+
 
 /***/ })
 

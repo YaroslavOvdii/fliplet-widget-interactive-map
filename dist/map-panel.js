@@ -347,8 +347,7 @@ module.exports = _defineProperty;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-
-module.exports = __webpack_require__(/*! C:\Max\Upplabs\Fliplet\interactive graphics\fliplet-widget-interactive-map\js\interface\map-panel.js */"./js/interface/map-panel.js");
+module.exports = __webpack_require__(/*! C:\Users\Yaroslav\Desktop\Fliplet\fliplet-widget-interactive-map\js\interface\map-panel.js */"./js/interface/map-panel.js");
 
 
 /***/ })

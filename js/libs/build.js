@@ -333,7 +333,7 @@ Fliplet.Widget.instance('interactive-map', function(widgetData) {
                   label: 'Details',
                   action: function () {
                     Fliplet.UI.Toast({
-                      html: error.message || error
+                      html: error.message || Fliplet.parseError(error)
                     });
                   }
                 }
